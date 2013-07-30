@@ -27,7 +27,10 @@ module.exports = function (grunt) {
         "-W069": true,
 
         // type definitions
-        "-W030": true
+        "-W030": true,
+
+        // Don't make functions within loops
+        "-W083": true
       }
     },
     closurecompiler: {
