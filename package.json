@@ -6,7 +6,7 @@
   "directories": {
     "test": "test"
   },
-  "repository": "",
+  "repository": "https://github.com/bramstein/fontloader.git",
   "keywords": [
     "fontloader",
     "fonts",
