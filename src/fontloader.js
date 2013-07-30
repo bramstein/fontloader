@@ -44,7 +44,7 @@ goog.scope(function () {
     /**
      * @type {fontloader.CSSValue}
      */
-    var font = CSSValue.parse(params['font'])
+    var font = CSSValue.parse(params['font']);
 
     /**
      * @type {Array.<string>}
