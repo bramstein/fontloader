@@ -1,0 +1,10 @@
+@font-face {
+    font-family: 'Source Sans Pro Light Italic Web Font';
+    src: url('sourcesanspro-lightit.eot');
+    src: url('sourcesanspro-lightit.eot?#iefix') format('embedded-opentype'),
+         url('sourcesanspro-lightit.woff') format('woff'),
+         url('sourcesanspro-lightit.ttf') format('truetype'),
+         url('sourcesanspro-lightit.svg#source_sans_prolight_italic') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
