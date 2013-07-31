@@ -91,6 +91,21 @@ describe('fontloader.FontWatcher', function () {
       });
     });
 
+    it('should fail to load a broken font and create a timeout error', function (done) {
+      var fontWatcher = new FontWatcher({}, 'hello world');
+
+      FontWatcher.DEFAULT_TIMEOUT = 100;
+
+      loadStylesheet('assets/brokenfont/brokenfont-regular.css');
+
+      fontWatcher.start({ 'font-family': 'Broken Font Regular' }, function (err, font) {
+        expect(err).not.to.be(null);
+        expect(err.message).to.eql('Timeout');
+        expect(font).to.eql({ 'font-family': 'Broken Font Regular' });
+        done();
+      });
+    });
+
     it('should load a real font and call the callback', function (done) {
       var fontWatcher = new FontWatcher({}, 'hello world'),
           ruler = new Ruler('hello world'),

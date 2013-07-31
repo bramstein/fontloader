@@ -1,4 +1,8 @@
 describe('fontloader API', function () {
+  beforeEach(function () {
+    fontloader.FontWatcher.DEFAULT_TIMEOUT = 5000;
+  });
+
   it('succesfully loads a font and calls the correct callback', function (done) {
     loadStylesheet('assets/sourcesanspro/sourcesanspro-black.css');
 
@@ -84,6 +88,85 @@ describe('fontloader API', function () {
       },
       error: function () {
         done(new Error('Should not fail'));
+      }
+    });
+  });
+
+  it('fails to load a single font and calls the correct callbacks', function (done) {
+    loadStylesheet('assets/brokenfont/brokenfont-bold.css');
+
+    fontloader.FontWatcher.DEFAULT_TIMEOUT = 100;
+
+    fontloader.onloading = sinon.spy();
+    fontloader.onloadingdone = sinon.spy();
+    fontloader.onloadstart = sinon.spy();
+    fontloader.onload = sinon.spy();
+    fontloader.onerror = sinon.spy();
+
+    fontloader.loadFont({
+      font: '13px Broken Font Bold',
+      success: function () {
+        done(new Error('Should not succeed'));
+      },
+      error: function () {
+        expect(fontloader.loading).to.be(false);
+
+        expect(fontloader.onloading.calledOnce).to.be(true);
+        expect(fontloader.onloading.calledWith({ error: null, fontface: 'Broken Font Bold' })).to.be(true);
+
+        expect(fontloader.onloadingdone.calledOnce).to.be(true);
+        expect(fontloader.onloadingdone.calledWith({ error: null, fontface: 'Broken Font Bold' })).to.be(true);
+
+        expect(fontloader.onloadstart.calledOnce).to.be(true);
+        expect(fontloader.onloadstart.calledWith({ error: null, fontface: 'Broken Font Bold' })).to.be(true);
+
+        expect(fontloader.onload.callCount).to.eql(0);
+
+        expect(fontloader.onerror.calledOnce).to.be(true);
+        expect(fontloader.onerror.calledWith({ error: new Error('Timeout'), fontface: 'Broken Font Bold' })).to.be(true);
+
+        done();
+      }
+    });
+  });
+
+  it('fails to load multiple fonts and calls the correct callbacks', function (done) {
+    loadStylesheet('assets/brokenfont/brokenfont-italic.css');
+    loadStylesheet('assets/brokenfont/brokenfont-light.css');
+
+    fontloader.FontWatcher.DEFAULT_TIMEOUT = 100;
+
+    fontloader.onloading = sinon.spy();
+    fontloader.onloadingdone = sinon.spy();
+    fontloader.onloadstart = sinon.spy();
+    fontloader.onload = sinon.spy();
+    fontloader.onerror = sinon.spy();
+
+    fontloader.loadFont({
+      font: '13px Broken Font Italic, Broken Font Light',
+      success: function () {
+        done(new Error('Should not succeed'));
+      },
+      error: function () {
+        expect(fontloader.loading).to.be(false);
+
+        expect(fontloader.onloading.calledOnce).to.be(true);
+        expect(fontloader.onloading.calledWith({ error: null, fontface: 'Broken Font Italic' })).to.be(true);
+
+        expect(fontloader.onloadingdone.calledOnce).to.be(true);
+        expect(fontloader.onloadingdone.calledWith({ error: null, fontface: 'Broken Font Light' })).to.be(true);
+
+        expect(fontloader.onloadstart.calledTwice).to.be(true);
+        expect(fontloader.onloadstart.calledWith({ error: null, fontface: 'Broken Font Italic' })).to.be(true);
+        expect(fontloader.onloadstart.calledWith({ error: null, fontface: 'Broken Font Light' })).to.be(true);
+
+        expect(fontloader.onload.callCount).to.eql(0);
+
+        expect(fontloader.onerror.calledTwice).to.be(true);
+        expect(fontloader.onerror.calledWith({ error: new Error('Timeout'), fontface: 'Broken Font Italic' })).to.be(true);
+        expect(fontloader.onerror.calledWith({ error: new Error('Timeout'), fontface: 'Broken Font Light' })).to.be(true);
+
+        done();
       }
     });
   });
