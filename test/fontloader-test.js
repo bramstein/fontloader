@@ -1,6 +1,6 @@
-describe('fontloader', function () {
+describe('fontloader API', function () {
   it('succesfully loads a font and calls the correct callback', function (done) {
-    loadStylesheet('assets/sourcesanspro-black.css');
+    loadStylesheet('assets/sourcesanspro/sourcesanspro-black.css');
 
     fontloader.onloading = sinon.spy();
     fontloader.onloadingdone = sinon.spy();
@@ -38,13 +38,11 @@ describe('fontloader', function () {
         done(new Error('Should not fail'));
       }
     });
-
-    expect(fontloader.loading).to.be(true);
   });
 
   it('successfully loads multiple fonts and calls the correct callbacks', function (done) {
-    loadStylesheet('assets/sourcesanspro-light.css');
-    loadStylesheet('assets/sourcesanspro-lightit.css');
+    loadStylesheet('assets/sourcesanspro/sourcesanspro-light.css');
+    loadStylesheet('assets/sourcesanspro/sourcesanspro-lightit.css');
 
     fontloader.onloading = sinon.spy();
     fontloader.onloadingdone = sinon.spy();
@@ -82,13 +80,11 @@ describe('fontloader', function () {
 
         expect(fontloader.onerror.callCount).to.eql(0);
 
-       done();
+        done();
       },
       error: function () {
         done(new Error('Should not fail'));
       }
     });
-
-    expect(fontloader.loading).to.be(true);
   });
 });

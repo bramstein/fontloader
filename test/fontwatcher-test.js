@@ -101,7 +101,7 @@ describe('fontloader.FontWatcher', function () {
 
       beforeWidth = ruler.getWidth();
 
-      loadStylesheet('assets/sourcesanspro-regular.css');
+      loadStylesheet('assets/sourcesanspro/sourcesanspro-regular.css');
 
       ruler.setStyle({ 'font-family': ['Source Sans Pro Regular Web Font', 'monospace'] });
 
@@ -150,7 +150,7 @@ describe('fontloader.FontWatcher', function () {
         }, 100);
       });
 
-      loadStylesheet('assets/sourcesanspro-it.css');
+      loadStylesheet('assets/sourcesanspro/sourcesanspro-it.css');
     });
   });
 
