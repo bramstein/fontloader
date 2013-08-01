@@ -40,9 +40,9 @@ goog.scope(function () {
     ruler.remove();
 
     debug.info('Finished setting up fall back font cache:');
-    debug.info('  serif: %s', this.fontCache.serif);
-    debug.info('  sans-serif: %s', this.fontCache.sansserif);
-    debug.info('  monospace: %s', this.fontCache.monospace);
+    debug.info('  serif: ' + this.fontCache.serif);
+    debug.info('  sans-serif: ' + this.fontCache.sansserif);
+    debug.info('  monospace: ' + this.fontCache.monospace);
   };
 
   var FontWatcher = fontloader.FontWatcher;
@@ -97,8 +97,8 @@ goog.scope(function () {
         rulerB = new Ruler(this.text),
         that = this;
 
-    debug.info('Starting font watching for "%s" font', font['font-family']);
-    debug.info('WebKit fallback bug %s', this.hasWebKitFallbackBug());
+    debug.info('Starting font watching for "' + font['font-family'] + '" font');
+    debug.info('WebKit fallback bug ' + this.hasWebKitFallbackBug());
 
     rulerA.insert();
     rulerA.setStyle(util.extend({}, font, { 'font-family': font['font-family'] + ',sans-serif' }));
@@ -114,7 +114,7 @@ goog.scope(function () {
 
       if (that.isFallbackFont(widthA, widthB) || that.isLastResortFont(widthA, widthB)) {
         if (goog.now() - started >= FontWatcher.DEFAULT_TIMEOUT) {
-          debug.info('Timeout while loading "%s"', font['font-family']);
+          debug.info('Timeout while loading "' + font['font-family'] + '"');
           done(new Error('Timeout'), font);
         } else {
           goog.global.setTimeout(function () {
@@ -122,7 +122,7 @@ goog.scope(function () {
           }, 25);
         }
       } else {
-        debug.info('"%s" loaded succesfully', font['font-family']);
+        debug.info('"' + font['font-family'] + '" loaded succesfully');
         done(null, font);
       }
     }

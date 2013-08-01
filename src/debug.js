@@ -4,70 +4,29 @@ goog.scope(function () {
   var cons = goog.global.console;
 
   /**
-   * @param {!{length}} o
-   * @return {!Array}
+   * @param {string} str
    */
-  debug.toArray = function (o) {
-    return Array.prototype.slice.call(o, 0);
-  };
-
-  /**
-   * @const
-   * @private
-   * @type {number}
-   */
-  debug.startup = goog.now();
-
-  /**
-   * @private
-   * @return {string}
-   */
-  debug.timestamp = function () {
-    return ((goog.now() - debug.startup) / 1000).toFixed(3);
-  };
-
-  /**
-   * @param {...*} var_args
-   */
-  debug.info = function (var_args) {
+  debug.info = function (str) {
     if (goog.DEBUG && cons) {
-      var args = debug.toArray(arguments);
-
-      if (goog.isString(args[0])) {
-        cons.log.apply(cons, ['[%ss] ' + args[0], debug.timestamp()].concat(args.slice(1)));
-      } else {
-        cons.log.apply(cons, ['[%ss]', debug.timestamp()].concat(args));
-      }
+      cons.log(str);
     }
   };
 
   /**
-   * @param {...*} var_args
+   * @param {string} str
    */
-  debug.warn = function (var_args) {
+  debug.warn = function (str) {
     if (goog.DEBUG && cons) {
-      var args = debug.toArray(arguments);
-
-      if (goog.isString(args[0])) {
-        cons.warn.apply(cons, ['[%ss] ' + args[0], debug.timestamp()].concat(args.slice(1)));
-      } else {
-        cons.warn.apply(cons, ['[%ss]', debug.timestamp()].concat(args));
-      }
+      cons.warn(str);
     }
   };
 
   /**
-   * @param {...*} var_args
+   * @param {string} str
    */
-  debug.error = function (var_args) {
+  debug.error = function (str) {
     if (goog.DEBUG && cons) {
-      var args = debug.toArray(arguments);
-
-      if (goog.isString(args[0])) {
-        cons.error.apply(cons, ['[%ss] ' + args[0], debug.timestamp()].concat(args.slice(1)));
-      } else {
-        cons.error.apply(cons, ['[%ss]', debug.timestamp()].concat(args));
-      }
+      cons.error(str);
     }
   };
 });
