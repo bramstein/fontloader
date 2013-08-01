@@ -4,7 +4,7 @@ window.loadStylesheet = function (href) {
   link.rel = 'stylesheet';
   link.href = href;
 
-  document.head.appendChild(link);
+  document.getElementsByTagName('head')[0].appendChild(link);
 
   return link;
 };
