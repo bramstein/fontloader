@@ -123,7 +123,8 @@ describe('fontloader API', function () {
         expect(fontloader.onload.callCount).to.eql(0);
 
         expect(fontloader.onerror.calledOnce).to.be(true);
-        expect(fontloader.onerror.calledWith({ error: new Error('Timeout'), fontface: 'Broken Font Bold' })).to.be(true);
+        expect(fontloader.onerror.firstCall.args[0].fontface).to.eql('Broken Font Bold');
+        expect(fontloader.onerror.firstCall.args[0].error.message).to.eql('Timeout');
 
         done();
       }
@@ -163,9 +164,18 @@ describe('fontloader API', function () {
         expect(fontloader.onload.callCount).to.eql(0);
 
         expect(fontloader.onerror.calledTwice).to.be(true);
-        expect(fontloader.onerror.calledWith({ error: new Error('Timeout'), fontface: 'Broken Font Italic' })).to.be(true);
-        expect(fontloader.onerror.calledWith({ error: new Error('Timeout'), fontface: 'Broken Font Light' })).to.be(true);
 
+        if (fontloader.onerror.firstCall.args[0].fontface === 'Broken Font Italic') {
+          expect(fontloader.onerror.firstCall.args[0].fontface).to.eql('Broken Font Italic');
+          expect(fontloader.onerror.firstCall.args[0].error.message).to.eql('Timeout');
+          expect(fontloader.onerror.secondCall.args[0].fontface).to.eql('Broken Font Light');
+          expect(fontloader.onerror.secondCall.args[0].error.message).to.eql('Timeout');
+        } else {
+          expect(fontloader.onerror.firstCall.args[0].fontface).to.eql('Broken Font Light');
+          expect(fontloader.onerror.firstCall.args[0].error.message).to.eql('Timeout');
+          expect(fontloader.onerror.secondCall.args[0].fontface).to.eql('Broken Font Italic');
+          expect(fontloader.onerror.secondCall.args[0].error.message).to.eql('Timeout');
+        }
         done();
       }
     });
