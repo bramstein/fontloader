@@ -69,7 +69,9 @@ describe('fontloader.util', function () {
     it('iterates over an array with an asynchronous work load', function (done) {
       util.forEach([1, 2, 3], function (value, callback) {
         setTimeout(callback, value);
-      }, done);
+      }, function (err) {
+        done();
+      });
     });
   });
 });
