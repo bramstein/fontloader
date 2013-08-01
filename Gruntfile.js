@@ -62,7 +62,7 @@ module.exports = function (grunt) {
           concurrency: 3,
           browsers: browsers,
           tags: [process.env.TRAVIS_BRANCH],
-          testname: [process.env.TRAVIS_REPO_SLUG]
+          testname: process.env.TRAVIS_REPO_SLUG
         }
       }
     },
