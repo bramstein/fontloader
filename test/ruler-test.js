@@ -16,10 +16,6 @@ describe('fontloader.Ruler', function () {
     it('sets the test string correctly', function () {
       expect(r.el.innerHTML).to.eql('test');
     });
-
-    it('is not be inserted into the DOM', function () {
-      expect(r.el.parentNode).to.be(null);
-    });
   });
 
   describe('#insert', function () {
@@ -36,8 +32,9 @@ describe('fontloader.Ruler', function () {
       var r = new Ruler('test');
       r.insert();
       expect(r.el.parentNode).not.to.be(null);
+      var parentNode = r.el.parentNode;
       r.remove();
-      expect(r.el.parentNode).to.be(null);
+      expect(r.el.parentNode).not.to.be(parentNode);
     });
   });
 
