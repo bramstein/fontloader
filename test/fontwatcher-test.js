@@ -204,6 +204,12 @@ describe('fontloader.FontWatcher', function () {
       expect(fontWatcher.hasWebKitFallbackBug()).to.be(true);
     });
 
+    it('returns true when the user agent is WebKit and the bug is present in an old version', function () {
+      getUserAgent.returns('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/535.19 (KHTML, like Gecko) Chrome/20.0.814.2 Safari/535.19');
+
+      expect(fontWatcher.hasWebKitFallbackBug()).to.be(true);
+    });
+
     it('caches the results', function () {
       getUserAgent.returns('Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/536.11 (KHTML, like Gecko) Chrome/20.0.814.2 Safari/536.11');
 

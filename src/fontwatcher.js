@@ -81,8 +81,9 @@ goog.scope(function () {
       var match = /AppleWeb[kK]it\/([0-9]+)(?:\.([0-9]+))/.exec(this.getUserAgent());
 
       FontWatcher.HAS_WEBKIT_FALLBACK_BUG = !!match &&
-                                            parseInt(match[1], 10) <= 536 &&
-                                            parseInt(match[2], 10) <= 11;
+                                            (parseInt(match[1], 10) < 536 ||
+                                             (parseInt(match[1], 10) === 536 &&
+                                              parseInt(match[2], 10) <= 11));
     }
     return FontWatcher.HAS_WEBKIT_FALLBACK_BUG;
   };
