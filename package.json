@@ -22,6 +22,12 @@
     "grunt": "=0.4.0",
     "grunt-contrib-clean": "=0.5.0",
     "grunt-contrib-jshint": "=0.6.0",
-    "grunt-closurecompiler": "=0.9.5"
+    "grunt-closurecompiler": "=0.9.5",
+    "grunt-contrib-connect": "~0.3.0",
+    "grunt-contrib-watch": "~0.5.1",
+    "grunt-saucelabs": "~4.0.4"
+  },
+  "scripts": {
+    "test": "grunt test"
   }
 }

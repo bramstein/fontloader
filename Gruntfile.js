@@ -17,9 +17,56 @@ module.exports = function (grunt) {
     output_wrapper: '"(function(){%output%}());"'
   };
 
+  var browsers = [{
+    browserName: "firefox",
+    version: "19",
+    platform: "XP"
+  }, {
+    browserName: "chrome",
+    platform: "XP"
+  }, {
+    browserName: "chrome",
+    platform: "linux"
+  }, {
+    browserName: "internet explorer",
+    platform: "WIN8",
+    version: "10"
+  }, {
+    browserName: "internet explorer",
+    platform: "VISTA",
+    version: "9"
+  }, {
+    browserName: "opera",
+    platform: "Windows 2008",
+    version: "12"
+  }];
+
+
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: ['build'],
+    connect: {
+      server: {
+        options: {
+          base: "",
+          port: 9999
+        }
+      }
+    },
+    'saucelabs-mocha': {
+      all: {
+        options: {
+          urls: ['http://127.0.0.1:9999/test/index.html'],
+          tunnelTimeout: 5,
+          build: process.env.TRAVIS_JOB_ID,
+          concurrency: 3,
+          browsers: browsers,
+          testname: 'mocha tests',
+          tags: ['master']
+        }
+      }
+    },
+    watch: {},
     jshint: {
       all: ['src/**/*.js'],
       options: {
@@ -57,8 +104,13 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-closurecompiler');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-saucelabs');
+  grunt.loadNpmTasks('grunt-contrib-connect');
+  grunt.loadNpmTasks('grunt-contrib-watch');
 
   grunt.registerTask('compile', ['closurecompiler:compile']);
   grunt.registerTask('debug', ['closurecompiler:debug']);
   grunt.registerTask('default', ['compile']);
+  grunt.registerTask('dev', ['connect', 'watch']);
+  grunt.registerTask('test', ['connect', 'saucelabs-mocha']);
 };
