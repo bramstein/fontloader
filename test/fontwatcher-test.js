@@ -120,16 +120,16 @@ describe('fontloader.FontWatcher', function () {
 
       loadStylesheet('assets/sourcesanspro/sourcesanspro-regular.css');
 
-      ruler.setStyle({ 'font-family': ['Source Sans Pro Regular Web Font', 'monospace'] });
+      ruler.setStyle({ 'font-family': ['Source Sans Pro Regular', 'monospace'] });
 
-      fontWatcher.start({ 'font-family': 'Source Sans Pro Regular Web Font' }, function (err, font) {
+      fontWatcher.start({ 'font-family': 'Source Sans Pro Regular' }, function (err, font) {
         var activeWidth = ruler.getWidth();
 
         window.setTimeout(function () {
           var afterWidth = ruler.getWidth();
 
           expect(err).to.be(null);
-          expect(font).to.eql({ 'font-family': 'Source Sans Pro Regular Web Font' });
+          expect(font).to.eql({ 'font-family': 'Source Sans Pro Regular' });
           expect(activeWidth).to.not.eql(beforeWidth);
           expect(afterWidth).to.eql(activeWidth);
           expect(afterWidth).not.to.eql(beforeWidth);
@@ -149,16 +149,16 @@ describe('fontloader.FontWatcher', function () {
 
       beforeWidth = ruler.getWidth();
 
-      ruler.setStyle({ 'font-family': ['Source Sans Pro Italic Web Font', 'monospace'] });
+      ruler.setStyle({ 'font-family': ['Source Sans Pro Italic', 'monospace'] });
 
-      fontWatcher.start({ 'font-family': 'Source Sans Pro Italic Web Font' }, function (err, font) {
+      fontWatcher.start({ 'font-family': 'Source Sans Pro Italic' }, function (err, font) {
         var activeWidth = ruler.getWidth();
 
         window.setTimeout(function () {
           var afterWidth = ruler.getWidth();
 
           expect(err).to.be(null);
-          expect(font).to.eql({ 'font-family': 'Source Sans Pro Italic Web Font' });
+          expect(font).to.eql({ 'font-family': 'Source Sans Pro Italic' });
           expect(activeWidth).to.not.eql(beforeWidth);
           expect(afterWidth).to.eql(activeWidth);
           expect(afterWidth).not.to.eql(beforeWidth);

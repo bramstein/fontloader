@@ -15,11 +15,11 @@ describe('fontloader API', function () {
     fontloader.onerror = sinon.spy();
 
     fontloader.loadFont({
-      font: '13px Source Sans Pro Black Web Font',
+      font: '13px Source Sans Pro Black',
       success: function () {
         var sourceSansProBlack = {
           error: null,
-          fontface: 'Source Sans Pro Black Web Font'
+          fontface: 'Source Sans Pro Black'
         };
 
         expect(fontloader.loading).to.be(false);
@@ -57,15 +57,15 @@ describe('fontloader API', function () {
     fontloader.onerror = sinon.spy();
 
     fontloader.loadFont({
-      font: '16px Source Sans Pro Light Web Font, Source Sans Pro Light Italic Web Font',
+      font: '16px Source Sans Pro Light, Source Sans Pro Light Italic',
       success: function () {
         var sourceSansProLight = {
               error: null,
-              fontface: 'Source Sans Pro Light Web Font'
+              fontface: 'Source Sans Pro Light'
             },
             sourceSansProLightItalic = {
               error: null,
-              fontface: 'Source Sans Pro Light Italic Web Font'
+              fontface: 'Source Sans Pro Light Italic'
             };
 
         expect(fontloader.loading).to.be(false);
