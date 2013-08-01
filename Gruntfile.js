@@ -60,7 +60,9 @@ module.exports = function (grunt) {
           tunnelTimeout: 5,
           build: process.env.TRAVIS_JOB_ID,
           concurrency: 3,
-          browsers: browsers
+          browsers: browsers,
+          tags: [process.env.TRAVIS_BRANCH],
+          testname: [process.env.TRAVIS_REPO_SLUG]
         }
       }
     },
