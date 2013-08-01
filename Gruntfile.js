@@ -18,27 +18,82 @@ module.exports = function (grunt) {
   };
 
   var browsers = [{
-    browserName: "firefox",
-    version: "19",
-    platform: "XP"
+    browserName: 'internet explorer',
+    version: '6',
+    platform: 'Windows XP'
   }, {
-    browserName: "chrome",
-    platform: "XP"
+    browserName: 'internet explorer',
+    version: '7',
+    platform: 'Windows XP'
   }, {
-    browserName: "chrome",
-    platform: "linux"
+    browserName: 'internet explorer',
+    version: '8',
+    platform: 'Windows XP'
   }, {
-    browserName: "internet explorer",
-    platform: "WIN8",
-    version: "10"
+    browserName: 'internet explorer',
+    version: '9',
+    platform: 'Windows 7'
   }, {
-    browserName: "internet explorer",
-    platform: "VISTA",
-    version: "9"
+    browserName: 'internet explorer',
+    version: '10',
+    platform: 'Windows 8'
   }, {
-    browserName: "opera",
-    platform: "Windows 2008",
-    version: "12"
+    browserName: 'firefox',
+    version: '3.6',
+    platform: 'Windows XP'
+  }, {
+    browserName: 'firefox',
+    version: '22',
+    platform: 'Windows XP'
+  }, {
+    browserName: 'opera',
+    version: '11',
+    platform: 'Windows XP'
+  }, {
+    browserName: 'opera',
+    version: '12',
+    platform: 'Windows XP'
+  }, {
+    browserName: 'chrome',
+    platform: 'Windows XP'
+  }, {
+    browserName: 'chrome',
+    platform: 'OS X 10.8'
+  }, {
+    browserName: 'chrome',
+    platform: 'Linux'
+  }, {
+    browserName: 'safari',
+    version: '6',
+    platform: 'OS X 10.8'
+  }, {
+    browserName: 'safari',
+    version: '5',
+    platform: 'OS X 10.6'
+  }, {
+    browserName: 'safari',
+    version: '5',
+    platform: 'Windows XP'
+  }, {
+    browserName: 'safari',
+    version: '4',
+    platform: 'Windows XP'
+  }, {
+    browserName: 'ipad',
+    version: '5.0',
+    platform: 'OS X 10.6'
+  }, {
+    browserName: 'ipad',
+    version: '5.1',
+    platform: 'OS X 10.8'
+  }, {
+    browserName: 'ipad',
+    version: '6',
+    platform: 'OS X 10.8'
+  }, {
+    browserName: 'android',
+    version: '4.0',
+    platform: 'Linux'
   }];
 
 
