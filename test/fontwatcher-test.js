@@ -73,6 +73,8 @@ describe('fontloader.FontWatcher', function () {
   });
 
   describe('#start', function () {
+    this.timeout(5000);
+
     beforeEach(function () {
       FontWatcher.HAS_WEBKIT_FALLBACK_BUG = null;
       FontWatcher.DEFAULT_TIMEOUT = 5000;

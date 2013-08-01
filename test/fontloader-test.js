@@ -1,4 +1,6 @@
 describe('fontloader API', function () {
+  this.timeout(5000);
+
   beforeEach(function () {
     fontloader.FontWatcher.DEFAULT_TIMEOUT = 5000;
   });
