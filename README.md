@@ -21,6 +21,20 @@ The library has a default timeout of X seconds after which it considers a font l
 
 The polyfill doesn't know the contents of the font so it will attempt to load a font even if it doesn't match the Unicode range of the text.
 
+## Browser Support
+
+The following browsers are supported:
+
+* IE6+
+* Chrome 6+
+* Firefox 3.6+
+* Safari 3.1+
+* Android 2.2+
+* iOS 4.2+
+* Opera 11+
+
+Other browser may work, but are not extensively tested. Please open an issue if you think a browser should be supported but isn't.
+
 ## Copyright and License
 
 Portions of this project are derived from the [Web Font Loader](https://github.com/typekit/webfontloader):
