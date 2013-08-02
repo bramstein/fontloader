@@ -79,6 +79,10 @@ goog.scope(function () {
     util.forEach(fontFamilies, function (family, callback) {
       family = /** @type {string} */ (family);
 
+      if (family.length > 31) {
+        debug.warn('Font "' + family + '" is longer than 31 characters and will most likely not work in Internet Explorer.');
+      }
+
       if (family === font['font-family'][0]) {
         fontloader.onloading({
           fontface: family,
