@@ -1,5 +1,6 @@
 ## FontLoader Polyfill
 
+[![Build Status](https://travis-ci.org/bramstein/fontloader.png?branch=master)](https://travis-ci.org/bramstein/fontloader)
 
 ## Limitations
 
