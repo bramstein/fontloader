@@ -1,6 +1,6 @@
 {
   "name": "fontloader",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A polyfill for the FontLoader interface",
   "main": "lib/fontloader.js",
   "directories": {
@@ -29,6 +29,6 @@
     "grunt-exec": "~0.4.2"
   },
   "scripts": {
-    "test": "browserstack-test -u $BROWSERSTACK_USERNAME -p $BROWSERSTACK_PASSWORD -k $BROWSERSTACK_KEY -b browsers.json http://localhost:9999/test/index.html"
+    "test": "grunt test"
   }
 }
