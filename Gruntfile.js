@@ -29,6 +29,11 @@ module.exports = function (grunt) {
       }
     },
     watch: {},
+    exec: {
+      test: {
+        command: 'browserstack-test -u $BROWSERSTACK_USERNAME -p $BROWSERSTACK_PASSWORD -k $BROWSERSTACK_KEY -b browsers.json http://localhost:9999/test/index.html'
+      }
+    },
     jshint: {
       all: ['src/**/*.js'],
       options: {
@@ -68,9 +73,11 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
+  grunt.loadNpmTasks('grunt-exec');
 
   grunt.registerTask('compile', ['closurecompiler:compile']);
   grunt.registerTask('debug', ['closurecompiler:debug']);
   grunt.registerTask('default', ['compile']);
+  grunt.registerTask('test', ['connect', 'exec:test']);
   grunt.registerTask('dev', ['connect', 'watch']);
 };
