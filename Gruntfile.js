@@ -17,86 +17,6 @@ module.exports = function (grunt) {
     output_wrapper: '"(function(){%output%}());"'
   };
 
-  var browsers = [{
-    browserName: 'internet explorer',
-    version: '6',
-    platform: 'Windows XP'
-  }, {
-    browserName: 'internet explorer',
-    version: '7',
-    platform: 'Windows XP'
-  }, {
-    browserName: 'internet explorer',
-    version: '8',
-    platform: 'Windows XP'
-  }, {
-    browserName: 'internet explorer',
-    version: '9',
-    platform: 'Windows 7'
-  }, {
-    browserName: 'internet explorer',
-    version: '10',
-    platform: 'Windows 8'
-  }, {
-    browserName: 'firefox',
-    version: '3.6',
-    platform: 'Windows XP'
-  }, {
-    browserName: 'firefox',
-    version: '22',
-    platform: 'Windows XP'
-  }, {
-    browserName: 'opera',
-    version: '11',
-    platform: 'Windows XP'
-  }, {
-    browserName: 'opera',
-    version: '12',
-    platform: 'Windows XP'
-  }, {
-    browserName: 'chrome',
-    platform: 'Windows XP'
-  }, {
-    browserName: 'chrome',
-    platform: 'OS X 10.8'
-  }, {
-    browserName: 'chrome',
-    platform: 'Linux'
-  }, {
-    browserName: 'safari',
-    version: '6',
-    platform: 'OS X 10.8'
-  }, {
-    browserName: 'safari',
-    version: '5',
-    platform: 'OS X 10.6'
-  }, {
-    browserName: 'safari',
-    version: '5',
-    platform: 'Windows XP'
-  }, {
-    browserName: 'safari',
-    version: '4',
-    platform: 'Windows XP'
-  }, {
-    browserName: 'ipad',
-    version: '5.0',
-    platform: 'OS X 10.6'
-  }, {
-    browserName: 'ipad',
-    version: '5.1',
-    platform: 'OS X 10.8'
-  }, {
-    browserName: 'ipad',
-    version: '6',
-    platform: 'OS X 10.8'
-  }, {
-    browserName: 'android',
-    version: '4.0',
-    platform: 'Linux'
-  }];
-
-
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: ['build'],
@@ -105,19 +25,6 @@ module.exports = function (grunt) {
         options: {
           base: "",
           port: 9999
-        }
-      }
-    },
-    'saucelabs-mocha': {
-      all: {
-        options: {
-          urls: ['http://127.0.0.1:9999/test/index.html'],
-          tunnelTimeout: 5,
-          build: process.env.TRAVIS_JOB_ID,
-          concurrency: 3,
-          browsers: browsers,
-          tags: [process.env.TRAVIS_BRANCH],
-          testname: process.env.TRAVIS_REPO_SLUG
         }
       }
     },
@@ -159,7 +66,6 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-closurecompiler');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-saucelabs');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-contrib-watch');
 
@@ -167,5 +73,4 @@ module.exports = function (grunt) {
   grunt.registerTask('debug', ['closurecompiler:debug']);
   grunt.registerTask('default', ['compile']);
   grunt.registerTask('dev', ['connect', 'watch']);
-  grunt.registerTask('test', ['connect', 'saucelabs-mocha']);
 };

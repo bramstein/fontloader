@@ -73,11 +73,11 @@ describe('fontloader.FontWatcher', function () {
   });
 
   describe('#start', function () {
-    this.timeout(2000);
+    this.timeout(5000);
 
     beforeEach(function () {
       FontWatcher.HAS_WEBKIT_FALLBACK_BUG = null;
-      FontWatcher.DEFAULT_TIMEOUT = 2000;
+      FontWatcher.DEFAULT_TIMEOUT = 5000;
     });
 
     it('should fail to load a nonexistent font and create a timeout error', function (done) {

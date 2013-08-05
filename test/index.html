@@ -13,11 +13,12 @@
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="../node_modules/expect.js/expect.js"></script>
     <script src="../node_modules/sinon/pkg/sinon.js"></script>
+    <script src="../node_modules/mocha-browserstack/lib/mocha-browserstack.js"></script>
     <script src="helper.js"></script>
     <script src="deps.js"></script>
     <script>
       goog.require('fontloader');
-      mocha.ui('bdd');
+      mocha.ui('bdd').reporter(Mocha.BrowserStack);
     </script>
     <script src="./fontloader-test.js"></script>
     <script src="./fontwatcher-test.js"></script>
