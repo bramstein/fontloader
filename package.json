@@ -25,8 +25,7 @@
     "grunt-contrib-jshint": "=0.6.0",
     "grunt-closurecompiler": "=0.9.5",
     "grunt-contrib-connect": "~0.3.0",
-    "grunt-contrib-watch": "~0.5.1",
-    "grunt-saucelabs": "~4.0.4"
+    "grunt-contrib-watch": "~0.5.1"
   },
   "scripts": {
     "test": "browserstack-test -u $BROWSERSTACK_USERNAME -p $BROWSERSTACK_PASSWORD -k $BROWSERSTACK_KEY -b browsers.json http://localhost:9999/test/index.html"
