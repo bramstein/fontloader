@@ -4,7 +4,7 @@ env:
   - secure: Fyc7hvFkznTaB9PnFEimBSs4zvPAu3imj+YK2vG7r71DBhogBeJmRHN+OiQUCfk9ZH1Sk41+IGv5V8FrVE4/C6B8zESCcTvcXmAxTfSdhxz0SGTw2tv2Xcu+7O3+oHt+rq3Xjx1/rI65aVlKEYMVasQmamjGItWTw7cnXfqoWa4=
   - secure: XRbhjM6uwq7YeaVL9N5sizVWuyT2gi/f1cdxzYS11a+PazZwRdZwellu4RlyylMjyYMRSF8VdCKrElkIP7ExdYVWL7HnjK+leDkM/o0tz25SDpFlkxgEdumUfYQ0gKemxOJUSmLjV+tQURGhQ1gyWwioHq8YrPH8g2S0D1+/4Po=
 before_script: 
-- npm install -g grunt-cli browserstack-test
+- npm install -g grunt-cli browserstack-test@0.1.2
 node_js: 
 - 0.1
 language: node_js
