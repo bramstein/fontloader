@@ -20,24 +20,6 @@
   {
     "os_version": "XP",
     "os": "Windows",
-    "browser_version": "5.1",
-    "browser": "safari"
-  },
-  {
-    "os_version": "XP",
-    "os": "Windows",
-    "browser_version": "18.0",
-    "browser": "chrome"
-  },
-  {
-    "os_version": "XP",
-    "os": "Windows",
-    "browser_version": "25.0",
-    "browser": "chrome"
-  },
-  {
-    "os_version": "XP",
-    "os": "Windows",
     "browser_version": "6.0",
     "browser": "ie"
   },
@@ -62,38 +44,14 @@
   {
     "os_version": "7",
     "os": "Windows",
-    "browser_version": "8.0",
-    "browser": "ie"
-  },
-  {
-    "os_version": "7",
-    "os": "Windows",
     "browser_version": "9.0",
     "browser": "ie"
-  },
-  {
-    "os_version": "7",
-    "os": "Windows",
-    "browser_version": "10.0",
-    "browser": "ie"
-  },
-  {
-    "os_version": "Lion",
-    "os": "OS X",
-    "browser_version": "5.1",
-    "browser": "safari"
   },
   {
     "os_version": "Mountain Lion",
     "os": "OS X",
     "browser_version": "6.0",
     "browser": "safari"
-  },
-  {
-    "os_version": "Mountain Lion",
-    "os": "OS X",
-    "browser_version": "18.0",
-    "browser": "chrome"
   },
   {
     "os_version": "Mountain Lion",
