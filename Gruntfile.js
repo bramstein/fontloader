@@ -48,6 +48,14 @@ module.exports = function (grunt) {
       }
     },
     closurecompiler: {
+      dist: {
+        files: {
+          "fontloader.js": ['src/**/*.js', 'vendor/google/base.js']
+        },
+        options: extend({}, compilerOptions, {
+          define: "goog.DEBUG=false"
+        })
+      },
       compile: {
         files: {
           "build/fontloader.js": ['src/**/*.js', 'vendor/google/base.js'],
@@ -80,4 +88,5 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['compile']);
   grunt.registerTask('test', ['connect', 'exec:test']);
   grunt.registerTask('dev', ['connect', 'watch']);
+  grunt.registerTask('dist', ['closurecompiler:dist']);
 };
