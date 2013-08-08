@@ -44,7 +44,7 @@ var goog = goog || {}; // Identifies this file as the Closure base.
 /**
  * Reference to the global context.  In most cases this will be 'window'.
  */
-goog.global = this;
+goog.global = window;
 
 
 /**
