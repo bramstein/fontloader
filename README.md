@@ -96,7 +96,7 @@ The following browsers are supported:
 * iOS 4.2+
 * Opera 11+
 
-Other browser may work, but are not extensively tested. Please [open an issue](https://github.com/bramstein/fontloader/issues) if you think a browser should be supported but isn't.
+Other browser may work, but are not extensively tested. Please [open an issue](https://github.com/bramstein/fontloader/issues) if you think a browser should be supported but isn't. Tests are run automatically on all supported browsers using [BrowserStack](http://www.browserstack.com) and [browserstack-test](https://github.com/bramstein/browserstack-test).
 
 ## Copyright and License
 
