@@ -5,5 +5,4 @@ goog.require('fontloader.FontFace');
 if (goog.DEBUG || !window['FontFace']) {
   window['FontFace'] = fontloader.FontFace;
   window['FontFace']['prototype']['load'] = fontloader.FontFace.prototype.load;
-  window['FontFace']['prototype']['family'] = fontloader.FontFace.prototype.family;
 }
