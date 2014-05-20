@@ -10,6 +10,10 @@ goog.scope(function () {
    * @param {fontloader.FontFaceDescriptors} descriptors
    */
   fontloader.FontFace = function (family, source, descriptors) {
+    if (arguments.length !== 3) {
+      throw new TypeError("Failed to constructor 'FontFace': 3 arguments required, but only " + arguments.length + " present.");
+    }
+
     var fontface = this;
 
     /**
@@ -54,36 +58,50 @@ goog.scope(function () {
     fontface.featureSettings = fontface.validate(descriptors['featureSettings'], FontFace.DescriptorValidator.FEATURE_SETTINGS) || "normal";
 
     /**
-     * @type {Promise}
-     */
-    fontface.loaded = new Promise(function (resolve, reject) {
-    });
-
-    /**
+     * @private
      * @type {Array.<string>?}
      */
     fontface.urls = null;
 
     /**
+     * @private
      * @type {fontloader.BinaryData?}
      */
     fontface.data = null;
+
+    if (typeof source === 'string') {
+      var urlRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)/g,
+          urls = [],
+          match = null;
+
+      while ((match = urlRegExp.exec(source))) {
+        urls.push(match[2]);
+      }
+
+      if (urls.length) {
+        fontface.urls = urls;
+      } else {
+        throw new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list.");
+      }
+    } else {
+      fontface.data = /** @type {fontloader.BinaryData} */ (source);
+    }
   };
 
   var FontFace = fontloader.FontFace;
 
   /**
+   * @private
    * @type {Object.<string, RegExp>}
    */
   FontFace.DescriptorValidator = {
-    STYLE: /^italic|oblique|normal$/,
-    WEIGHT: /^bold(er)?|lighter|[1-9]00|normal$/,
-    STRETCH: /^((ultra|extra|semi)-)?(condensed|expanded)|normal$/,
-    UNICODE_RANGE: /^u\+[0-9a-f?]{1,6}(-[0-9a-f]{1,6})?$/i,
-    VARIANT: /^small-caps|normal$/,
+    STYLE: /^(italic|oblique|normal)$/,
+    WEIGHT: /^(bold(er)?|lighter|[1-9]00|normal)$/,
+    STRETCH: /^(((ultra|extra|semi)-)?(condensed|expanded)|normal)$/,
+    UNICODE_RANGE: /^(u\+[0-9a-f?]{1,6}(-[0-9a-f]{1,6})?)$/i,
+    VARIANT: /^(small-caps|normal)$/,
     FEATURE_SETTINGS: /^normal$/ // TODO: Fix this and variant
   };
-
 
   /**
    * Validates and returns a descriptor. Throws a SyntaxError
@@ -112,6 +130,7 @@ goog.scope(function () {
    * @return {Promise}
    */
   FontFace.prototype.load = function () {
-    return this.loaded;
+    return new Promise(function (resolve, reject) {
+    });
   };
 });
