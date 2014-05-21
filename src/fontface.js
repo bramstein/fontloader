@@ -17,75 +17,85 @@ goog.scope(function () {
     var fontface = this;
 
     /**
-     * @type {fontloader.FontFaceLoadStatus}
+     * @type {!fontloader.FontFaceLoadStatus}
      */
-    fontface.status = fontloader.FontFaceLoadStatus.UNLOADED;
+    this.status = fontloader.FontFaceLoadStatus.UNLOADED;
 
     /**
-     * @private
-     * @type {string}
+     * @type {?string}
      */
-    fontface.family = family; // TODO: Validate this.
+    this.family = null;
 
     /**
-     * @type {string}
+     * @type {?string}
      */
-    fontface.style = fontface.validate(descriptors['style'], FontFace.DescriptorValidator.STYLE) || "normal";
+    this.style = null;
 
     /**
-     * @type {string}
+     * @type {?string}
      */
-    fontface.weight = fontface.validate(descriptors['weight'], FontFace.DescriptorValidator.WEIGHT) || "normal";
+    this.weight = null;
 
     /**
-     * @type {string}
+     * @type {?string}
      */
-    fontface.stretch = fontface.validate(descriptors['stretch'], FontFace.DescriptorValidator.STRETCH) || "normal";
+    this.stretch = null;
 
     /**
-     * @type {string}
+     * @type {?string}
      */
-    fontface.unicodeRange = fontface.validate(descriptors['unicodeRange'], FontFace.DescriptorValidator.UNICODE_RANGE) || "u+0-10FFFF";
+    this.unicodeRange = null;
 
     /**
-     * @type {string}
+     * @type {?string}
      */
-    fontface.variant = fontface.validate(descriptors['variant'], FontFace.DescriptorValidator.VARIANT) || "normal";
+    this.variant = null;
 
     /**
-     * @type {string}
+     * @type {?string}
      */
-    fontface.featureSettings = fontface.validate(descriptors['featureSettings'], FontFace.DescriptorValidator.FEATURE_SETTINGS) || "normal";
+    this.featureSettings = null;
 
     /**
-     * @private
      * @type {Array.<string>?}
      */
-    fontface.urls = null;
+    this.urls = null;
 
     /**
-     * @private
      * @type {fontloader.BinaryData?}
      */
-    fontface.data = null;
+    this.data = null;
 
-    if (typeof source === 'string') {
-      var urlRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)/g,
-          urls = [],
-          match = null;
+    /**
+     * @type {Promise}
+     */
+    this.promise = new Promise(function (resolve, reject) {
+      fontface.family = family;
+      fontface.style = fontface.validate(descriptors['style'], FontFace.DescriptorValidator.STYLE) || "normal";
+      fontface.weight = fontface.validate(descriptors['weight'], FontFace.DescriptorValidator.WEIGHT) || "normal";
+      fontface.stretch = fontface.validate(descriptors['stretch'], FontFace.DescriptorValidator.STRETCH) || "normal";
+      fontface.unicodeRange = fontface.validate(descriptors['unicodeRange'], FontFace.DescriptorValidator.UNICODE_RANGE) || "u+0-10FFFF";
+      fontface.variant = fontface.validate(descriptors['variant'], FontFace.DescriptorValidator.VARIANT) || "normal";
+      fontface.featureSettings = fontface.validate(descriptors['featureSettings'], FontFace.DescriptorValidator.FEATURE_SETTINGS) || "normal";
 
-      while ((match = urlRegExp.exec(source))) {
-        urls.push(match[2]);
-      }
+      if (typeof source === 'string') {
+        var urlRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)/g,
+            urls = [],
+            match = null;
 
-      if (urls.length) {
-        fontface.urls = urls;
+        while ((match = urlRegExp.exec(source))) {
+          urls.push(match[2]);
+        }
+
+        if (urls.length) {
+          fontface.urls = urls;
+        } else {
+          reject(new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list."));
+        }
       } else {
-        throw new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list.");
+        fontface.data = /** @type {fontloader.BinaryData} */ (source);
       }
-    } else {
-      fontface.data = /** @type {fontloader.BinaryData} */ (source);
-    }
+    });
   };
 
   var FontFace = fontloader.FontFace;
@@ -130,7 +140,6 @@ goog.scope(function () {
    * @return {Promise}
    */
   FontFace.prototype.load = function () {
-    return new Promise(function (resolve, reject) {
-    });
+    return this.promise;
   };
 });

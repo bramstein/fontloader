@@ -27,11 +27,21 @@ describe('FontFace', function () {
       expect(new FontFace('My Family', 'url(font.woff)', {}).urls).to.eql(['font.woff']);
       expect(new FontFace('My Family', 'url("font.woff")', {}).urls).to.eql(['font.woff']);
       expect(new FontFace('My Family', "url('font.woff')", {}).urls).to.eql(['font.woff']);
-      expect(function () {
-        new FontFace('My Family', 'font.woff', {});
-      }).to.throwException();
       expect(new FontFace('My Family', 'url(font.woff),url(font.otf)', {}).urls).to.eql(['font.woff', 'font.otf']);
       expect(new FontFace('My Family', 'url(font.woff), url(font.otf)', {}).urls).to.eql(['font.woff', 'font.otf']);
+    });
+
+    it('parses source urls with formats', function () {
+      expect(new FontFace('My Family', 'url(font.woff) format(woff)', {}).urls).to.eql(['font.woff']);
+      expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).urls).to.eql(['font.woff', 'font.otf']);
+    });
+
+    it('rejects the promise if source urls are invalid', function (done) {
+      var font = new FontFace('My Family', 'font.woff', {});
+      font.load().catch(function (e) {
+        expect(e).to.be.a(SyntaxError);
+        done();
+      });
     });
 
     it('parses descriptors', function () {
@@ -40,6 +50,14 @@ describe('FontFace', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { stretch: 'condensed' }).stretch).to.eql('condensed');
       expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'u+ff' }).unicodeRange).to.eql('u+ff');
       expect(new FontFace('My Family', 'url(font.woff)', { variant: 'small-caps' }).variant).to.eql('small-caps');
+    });
+
+    it('rejects the promise if descriptors are invalid', function (done) {
+      var font = new FontFace('My Family', 'font.woff', { style: 'red' });
+      font.load().catch(function (e) {
+        expect(e).to.be.a(SyntaxError);
+        done();
+      });
     });
 
     it('defaults descriptors if not given', function () {
