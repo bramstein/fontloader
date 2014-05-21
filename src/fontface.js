@@ -65,7 +65,7 @@ goog.scope(function () {
      * @type {Promise}
      */
     this.promise = new Promise(function (resolve, reject) {
-      fontface.family = family;
+      fontface.family = family; // TODO: Validate this
       fontface.style = fontface.validate(descriptors['style'], FontFace.DescriptorValidator.STYLE) || "normal";
       fontface.weight = fontface.validate(descriptors['weight'], FontFace.DescriptorValidator.WEIGHT) || "normal";
       fontface.stretch = fontface.validate(descriptors['stretch'], FontFace.DescriptorValidator.STRETCH) || "normal";
