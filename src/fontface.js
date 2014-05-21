@@ -57,14 +57,9 @@ goog.scope(function () {
     this.featureSettings = null;
 
     /**
-     * @type {Array.<string>?}
+     * @type {?string}
      */
-    this.urls = null;
-
-    /**
-     * @type {fontloader.BinaryData?}
-     */
-    this.data = null;
+    this.src = null;
 
     /**
      * @type {Promise}
@@ -79,21 +74,35 @@ goog.scope(function () {
       fontface.featureSettings = fontface.validate(descriptors['featureSettings'], FontFace.DescriptorValidator.FEATURE_SETTINGS) || "normal";
 
       if (typeof source === 'string') {
-        var urlRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)/g,
-            urls = [],
-            match = null;
+        var srcRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)( format\((\'|\"|)([^\'\"]+?)\4\))?/g,
+            match = null,
+            valid = false;
 
-        while ((match = urlRegExp.exec(source))) {
-          urls.push(match[2]);
+        while ((match = srcRegExp.exec(source))) {
+          if (match[2]) {
+            valid = true;
+          }
         }
 
-        if (urls.length) {
-          fontface.urls = urls;
-        } else {
+        if (!valid) {
           reject(new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list."));
+        } else {
+          fontface.src = source;
         }
       } else {
-        fontface.data = /** @type {fontloader.BinaryData} */ (source);
+        var bytes = new Uint8Array(source),
+            buffer = '';
+
+        for (var i = 0, l = bytes.length; i < l; i++) {
+          buffer += String.fromCharCode(bytes[i]);
+        }
+
+        // TODO: We could detect the format here and set the correct mime type
+        fontface.src = 'url(data:font/opentype;base64,' + window.btoa(buffer) + ')';
+      }
+
+      if (fontface.data) {
+        fontface.status = fontloader.FontFaceLoadStatus.LOADING;
       }
     });
   };

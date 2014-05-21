@@ -18,22 +18,21 @@ describe('FontFace', function () {
     // older browsers that do not support array buffers.
     if (window['ArrayBuffer']) {
       it('parses source data', function () {
-        var buffer = new ArrayBuffer(32);
-        expect(new FontFace('My Family', buffer, {}).data).to.eql(buffer);
+        expect(new FontFace('My Family', new ArrayBuffer(4), {}).src).to.eql('url(data:font/opentype;base64,AAAAAA==)');
       });
     }
 
     it('parses source urls', function () {
-      expect(new FontFace('My Family', 'url(font.woff)', {}).urls).to.eql(['font.woff']);
-      expect(new FontFace('My Family', 'url("font.woff")', {}).urls).to.eql(['font.woff']);
-      expect(new FontFace('My Family', "url('font.woff')", {}).urls).to.eql(['font.woff']);
-      expect(new FontFace('My Family', 'url(font.woff),url(font.otf)', {}).urls).to.eql(['font.woff', 'font.otf']);
-      expect(new FontFace('My Family', 'url(font.woff), url(font.otf)', {}).urls).to.eql(['font.woff', 'font.otf']);
+      expect(new FontFace('My Family', 'url(font.woff)', {}).src).to.eql('url(font.woff)');
+      expect(new FontFace('My Family', 'url("font.woff")', {}).src).to.eql('url("font.woff")');
+      expect(new FontFace('My Family', "url('font.woff')", {}).src).to.eql("url('font.woff')");
+      expect(new FontFace('My Family', 'url(font.woff),url(font.otf)', {}).src).to.eql('url(font.woff),url(font.otf)');
+      expect(new FontFace('My Family', 'url(font.woff), url(font.otf)', {}).src).to.eql('url(font.woff), url(font.otf)');
     });
 
     it('parses source urls with formats', function () {
-      expect(new FontFace('My Family', 'url(font.woff) format(woff)', {}).urls).to.eql(['font.woff']);
-      expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).urls).to.eql(['font.woff', 'font.otf']);
+      expect(new FontFace('My Family', 'url(font.woff) format(woff)', {}).src).to.eql('url(font.woff) format(woff)');
+      expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).src).to.eql('url(font.woff) format(woff), url(font.otf) format(opentype)');
     });
 
     it('rejects the promise if source urls are invalid', function (done) {
