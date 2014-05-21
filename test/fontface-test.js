@@ -22,6 +22,18 @@ describe('FontFace', function () {
       });
     }
 
+    // TODO: I'm still making up my mind about this. The Chrome implementation parses
+    // parameters synchronously which makes sense to me, as long as font loading and
+    // parsing is done asynchronously.
+    xit('parses parameters asynchronously', function (done) {
+      var font = new FontFace('My Family', 'url(font.woff)', {});
+      expect(font.family).to.eql(null);
+      setTimeout(function () {
+        expect(font.family).to.eql('My Family');
+        done();
+      }, 0);
+    });
+
     it('parses source urls', function () {
       expect(new FontFace('My Family', 'url(font.woff)', {}).src).to.eql('url(font.woff)');
       expect(new FontFace('My Family', 'url("font.woff")', {}).src).to.eql('url("font.woff")');
