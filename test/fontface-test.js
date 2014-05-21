@@ -54,6 +54,19 @@ describe('FontFace', function () {
     });
   });
 
+  describe('#validate', function () {
+    it('validates descriptors', function () {
+      var font = new FontFace('My Family', 'url(font.woff)', {});
+
+      expect(font.validate(null, /./)).to.eql(null);
+      expect(font.validate(undefined, /./)).to.eql(null);
+      expect(function () {
+        font.validate('hello', /world/);
+      }).to.throwException();
+      expect(font.validate('hello', /hello/)).to.eql('hello');
+    });
+  });
+
   describe('DescriptorValidator', function () {
     var validator = FontFace.DescriptorValidator;
 
