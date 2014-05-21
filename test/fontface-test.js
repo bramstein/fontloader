@@ -84,6 +84,13 @@ describe('FontFace', function () {
     });
   });
 
+  describe('#toCSS', function () {
+    it('generates valid CSS', function () {
+      var font = new FontFace('My Family', 'url(font.woff)', {});
+      expect(font.toCSS()).to.eql('@font-face{font-family:My Family;font-style:normal;font-weight:normal;font-stretch:normal;unicode-range:u+0-10FFFF;font-variant:normal;font-feature-settings:normal;src:url(font.woff);}');
+    });
+  });
+
   describe('DescriptorValidator', function () {
     var validator = FontFace.DescriptorValidator;
 
