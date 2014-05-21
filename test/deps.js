@@ -4,4 +4,4 @@ goog.addDependency("../../src/debug.js", ["debug"], []);
 goog.addDependency("../../src/fontface.js", ["fontloader.FontFace"], ["fontloader.FontFaceLoadStatus"]);
 goog.addDependency("../../src/fontfacedescriptors.js", ["fontloader.FontFaceDescriptors"], []);
 goog.addDependency("../../src/fontfaceloadstatus.js", ["fontloader.FontFaceLoadStatus"], []);
-goog.addDependency("../../src/fontloader.js", ["fontloader"], ["fontloader.FontFace"]);
+goog.addDependency("../../src/polyfill.js", ["fontloader"], ["fontloader.FontFace"]);
