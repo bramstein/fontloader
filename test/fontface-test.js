@@ -41,6 +41,12 @@ describe('FontFace', function () {
         expect(e).to.be.a(SyntaxError);
         done();
       });
+
+      font = new FontFace('My Family', true, {});
+      font.load().catch(function (e) {
+        expect(e).to.be.a(SyntaxError);
+        done();
+      });
     });
 
     it('parses descriptors', function () {
