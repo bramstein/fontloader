@@ -22,44 +22,44 @@ goog.scope(function () {
     this.status = fontloader.FontFaceLoadStatus.UNLOADED;
 
     /**
-     * @type {?string}
+     * @type {string}
      */
-    this.family = null;
+    this.family;
 
     /**
-     * @type {?string}
+     * @type {string}
      */
-    this.style = null;
+    this.style;
 
     /**
-     * @type {?string}
+     * @type {string}
      */
-    this.weight = null;
+    this.weight;
 
     /**
-     * @type {?string}
+     * @type {string}
      */
-    this.stretch = null;
+    this.stretch;
 
     /**
-     * @type {?string}
+     * @type {string}
      */
-    this.unicodeRange = null;
+    this.unicodeRange;
 
     /**
-     * @type {?string}
+     * @type {string}
      */
-    this.variant = null;
+    this.variant;
 
     /**
-     * @type {?string}
+     * @type {string}
      */
-    this.featureSettings = null;
+    this.featureSettings;
 
     /**
-     * @type {?string}
+     * @type {string}
      */
-    this.src = null;
+    this.src;
 
     /**
      * @type {Promise}
