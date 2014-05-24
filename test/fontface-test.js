@@ -74,6 +74,15 @@ describe('FontFace', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { variant: 'small-caps' }).variant).to.eql('small-caps');
     });
 
+    it('rejects the promise if the descriptors are not strings', function (done) {
+      var font = new FontFace('My Family', 'url(font.woff)', { style: true });
+
+      font.load().catch(function (e) {
+        expect(e).to.be.a(SyntaxError);
+        done();
+      });
+    });
+
     it('rejects the promise if descriptors are invalid', function (done) {
       var font = new FontFace('My Family', 'font.woff', { style: 'red' });
       font.load().catch(function (e) {
@@ -98,10 +107,18 @@ describe('FontFace', function () {
     it('validates descriptors', function () {
       var font = new FontFace('My Family', 'url(font.woff)', {});
 
-      expect(font.validate(null, /./)).to.eql(null);
       expect(font.validate(undefined, /./)).to.eql(null);
       expect(function () {
         font.validate('hello', /world/);
+      }).to.throwException();
+      expect(function () {
+        font.validate(null, /./);
+      }).to.throwException();
+      expect(function () {
+        font.validate(true, /./);
+      }).to.throwException();
+      expect(function () {
+        font.validate(false, /./);
       }).to.throwException();
       expect(font.validate('hello', /hello/)).to.eql('hello');
     });

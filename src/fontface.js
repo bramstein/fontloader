@@ -155,8 +155,8 @@ goog.scope(function () {
    * @return {string?}
    */
   FontFace.prototype.validate = function (descriptor, validator) {
-    if (descriptor) {
-      if (validator.test(descriptor)) {
+    if (descriptor !== undefined) {
+      if (typeof descriptor === 'string' && validator.test(descriptor)) {
         return descriptor;
       } else {
         throw new SyntaxError("Failed to construct 'FontFace': Failed to set '" + descriptor + "' as a property value.");
