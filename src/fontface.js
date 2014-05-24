@@ -106,11 +106,11 @@ goog.scope(function () {
         }
 
         if (!valid) {
-          reject(new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list."));
+          throw new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list.");
         } else {
           fontface.src = source;
         }
-      } else if (typeof source.byteLength === "number") {
+      } else if (source && typeof source.byteLength === "number") {
         var bytes = new Uint8Array(source),
             buffer = '';
 
@@ -123,7 +123,7 @@ goog.scope(function () {
 
         fontface.status = fontloader.FontFaceLoadStatus.LOADING;
       } else {
-        reject(new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list."));
+        throw new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list.");
       }
     });
   };
