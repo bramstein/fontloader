@@ -120,7 +120,20 @@ describe('FontFace', function () {
     var parsers = FontFace.DescriptorParsers;
 
     it('parses family correctly', function () {
+      expect(parsers.FAMILY('myfamily')).to.eql('myfamily');
+      expect(parsers.FAMILY('my-family')).to.eql('my-family');
       expect(parsers.FAMILY('My Family')).to.eql('My Family');
+      expect(parsers.FAMILY('Red/Black')).to.eql(null);
+      expect(parsers.FAMILY('Ahem!')).to.eql(null);
+      expect(parsers.FAMILY('test@foo')).to.eql(null);
+      expect(parsers.FAMILY('#POUND')).to.eql(null);
+      expect(parsers.FAMILY('Hawaii 5-0')).to.eql(null);
+      expect(parsers.FAMILY('$42')).to.eql(null);
+      expect(parsers.FAMILY('Red\\/Black')).to.eql('Red\\/Black');
+      expect(parsers.FAMILY('Lucida     Grande')).to.eql('Lucida Grande');
+      expect(parsers.FAMILY('Ahem\\!')).to.eql('Ahem\\!');
+      expect(parsers.FAMILY('\\$42')).to.eql('\\$42');
+      expect(parsers.FAMILY('€42')).to.eql('€42');
     });
 
     it('parses style correctly', function () {
