@@ -70,46 +70,17 @@ goog.scope(function () {
      * @type {Promise}
      */
     this.promise = new Promise(function (resolve, reject) {
-      fontface.family = family; // TODO: Validate this
-      fontface.style = fontface.validate(descriptors['style'], FontFace.DescriptorValidator.STYLE) || "normal";
-      fontface.weight = fontface.validate(descriptors['weight'], FontFace.DescriptorValidator.WEIGHT) || "normal";
-      fontface.stretch = fontface.validate(descriptors['stretch'], FontFace.DescriptorValidator.STRETCH) || "normal";
+      fontface.family = fontface.parse(family, FontFace.DescriptorParsers.FAMILY).toString();
+      fontface.style = fontface.parse(descriptors['style'] || 'normal', FontFace.DescriptorParsers.STYLE).toString();
+      fontface.weight = fontface.parse(descriptors['weight'] || 'normal', FontFace.DescriptorParsers.WEIGHT).toString();
+      fontface.stretch = fontface.parse(descriptors['stretch'] || 'normal', FontFace.DescriptorParsers.STRETCH).toString();
+      fontface.unicodeRange = fontface.parse(descriptors['unicodeRange'] || 'u+0-10FFFF', FontFace.DescriptorParsers.UNICODE_RANGE).toString();
+      fontface.variant = fontface.parse(descriptors['variant'] || 'normal', FontFace.DescriptorParsers.VARIANT).toString();
+      fontface.featureSettings = fontface.parse(descriptors['featureSettings'] || 'normal', FontFace.DescriptorParsers.FEATURE_SETTINGS).toString();
 
-      var unicodeRange = descriptors['unicodeRange'];
-
-      if (unicodeRange) {
-        var ranges = unicodeRange.split(/\s*,\s*/);
-
-        for (var r = 0; r < ranges.length; r++) {
-          fontface.validate(ranges[r], FontFace.DescriptorValidator.UNICODE_RANGE);
-        }
-
-        fontface.unicodeRange = unicodeRange;
-        fontface.testString = "????"; // FIXME
-      } else {
-        fontface.unicodeRange = "u+0-10FFFF";
-        fontface.testString = "BESbswy";
-      }
-
-      fontface.variant = fontface.validate(descriptors['variant'], FontFace.DescriptorValidator.VARIANT) || "normal";
-      fontface.featureSettings = fontface.validate(descriptors['featureSettings'], FontFace.DescriptorValidator.FEATURE_SETTINGS) || "normal";
 
       if (typeof source === 'string') {
-        var srcRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)( format\((\'|\"|)([^\'\"]+?)\4\))?/g,
-            match = null,
-            valid = false;
-
-        while ((match = srcRegExp.exec(source))) {
-          if (match[2]) {
-            valid = true;
-          }
-        }
-
-        if (!valid) {
-          throw new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list.");
-        } else {
-          fontface.src = source;
-        }
+        fontface.src = fontface.parse(source, FontFace.DescriptorParsers.SRC).toString();
       } else if (source && typeof source.byteLength === "number") {
         var bytes = new Uint8Array(source),
             buffer = '';
@@ -132,38 +103,72 @@ goog.scope(function () {
 
   /**
    * @private
-   * @type {Object.<string, RegExp>}
+   * @enum {function(string):*}
    */
-  FontFace.DescriptorValidator = {
-    STYLE: /^(italic|oblique|normal)$/,
-    WEIGHT: /^(bold(er)?|lighter|[1-9]00|normal)$/,
-    STRETCH: /^(((ultra|extra|semi)-)?(condensed|expanded)|normal)$/,
-    UNICODE_RANGE: /^(u\+[0-9a-f?]{1,6}(-[0-9a-f]{1,6})?)$/i,
-    VARIANT: /^(small-caps|normal)$/,
-    FEATURE_SETTINGS: /^normal$/ // TODO: Fix this and variant
+  FontFace.DescriptorParsers = {
+    FAMILY: function (value) {
+      return value;
+    },
+    STYLE: function (value) {
+      return /^(italic|oblique|normal)$/.test(value) && value || null;
+    },
+    WEIGHT: function (value) {
+      return /^(bold(er)?|lighter|[1-9]00|normal)$/.test(value) && value || null;
+    },
+    STRETCH: function (value) {
+      return /^(((ultra|extra|semi)-)?(condensed|expanded)|normal)$/.test(value) && value || null;
+    },
+    UNICODE_RANGE: function (value) {
+      var ranges = value.split(/\s*,\s*/);
+
+      for (var i = 0; i < ranges.length; i++) {
+        if (!/^(u\+[0-9a-f?]{1,6}(-[0-9a-f]{1,6})?)$/i.test(ranges[i])) {
+          return null;
+        }
+      }
+
+      return value;
+    },
+    VARIANT: function (value) {
+      return /^(small-caps|normal)$/.test(value) && value || null;
+    },
+    FEATURE_SETTINGS: function (value) {
+      return /^normal$/.test(value) && value || null;
+    },
+    SRC: function (value) {
+      var srcRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)( format\((\'|\"|)([^\'\"]+?)\4\))?/g,
+          match = null,
+          valid = false;
+
+      while ((match = srcRegExp.exec(value))) {
+        if (match[2]) {
+          valid = true;
+        }
+      }
+
+      if (valid) {
+        return value;
+      } else {
+        return null;
+      }
+    }
   };
 
   /**
-   * Validates and returns a descriptor. Throws a SyntaxError
-   * if the descriptor does not validate and returns null if
-   * the descriptor is not present.
-   *
    * @private
-   * @param {string?} descriptor
-   * @param {RegExp} validator
-   *
-   * @return {string?}
+   * @param {*} descriptor
+   * @param {fontloader.FontFace.DescriptorParsers} parser
+   * @return {*}
    */
-  FontFace.prototype.validate = function (descriptor, validator) {
-    if (descriptor !== undefined) {
-      if (typeof descriptor === 'string' && validator.test(descriptor)) {
-        return descriptor;
-      } else {
-        throw new SyntaxError("Failed to construct 'FontFace': Failed to set '" + descriptor + "' as a property value.");
+  FontFace.prototype.parse = function (descriptor, parser) {
+    if (typeof descriptor === 'string') {
+      var result = parser(descriptor);
+
+      if (result !== null) {
+        return result;
       }
-    } else {
-      return null;
     }
+    throw new SyntaxError("Failed to constructor 'FontFace': Failed to set '" + descriptor + "' as a property value.");
   };
 
   /**

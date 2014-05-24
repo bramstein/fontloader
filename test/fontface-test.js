@@ -34,11 +34,6 @@ describe('FontFace', function () {
       }, 0);
     });
 
-    it('parses multiple unicode ranges correctly', function () {
-      expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'u+AA' }).unicodeRange).to.eql('u+AA');
-      expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'u+AA,u+AB' }).unicodeRange).to.eql('u+AA,u+AB');
-    });
-
     it('parses source urls', function () {
       expect(new FontFace('My Family', 'url(font.woff)', {}).src).to.eql('url(font.woff)');
       expect(new FontFace('My Family', 'url("font.woff")', {}).src).to.eql('url("font.woff")');
@@ -103,24 +98,14 @@ describe('FontFace', function () {
     });
   });
 
-  describe('#validate', function () {
-    it('validates descriptors', function () {
+  describe('#parse', function () {
+    it('parses descriptors', function () {
       var font = new FontFace('My Family', 'url(font.woff)', {});
 
-      expect(font.validate(undefined, /./)).to.eql(null);
       expect(function () {
-        font.validate('hello', /world/);
+        font.validate('hello', function () { return null; });
       }).to.throwException();
-      expect(function () {
-        font.validate(null, /./);
-      }).to.throwException();
-      expect(function () {
-        font.validate(true, /./);
-      }).to.throwException();
-      expect(function () {
-        font.validate(false, /./);
-      }).to.throwException();
-      expect(font.validate('hello', /hello/)).to.eql('hello');
+      expect(font.parse('hello', function () { return 'hello'; })).to.eql('hello');
     });
   });
 
@@ -131,63 +116,68 @@ describe('FontFace', function () {
     });
   });
 
-  describe('DescriptorValidator', function () {
-    var validator = FontFace.DescriptorValidator;
+  describe('DescriptorParsers', function () {
+    var parsers = FontFace.DescriptorParsers;
+
+    it('parses family correctly', function () {
+      expect(parsers.FAMILY('My Family')).to.eql('My Family');
+    });
 
     it('parses style correctly', function () {
-      expect(validator.STYLE.test('italic')).to.be(true);
-      expect(validator.STYLE.test('oblique')).to.be(true);
-      expect(validator.STYLE.test('normal')).to.be(true);
-      expect(validator.STYLE.test('Italic')).to.be(false);
-      expect(validator.STYLE.test('bold')).to.be(false);
-      expect(validator.STYLE.test('italics')).to.be(false);
-      expect(validator.STYLE.test('nitalics')).to.be(false);
+      expect(parsers.STYLE('italic')).to.eql('italic');
+      expect(parsers.STYLE('oblique')).to.be('oblique');
+      expect(parsers.STYLE('normal')).to.eql('normal');
+      expect(parsers.STYLE('Italic')).to.eql(null);
+      expect(parsers.STYLE('bold')).to.eql(null);
+      expect(parsers.STYLE('italics')).to.eql(null);
+      expect(parsers.STYLE('nitalics')).to.eql(null);
     });
 
     it('parses weight correctly', function () {
-      expect(validator.WEIGHT.test('bold')).to.be(true);
-      expect(validator.WEIGHT.test('bolder')).to.be(true);
-      expect(validator.WEIGHT.test('lighter')).to.be(true);
-      expect(validator.WEIGHT.test('100')).to.be(true);
-      expect(validator.WEIGHT.test('200')).to.be(true);
-      expect(validator.WEIGHT.test('300')).to.be(true);
-      expect(validator.WEIGHT.test('400')).to.be(true);
-      expect(validator.WEIGHT.test('500')).to.be(true);
-      expect(validator.WEIGHT.test('600')).to.be(true);
-      expect(validator.WEIGHT.test('700')).to.be(true);
-      expect(validator.WEIGHT.test('800')).to.be(true);
-      expect(validator.WEIGHT.test('900')).to.be(true);
-      expect(validator.WEIGHT.test('1000')).to.be(false);
-      expect(validator.WEIGHT.test('light')).to.be(false);
-      expect(validator.WEIGHT.test('nbolds')).to.be(false);
+      expect(parsers.WEIGHT('bold')).to.eql('bold');
+      expect(parsers.WEIGHT('bolder')).to.eql('bolder');
+      expect(parsers.WEIGHT('lighter')).to.eql('lighter');
+      expect(parsers.WEIGHT('100')).to.eql('100');
+      expect(parsers.WEIGHT('200')).to.eql('200');
+      expect(parsers.WEIGHT('300')).to.eql('300');
+      expect(parsers.WEIGHT('400')).to.eql('400');
+      expect(parsers.WEIGHT('500')).to.eql('500');
+      expect(parsers.WEIGHT('600')).to.eql('600');
+      expect(parsers.WEIGHT('700')).to.eql('700');
+      expect(parsers.WEIGHT('800')).to.eql('800');
+      expect(parsers.WEIGHT('900')).to.eql('900');
+      expect(parsers.WEIGHT('1000')).to.eql(null);
+      expect(parsers.WEIGHT('light')).to.eql(null);
+      expect(parsers.WEIGHT('nbolds')).to.eql(null);
     });
 
     it('parses stretch correctly', function () {
-      expect(validator.STRETCH.test('ultra-condensed')).to.be(true);
-      expect(validator.STRETCH.test('extra-condensed')).to.be(true);
-      expect(validator.STRETCH.test('semi-condensed')).to.be(true);
-      expect(validator.STRETCH.test('ultra-expanded')).to.be(true);
-      expect(validator.STRETCH.test('extra-expanded')).to.be(true);
-      expect(validator.STRETCH.test('semi-expanded')).to.be(true);
-      expect(validator.STRETCH.test('condensed')).to.be(true);
-      expect(validator.STRETCH.test('expanded')).to.be(true);
-      expect(validator.STRETCH.test('normal')).to.be(true);
-      expect(validator.STRETCH.test('bold')).to.be(false);
-      expect(validator.STRETCH.test('')).to.be(false);
+      expect(parsers.STRETCH('ultra-condensed')).to.eql('ultra-condensed');
+      expect(parsers.STRETCH('extra-condensed')).to.eql('extra-condensed');
+      expect(parsers.STRETCH('semi-condensed')).to.eql('semi-condensed');
+      expect(parsers.STRETCH('ultra-expanded')).to.eql('ultra-expanded');
+      expect(parsers.STRETCH('extra-expanded')).to.eql('extra-expanded');
+      expect(parsers.STRETCH('semi-expanded')).to.eql('semi-expanded');
+      expect(parsers.STRETCH('condensed')).to.eql('condensed');
+      expect(parsers.STRETCH('expanded')).to.eql('expanded');
+      expect(parsers.STRETCH('normal')).to.eql('normal');
+      expect(parsers.STRETCH('bold')).to.eql(null);
+      expect(parsers.STRETCH('')).to.eql(null);
     });
 
     it('parses unicodeRange correctly', function () {
-      expect(validator.UNICODE_RANGE.test('u+ff')).to.be(true);
-      expect(validator.UNICODE_RANGE.test('U+Ff')).to.be(true);
-      expect(validator.UNICODE_RANGE.test('U+F?')).to.be(true);
-      expect(validator.UNICODE_RANGE.test('U+AA-FF')).to.be(true);
-      expect(validator.UNICODE_RANGE.test('U+FF-')).to.be(false);
-      expect(validator.UNICODE_RANGE.test('U+FFFFFFFFF')).to.be(false);
+      expect(parsers.UNICODE_RANGE('u+ff')).to.eql('u+ff');
+      expect(parsers.UNICODE_RANGE('U+Ff')).to.eql('U+Ff');
+      expect(parsers.UNICODE_RANGE('U+F?')).to.eql('U+F?');
+      expect(parsers.UNICODE_RANGE('U+AA-FF')).to.eql('U+AA-FF');
+      expect(parsers.UNICODE_RANGE('U+FF-')).to.eql(null);
+      expect(parsers.UNICODE_RANGE('U+FFFFFFFFF')).to.eql(null);
+      expect(parsers.UNICODE_RANGE('u+AA,u+AB')).to.eql('u+AA,u+AB');
     });
 
     it('parses variant correctly', function () {
-      expect(validator.VARIANT.test('small-caps')).to.be(true);
-      expect(validator.VARIANT.test('normal')).to.be(true);
+      expect(parsers.VARIANT('small-caps')).to.eql('small-caps');
+      expect(parsers.VARIANT('normal')).to.eql('normal');
     });
   });
 });
