@@ -34,6 +34,11 @@ describe('FontFace', function () {
       }, 0);
     });
 
+    it('parses multiple unicode ranges correctly', function () {
+      expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'u+AA' }).unicodeRange).to.eql('u+AA');
+      expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'u+AA,u+AB' }).unicodeRange).to.eql('u+AA,u+AB');
+    });
+
     it('parses source urls', function () {
       expect(new FontFace('My Family', 'url(font.woff)', {}).src).to.eql('url(font.woff)');
       expect(new FontFace('My Family', 'url("font.woff")', {}).src).to.eql('url("font.woff")');

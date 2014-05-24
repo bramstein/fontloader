@@ -62,6 +62,11 @@ goog.scope(function () {
     this.src;
 
     /**
+     * @type {string}
+     */
+    this.testString;
+
+    /**
      * @type {Promise}
      */
     this.promise = new Promise(function (resolve, reject) {
@@ -69,7 +74,23 @@ goog.scope(function () {
       fontface.style = fontface.validate(descriptors['style'], FontFace.DescriptorValidator.STYLE) || "normal";
       fontface.weight = fontface.validate(descriptors['weight'], FontFace.DescriptorValidator.WEIGHT) || "normal";
       fontface.stretch = fontface.validate(descriptors['stretch'], FontFace.DescriptorValidator.STRETCH) || "normal";
-      fontface.unicodeRange = fontface.validate(descriptors['unicodeRange'], FontFace.DescriptorValidator.UNICODE_RANGE) || "u+0-10FFFF";
+
+      var unicodeRange = descriptors['unicodeRange'];
+
+      if (unicodeRange) {
+        var ranges = unicodeRange.split(/\s*,\s*/);
+
+        for (var r = 0; r < ranges.length; r++) {
+          fontface.validate(ranges[r], FontFace.DescriptorValidator.UNICODE_RANGE);
+        }
+
+        fontface.unicodeRange = unicodeRange;
+        fontface.testString = "????"; // FIXME
+      } else {
+        fontface.unicodeRange = "u+0-10FFFF";
+        fontface.testString = "BESbswy";
+      }
+
       fontface.variant = fontface.validate(descriptors['variant'], FontFace.DescriptorValidator.VARIANT) || "normal";
       fontface.featureSettings = fontface.validate(descriptors['featureSettings'], FontFace.DescriptorValidator.FEATURE_SETTINGS) || "normal";
 
