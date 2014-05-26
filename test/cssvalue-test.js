@@ -64,13 +64,17 @@ describe('CssValue', function () {
     });
 
     it('parses unicodeRange correctly', function () {
-      expect(parsers.UNICODE_RANGE('u+ff')).to.eql('u+ff');
-      expect(parsers.UNICODE_RANGE('U+Ff')).to.eql('U+Ff');
-      expect(parsers.UNICODE_RANGE('U+F?')).to.eql('U+F?');
-      expect(parsers.UNICODE_RANGE('U+AA-FF')).to.eql('U+AA-FF');
-      expect(parsers.UNICODE_RANGE('U+FF-')).to.eql(null);
-      expect(parsers.UNICODE_RANGE('U+FFFFFFFFF')).to.eql(null);
-      expect(parsers.UNICODE_RANGE('u+AA,u+AB')).to.eql('u+AA,u+AB');
+      expect(parsers.UNICODE_RANGE('u+ff').toString()).to.eql('u+ff');
+      expect(parsers.UNICODE_RANGE('U+Ff').toString()).to.eql('u+ff');
+      expect(parsers.UNICODE_RANGE('U+F?').toString()).to.eql('u+f0-ff');
+      expect(parsers.UNICODE_RANGE('U+AA-FF').toString()).to.eql('u+aa-ff');
+      expect(function () {
+        parsers.UNICODE_RANGE('U+FF-');
+      }).to.throwException();
+      expect(function () {
+        parsers.UNICODE_RANGE('U+FFFFFFFFF')
+      }).to.throwException();
+      expect(parsers.UNICODE_RANGE('u+AA,u+AB').toString()).to.eql('u+aa,u+ab');
     });
 
     it('parses variant correctly', function () {

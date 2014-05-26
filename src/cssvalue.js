@@ -1,9 +1,12 @@
 goog.provide('fontloader.CssValue');
 
+goog.require('fontloader.UnicodeRange');
+
 goog.scope(function () {
   fontloader.CssValue = {};
 
-  var CssValue = fontloader.CssValue;
+  var CssValue = fontloader.CssValue,
+      UnicodeRange = fontloader.UnicodeRange;
 
   /**
    * @enum {function(string):*}
@@ -34,15 +37,14 @@ goog.scope(function () {
       return /^(((ultra|extra|semi)-)?(condensed|expanded)|normal)$/.test(value) && value || null;
     },
     UNICODE_RANGE: function (value) {
-      var ranges = value.split(/\s*,\s*/);
+      var ranges = value.split(/\s*,\s*/),
+          result = [];
 
       for (var i = 0; i < ranges.length; i++) {
-        if (!/^(u\+[0-9a-f?]{1,6}(-[0-9a-f]{1,6})?)$/i.test(ranges[i])) {
-          return null;
-        }
+        result.push(new UnicodeRange(ranges[i]));
       }
 
-      return value;
+      return result;
     },
     VARIANT: function (value) {
       return /^(small-caps|normal)$/.test(value) && value || null;
