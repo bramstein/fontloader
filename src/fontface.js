@@ -1,8 +1,12 @@
 goog.provide('fontloader.FontFace');
 
 goog.require('fontloader.FontFaceLoadStatus');
+goog.require('fontloader.FontFaceLoader');
+goog.require('fontloader.CssValue');
 
 goog.scope(function () {
+  var CssValue = fontloader.CssValue,
+      Parsers = CssValue.Parsers;
   /**
    * @constructor
    * @param {string} family
@@ -70,17 +74,17 @@ goog.scope(function () {
      * @type {Promise}
      */
     this.promise = new Promise(function (resolve, reject) {
-      fontface.family = fontface.parse(family, FontFace.DescriptorParsers.FAMILY).toString();
-      fontface.style = fontface.parse(descriptors['style'] || 'normal', FontFace.DescriptorParsers.STYLE).toString();
-      fontface.weight = fontface.parse(descriptors['weight'] || 'normal', FontFace.DescriptorParsers.WEIGHT).toString();
-      fontface.stretch = fontface.parse(descriptors['stretch'] || 'normal', FontFace.DescriptorParsers.STRETCH).toString();
-      fontface.unicodeRange = fontface.parse(descriptors['unicodeRange'] || 'u+0-10FFFF', FontFace.DescriptorParsers.UNICODE_RANGE).toString();
-      fontface.variant = fontface.parse(descriptors['variant'] || 'normal', FontFace.DescriptorParsers.VARIANT).toString();
-      fontface.featureSettings = fontface.parse(descriptors['featureSettings'] || 'normal', FontFace.DescriptorParsers.FEATURE_SETTINGS).toString();
+      fontface.family = fontface.parse(family, Parsers.FAMILY).toString();
+      fontface.style = fontface.parse(descriptors['style'] || 'normal', Parsers.STYLE).toString();
+      fontface.weight = fontface.parse(descriptors['weight'] || 'normal', Parsers.WEIGHT).toString();
+      fontface.stretch = fontface.parse(descriptors['stretch'] || 'normal', Parsers.STRETCH).toString();
+      fontface.unicodeRange = fontface.parse(descriptors['unicodeRange'] || 'u+0-10FFFF', Parsers.UNICODE_RANGE).toString();
+      fontface.variant = fontface.parse(descriptors['variant'] || 'normal', Parsers.VARIANT).toString();
+      fontface.featureSettings = fontface.parse(descriptors['featureSettings'] || 'normal', Parsers.FEATURE_SETTINGS).toString();
 
 
       if (typeof source === 'string') {
-        fontface.src = fontface.parse(source, FontFace.DescriptorParsers.SRC).toString();
+        fontface.src = fontface.parse(source, Parsers.SRC).toString();
       } else if (source && typeof source.byteLength === "number") {
         var bytes = new Uint8Array(source),
             buffer = '';
@@ -103,73 +107,8 @@ goog.scope(function () {
 
   /**
    * @private
-   * @enum {function(string):*}
-   */
-  FontFace.DescriptorParsers = {
-    FAMILY: function (value) {
-      if (value) {
-        var identifiers = value.replace(/^\s+|\s+$/, '').replace(/\s+/g, ' ').split(' ');
-
-        for (var i = 0; i < identifiers.length; i += 1) {
-          if (/^(-?\d|--)/.test(identifiers[i]) ||
-              !/^([_a-zA-Z0-9-]|[^\0-\237]|(\\[0-9a-f]{1,6}(\r\n|[ \n\r\t\f])?|\\[^\n\r\f0-9a-f]))+$/.test(identifiers[i])) {
-            return null;
-          }
-        }
-        return identifiers.join(' ');
-      } else {
-        return null;
-      }
-    },
-    STYLE: function (value) {
-      return /^(italic|oblique|normal)$/.test(value) && value || null;
-    },
-    WEIGHT: function (value) {
-      return /^(bold(er)?|lighter|[1-9]00|normal)$/.test(value) && value || null;
-    },
-    STRETCH: function (value) {
-      return /^(((ultra|extra|semi)-)?(condensed|expanded)|normal)$/.test(value) && value || null;
-    },
-    UNICODE_RANGE: function (value) {
-      var ranges = value.split(/\s*,\s*/);
-
-      for (var i = 0; i < ranges.length; i++) {
-        if (!/^(u\+[0-9a-f?]{1,6}(-[0-9a-f]{1,6})?)$/i.test(ranges[i])) {
-          return null;
-        }
-      }
-
-      return value;
-    },
-    VARIANT: function (value) {
-      return /^(small-caps|normal)$/.test(value) && value || null;
-    },
-    FEATURE_SETTINGS: function (value) {
-      return /^normal$/.test(value) && value || null;
-    },
-    SRC: function (value) {
-      var srcRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)( format\((\'|\"|)([^\'\"]+?)\4\))?/g,
-          match = null,
-          valid = false;
-
-      while ((match = srcRegExp.exec(value))) {
-        if (match[2]) {
-          valid = true;
-        }
-      }
-
-      if (valid) {
-        return value;
-      } else {
-        return null;
-      }
-    }
-  };
-
-  /**
-   * @private
    * @param {*} descriptor
-   * @param {fontloader.FontFace.DescriptorParsers} parser
+   * @param {fontloader.CssValue.Parsers} parser
    * @return {*}
    */
   FontFace.prototype.parse = function (descriptor, parser) {
