@@ -134,7 +134,7 @@ goog.scope(function () {
    *
    * @return {string}
    */
-  FontFace.prototype.toCSS = function () {
+  FontFace.prototype.toCss = function () {
     return '@font-face{' +
         'font-family:' + this.family + ';' +
         'font-style:' + this.style + ';' +

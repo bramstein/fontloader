@@ -15,7 +15,7 @@ goog.scope(function () {
    * @return {Promise}
    */
   FontFaceLoader.prototype.load = function () {
-    var css = this.font.toCSS();
+    var css = this.font.toCss();
 
     return new Promise(function (resolve, reject) {
       var head = document.head || document.getElementsByTagName('head')[0];
