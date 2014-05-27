@@ -1,11 +1,18 @@
 goog.provide('fontloader.CssValue');
 
+goog.require('fontloader.util');
 goog.require('fontloader.UnicodeRange');
 
+
 goog.scope(function () {
+
+  /**
+   * @typedef {Object.<string, (string|!Array.<string>)>}
+   */
   fontloader.CssValue = {};
 
   var CssValue = fontloader.CssValue,
+      util = fontloader.util,
       UnicodeRange = fontloader.UnicodeRange;
 
   /**
@@ -69,5 +76,32 @@ goog.scope(function () {
         return null;
       }
     }
+  };
+
+  /**
+   * @param {fontloader.CssValue} value
+   * @param {boolean=} opt_important
+   * @return {string}
+   */
+  CssValue.serialize = function (value, opt_important) {
+    var result = [];
+
+    for (var style in value) {
+      if (value.hasOwnProperty(style)) {
+        var property = style + ':';
+
+        if (util.isArray(value[style])) {
+          property += value[style].join(',');
+        } else {
+          property += value[style];
+        }
+
+        if (opt_important) {
+          property += ' !important';
+        }
+        result.push(property);
+      }
+    }
+    return result.join(';');
   };
 });

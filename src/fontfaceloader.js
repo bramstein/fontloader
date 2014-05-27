@@ -1,6 +1,10 @@
 goog.provide('fontloader.FontFaceLoader');
 
+goog.require('fontloader.Ruler');
+
 goog.scope(function () {
+  var Ruler = fontloader.Ruler;
+
   /**
    * @constructor
    * @param {fontloader.FontFace} font

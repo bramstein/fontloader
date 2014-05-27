@@ -136,14 +136,16 @@ goog.scope(function () {
    */
   FontFace.prototype.toCss = function () {
     return '@font-face{' +
-        'font-family:' + this.family + ';' +
-        'font-style:' + this.style + ';' +
-        'font-weight:' + this.weight + ';' +
-        'font-stretch:' + this.stretch + ';' +
-        'unicode-range:' + this.unicodeRange + ';' +
-        'font-variant:' + this.variant + ';' +
-        'font-feature-settings:' + this.featureSettings + ';' +
-        'src:' + this.src + ';' +
-      '}';
+      CssValue.serialize({
+        'font-family': this.family,
+        'font-style': this.style,
+        'font-weight': this.weight,
+        'font-stretch': this.stretch,
+        'unicode-range': this.unicodeRange,
+        'font-variant': this.variant,
+        'font-feature-settings': this.featureSettings,
+        'src': this.src
+      }) +
+    '}';
   };
 });

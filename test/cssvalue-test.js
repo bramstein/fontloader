@@ -82,4 +82,29 @@ describe('CssValue', function () {
       expect(parsers.VARIANT('normal')).to.eql('normal');
     });
   });
+
+  describe('serialize', function () {
+    it('serializes an empty value', function () {
+      expect(CssValue.serialize({})).to.eql('');
+    });
+
+    it('serializes a single property', function () {
+      expect(CssValue.serialize({
+        'font-size': '12px'
+      })).to.eql('font-size:12px');
+    });
+
+    it('serializes multiple properties', function () {
+      expect(CssValue.serialize({
+        'font-size': '12px',
+        'line-height': '16px'
+      })).to.eql('font-size:12px;line-height:16px');
+    });
+
+    it('serializes a property with multiple values', function () {
+      expect(CssValue.serialize({
+        'font-family': ['Arial', 'Verdana', 'sans-serif']
+      })).to.eql('font-family:Arial,Verdana,sans-serif');
+    });
+  });
 });
