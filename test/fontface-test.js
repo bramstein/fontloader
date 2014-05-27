@@ -112,7 +112,7 @@ describe('FontFace', function () {
   describe('#toCss', function () {
     it('generates valid CSS', function () {
       var font = new FontFace('My Family', 'url(font.woff)', {});
-      expect(font.toCss()).to.eql('@font-face{font-family:My Family;font-style:normal;font-weight:normal;font-stretch:normal;unicode-range:u+0-10ffff;font-variant:normal;font-feature-settings:normal;src:url(font.woff)}');
+      expect(font.toCss()).to.eql('@font-face{font-family:My Family;font-style:normal;font-weight:normal;font-stretch:normal;font-variant:normal;font-feature-settings:normal;-moz-font-feature-settings:normal;-webkit-font-feature-settings:normal;unicode-range:u+0-10ffff;src:url(font.woff)}');
     });
   });
 

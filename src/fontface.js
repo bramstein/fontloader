@@ -165,7 +165,7 @@ goog.scope(function () {
    */
   FontFace.prototype.toCss = function () {
     return '@font-face{' +
-      CssValue.serialize(util.extend(this.getStyle, {
+      CssValue.serialize(util.extend(this.getStyle(), {
         'unicode-range': this.unicodeRange,
         'src': this.src
       })) +
