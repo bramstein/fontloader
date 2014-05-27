@@ -15,7 +15,7 @@ goog.scope(function () {
    */
   fontloader.FontFace = function (family, source, descriptors) {
     if (arguments.length !== 3) {
-      throw new TypeError("Failed to constructor 'FontFace': 3 arguments required, but only " + arguments.length + " present.");
+      throw new TypeError("Failed to construct 'FontFace': 3 arguments required, but only " + arguments.length + " present.");
     }
 
     var fontface = this;
@@ -119,7 +119,7 @@ goog.scope(function () {
         return result;
       }
     }
-    throw new SyntaxError("Failed to constructor 'FontFace': Failed to set '" + descriptor + "' as a property value.");
+    throw new SyntaxError("Failed to construct 'FontFace': Failed to set '" + descriptor + "' as a property value.");
   };
 
   /**
