@@ -3,10 +3,14 @@ goog.provide('fontloader.FontFace');
 goog.require('fontloader.FontFaceLoadStatus');
 goog.require('fontloader.FontFaceLoader');
 goog.require('fontloader.CssValue');
+goog.require('fontloader.util');
 
 goog.scope(function () {
-  var CssValue = fontloader.CssValue,
-      Parsers = CssValue.Parsers;
+  var FontFaceLoader = fontloader.FontFaceLoader,
+      CssValue = fontloader.CssValue,
+      Parsers = CssValue.Parsers,
+      util = fontloader.util;
+
   /**
    * @constructor
    * @param {string} family
@@ -82,6 +86,7 @@ goog.scope(function () {
       fontface.variant = fontface.parse(descriptors['variant'] || 'normal', Parsers.VARIANT).toString();
       fontface.featureSettings = fontface.parse(descriptors['featureSettings'] || 'normal', Parsers.FEATURE_SETTINGS).toString();
 
+      fontface.fontFaceLoader = new FontFaceLoader(fontface);
 
       if (typeof source === 'string') {
         fontface.src = fontface.parse(source, Parsers.SRC).toString();
@@ -123,10 +128,32 @@ goog.scope(function () {
   };
 
   /**
-   * @return {Promise}
+   * @return {IThenable}
    */
   FontFace.prototype.load = function () {
-    return this.promise;
+    var that = this;
+    return that.promise.then(function () {
+      return that.fontFaceLoader.load();
+    });
+  };
+
+  /**
+   * Returns all the CSS properties to apply
+   * this FontFace to an element.
+   *
+   * @return {fontloader.CssValue}
+   */
+  FontFace.prototype.getStyle = function () {
+    return {
+      'font-family': this.family,
+      'font-style': this.style,
+      'font-weight': this.weight,
+      'font-stretch': this.stretch,
+      'font-variant': this.variant,
+      'font-feature-settings': this.featureSettings,
+      '-moz-font-feature-settings': this.featureSettings,
+      '-webkit-font-feature-settings': this.featureSettings
+    };
   };
 
   /**
@@ -136,16 +163,10 @@ goog.scope(function () {
    */
   FontFace.prototype.toCss = function () {
     return '@font-face{' +
-      CssValue.serialize({
-        'font-family': this.family,
-        'font-style': this.style,
-        'font-weight': this.weight,
-        'font-stretch': this.stretch,
+      CssValue.serialize(util.extend(this.getStyle, {
         'unicode-range': this.unicodeRange,
-        'font-variant': this.variant,
-        'font-feature-settings': this.featureSettings,
         'src': this.src
-      }) +
+      })) +
     '}';
   };
 });
