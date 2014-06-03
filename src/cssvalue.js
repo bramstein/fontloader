@@ -2,6 +2,7 @@ goog.provide('fontloader.CssValue');
 
 goog.require('fontloader.util');
 goog.require('fontloader.UnicodeRange');
+goog.require('fontloader.Url');
 
 
 goog.scope(function () {
@@ -13,7 +14,8 @@ goog.scope(function () {
 
   var CssValue = fontloader.CssValue,
       util = fontloader.util,
-      UnicodeRange = fontloader.UnicodeRange;
+      UnicodeRange = fontloader.UnicodeRange,
+      Url = fontloader.Url;
 
   /**
    * @enum {function(string):*}
@@ -62,16 +64,18 @@ goog.scope(function () {
     SRC: function (value) {
       var srcRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)( format\((\'|\"|)([^\'\"]+?)\4\))?/g,
           match = null,
+          result = [],
           valid = false;
 
       while ((match = srcRegExp.exec(value))) {
         if (match[2]) {
+          result.push(new Url(match[2], match[5]));
           valid = true;
         }
       }
 
       if (valid) {
-        return value;
+        return result;
       } else {
         return null;
       }

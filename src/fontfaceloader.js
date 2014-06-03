@@ -42,7 +42,7 @@ goog.scope(function () {
   var FontFaceLoader = fontloader.FontFaceLoader;
 
   /**
-   * @return {Promise}
+   * @return {IThenable}
    */
   FontFaceLoader.prototype.load = function () {
     var css = this.font.toCss(),

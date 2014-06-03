@@ -36,15 +36,15 @@ describe('FontFace', function () {
 
     it('parses source urls', function () {
       expect(new FontFace('My Family', 'url(font.woff)', {}).src).to.eql('url(font.woff)');
-      expect(new FontFace('My Family', 'url("font.woff")', {}).src).to.eql('url("font.woff")');
-      expect(new FontFace('My Family', "url('font.woff')", {}).src).to.eql("url('font.woff')");
+      expect(new FontFace('My Family', 'url("font.woff")', {}).src).to.eql('url(font.woff)');
+      expect(new FontFace('My Family', "url('font.woff')", {}).src).to.eql("url(font.woff)");
       expect(new FontFace('My Family', 'url(font.woff),url(font.otf)', {}).src).to.eql('url(font.woff),url(font.otf)');
-      expect(new FontFace('My Family', 'url(font.woff), url(font.otf)', {}).src).to.eql('url(font.woff), url(font.otf)');
+      expect(new FontFace('My Family', 'url(font.woff), url(font.otf)', {}).src).to.eql('url(font.woff),url(font.otf)');
     });
 
     it('parses source urls with formats', function () {
       expect(new FontFace('My Family', 'url(font.woff) format(woff)', {}).src).to.eql('url(font.woff) format(woff)');
-      expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).src).to.eql('url(font.woff) format(woff), url(font.otf) format(opentype)');
+      expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).src).to.eql('url(font.woff) format(woff),url(font.otf) format(opentype)');
     });
 
     it('rejects the promise if source urls are invalid', function (done) {
