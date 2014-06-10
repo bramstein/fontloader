@@ -87,6 +87,7 @@ goog.scope(function () {
     this['promise'] = new Promise(function (resolve, reject) {
       // TODO: Move error handling into a module so each parser can throw exceptions cheaply
       // and we can get rid of fontface.parse.
+      // TODO: These properties are supposed to be live.
       fontface['family'] = fontface.parse(family, Parsers.FAMILY).toString(); // FIXME: This should be quoted if necessary.
       fontface['style'] = fontface.parse(descriptors['style'] || 'normal', Parsers.STYLE).toString();
       fontface['weight'] = fontface.parse(descriptors['weight'] || 'normal', Parsers.WEIGHT).toString();
