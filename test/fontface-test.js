@@ -1,5 +1,7 @@
 describe('FontFace', function () {
-  var FontFace = fontloader.FontFace;
+  var FontFace = fontloader.FontFace,
+      FontFaceLoader = fontloader.FontFaceLoader,
+      FontFaceLoadStatus = fontloader.FontFaceLoadStatus;
 
   describe('#constructor', function () {
     it('throws when called without arguments', function () {
@@ -106,6 +108,116 @@ describe('FontFace', function () {
         font.validate('hello', function () { return null; });
       }).to.throwException();
       expect(font.parse('hello', function () { return 'hello'; })).to.eql('hello');
+    });
+  });
+
+  describe('#load', function () {
+    var loadMethod = null;
+
+    beforeEach(function () {
+      loadMethod = FontFaceLoader.prototype.load;
+    });
+
+    afterEach(function () {
+      FontFaceLoader.prototype.load = loadMethod;
+    });
+
+    it('returns immediately if the font is already loaded', function () {
+      var font = new FontFace('My Family', 'url(font.woff)', {});
+      font.status = FontFaceLoadStatus.LOADED;
+
+      expect(font.load()).to.eql(font.promise);
+    });
+
+    it('resolves when the font loads', function (done) {
+      var font = new FontFace('My Family', 'url(font.woff)', {});
+
+      FontFaceLoader.prototype.load = function () {
+        return Promise.resolve(font);
+      };
+
+      expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+
+      font.load().then(function (f) {
+        expect(font).to.eql(f);
+        expect(font.status).to.eql(FontFaceLoadStatus.LOADED);
+        done();
+      });
+    });
+
+    it('resolves when the font loads with a delay', function (done) {
+      var font = new FontFace('My Family', 'url(font.woff)', {});
+
+      FontFaceLoader.prototype.load = function () {
+        return new Promise(function (resolve) {
+          setTimeout(function () {
+            resolve(font);
+          }, 50);
+        });
+      };
+
+      expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+
+      font.load().then(function (f) {
+        expect(font).to.eql(f);
+        expect(font.status).to.eql(FontFaceLoadStatus.LOADED);
+        done();
+      });
+    });
+
+    it('rejects when the font fails to load', function (done) {
+      var font = new FontFace('My Family', 'url(font.woff)', {});
+
+      FontFaceLoader.prototype.load = function () {
+        return Promise.reject(font);
+      };
+
+      expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+
+      font.load().catch(function (f) {
+        expect(font).to.eql(f);
+        expect(font.status).to.eql(FontFaceLoadStatus.ERROR);
+        done();
+      });
+    });
+
+    it('rejects when the font fails to load with a delay', function (done) {
+      var font = new FontFace('My Family', 'url(font.woff)', {});
+
+      FontFaceLoader.prototype.load = function () {
+        return new Promise(function (resolve, reject) {
+          setTimeout(function () {
+            reject(font);
+          }, 50);
+        });
+      };
+
+      expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+
+      font.load().catch(function (f) {
+        expect(font).to.eql(f);
+        expect(font.status).to.eql(FontFaceLoadStatus.ERROR);
+        done();
+      });
+    });
+
+    it('loads immediately when given an arraybuffer', function (done) {
+      FontFaceLoader.prototype.load = function () {
+        return Promise.resolve('font');
+      };
+
+      var font = new FontFace('My Family', new ArrayBuffer(4), {});
+
+      expect(font.status).to.eql(FontFaceLoadStatus.LOADING);
+      font.promise.then(function (f) {
+        expect(font.status).to.eql(FontFaceLoadStatus.LOADED);
+        expect(f).to.eql('font');
+        done();
+      }, function (r) {
+        done(r);
+      });
+
+      done();
     });
   });
 
