@@ -211,5 +211,24 @@ describe('FontFaceLoader', function () {
         done(r);
       });
     });
+
+    it('should remove the stylesheet if the font fails to load', function (done) {
+      var font = new FontFace(
+            'test4',
+            'url(unknown?#iefix) format(embedded-opentype),' +
+            'url(unknown.woff) format(woff)',
+            {}
+          ),
+          loader = new FontFaceLoader(font);
+
+      var count = document.styleSheets.length;
+
+      loader.load().then(function () {
+        done(new Error('Should not call resolve'));
+      }, function (r) {
+        expect(document.styleSheets.length).to.eql(count);
+        done();
+      });
+    });
   });
 });

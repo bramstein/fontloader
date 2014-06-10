@@ -51,7 +51,9 @@ goog.scope(function () {
         that = this,
         started = goog.now(),
         rulerA = new Ruler(this.text),
-        rulerB = new Ruler(this.text);
+        rulerB = new Ruler(this.text),
+        head = document.head || document.getElementsByTagName('head')[0],
+        styleElement = document.createElement('style');
 
     return new Promise(function (resolve, reject) {
        function check() {
@@ -62,6 +64,7 @@ goog.scope(function () {
           if (goog.now() - started >= FontFaceLoader.DEFAULT_TIMEOUT) {
             rulerA.remove();
             rulerB.remove();
+            head.removeChild(styleElement);
             reject(new Error('Timeout'));
           } else {
             goog.global.setTimeout(function () {
@@ -75,11 +78,7 @@ goog.scope(function () {
         }
       }
 
-      var head = document.head || document.getElementsByTagName('head')[0];
-
       if (head) {
-        var styleElement = document.createElement('style');
-
         styleElement.setAttribute('type', 'text/css');
 
         if (styleElement.styleSheet) {
