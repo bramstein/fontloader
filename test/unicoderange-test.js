@@ -62,6 +62,34 @@ describe('UnicodeRange', function () {
     });
   });
 
+  describe('#encodeCodePoint', function () {
+    var unicodeRange = null;
+
+    beforeEach(function () {
+      unicodeRange = new UnicodeRange('u+0');
+    });
+
+    it('should encode ASCII safe characters as themselves', function () {
+      expect(unicodeRange.encodeCodePoint(65)).to.eql('A');
+      expect(unicodeRange.encodeCodePoint(57)).to.eql('9');
+      expect(unicodeRange.encodeCodePoint(97)).to.eql('a');
+    });
+
+    it('should encode control characters correctly', function () {
+      expect(unicodeRange.encodeCodePoint(0)).to.eql('\\u0000');
+      expect(unicodeRange.encodeCodePoint(127)).to.eql('\\u007f');
+    });
+
+    it('should always encode code points in the BMP that are not safe', function () {
+      expect(unicodeRange.encodeCodePoint(20013)).to.eql('\\u4e2d');
+      expect(unicodeRange.encodeCodePoint(22269)).to.eql('\\u56fd');
+    });
+
+    it('should encode code points outside the BMP as surrogate pairs', function () {
+      expect(unicodeRange.encodeCodePoint(119558)).to.eql('\\ud834\\udf06');
+    });
+  });
+
   describe('#toTestString', function () {
     it('uses the default string when given the entire unicode range', function () {
       expect(new UnicodeRange('u+0-10ffff').toTestString()).to.eql('BESbswy');

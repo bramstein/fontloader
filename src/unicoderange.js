@@ -75,13 +75,30 @@ goog.scope(function () {
   };
 
   /**
+   * @private
+   * @param {number} codePoint
+   * @return {string}
+   */
+  UnicodeRange.prototype.encodeCodePoint = function (codePoint) {
+    if (codePoint >= 0x21 && codePoint <= 0x7e) {
+      return String.fromCharCode(codePoint);
+    } else if (codePoint <= 0xffff) {
+      return '\\u' + (codePoint + 0x10000).toString(16).substr(-4);
+    } else {
+      return this.encodeCodePoint(Math.floor((codePoint - 0x10000) / 0x400) + 0xd800) +
+             this.encodeCodePoint((codePoint - 0x10000) % 0x400 + 0xdc00);
+    }
+  };
+
+  /**
    * @return {string}
    */
   UnicodeRange.prototype.toTestString = function () {
-    var codePoints = [];
+    var codePoints = [],
+        defaultCodePoints = [66, 69, 83, 98, 115, 119, 121];
 
     if (this.ranges.length === 1 && this.ranges[0].start === 0x00 && this.ranges[0].end === 0x10ffff) {
-      codePoints = [66, 69, 83, 98, 115, 119, 121];
+      codePoints = defaultCodePoints;
     } else {
       for (var i = 0; i < this.ranges.length && codePoints.length < 7; i++) {
         var range = this.ranges[i];
@@ -100,24 +117,14 @@ goog.scope(function () {
       // This should only happen when the given unicode range consists
       // only of control characters. Give up and use the default string.
       if (codePoints.length === 0) {
-        codePoints = [66, 69, 83, 98, 115, 119, 121];
+        codePoints = defaultCodePoints;
       }
     }
 
     var result = '';
 
     for (var i = 0; i < codePoints.length; i++) {
-      if (codePoints[i] >= 0x21 && codePoints[i] <= 0x7e) {
-        result += String.fromCharCode(codePoints[i]);
-      } else if (codePoints[i] <= 0xFFFF) {
-        result += '\\u' + (codePoints[i] + 0x10000).toString(16).substr(-4);
-      } else {
-        var low = (codePoints[i] - 0x10000) % 0x400 + 0xdc00,
-            high = Math.floor((codePoints[i] - 0x10000) / 0x400) + 0xd800;
-
-        result += '\\u' + (high + 0x10000).toString(16).substr(-4) +
-                  '\\u' + (low + 0x10000).toString(16).substr(-4);
-      }
+      result += this.encodeCodePoint(codePoints[i]);
     }
 
     return result;
