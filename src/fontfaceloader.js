@@ -26,7 +26,7 @@ goog.scope(function () {
     /**
      * @type {string}
      */
-    this.text = 'BESbswy';
+    this.text = font['testString'];
 
     var ruler = new Ruler(this.text);
 
@@ -46,7 +46,6 @@ goog.scope(function () {
    */
   FontFaceLoader.prototype.load = function () {
     var css = this.font.toCss(),
-        text = this.text,
         font = this.font,
         that = this,
         started = goog.now(),

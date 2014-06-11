@@ -1,63 +1,132 @@
 goog.provide('fontloader.UnicodeRange');
 
+goog.require('fontloader.Range');
+
 goog.scope(function () {
   /**
    * @constructor
-   * @param {string} range
+   * @param {string} input
    */
-  fontloader.UnicodeRange = function (range) {
+  fontloader.UnicodeRange = function (input) {
     /**
-     * @type {number}
+     * @type {Array.<fontloader.Range>}
      */
-    this.start;
+    this.ranges = [];
 
-    /**
-     * @type {number}
-     */
-    this.end;
+    var ranges = input.split(/\s*,\s*/),
+        start = null,
+        end = null;
 
+    for (var i = 0; i < ranges.length; i++) {
+      var match = /^(u\+([0-9a-f?]{1,6})(?:-([0-9a-f]{1,6}))?)$/i.exec(ranges[i]);
 
-    var match = /^(u\+([0-9a-f?]{1,6})(?:-([0-9a-f]{1,6}))?)$/i.exec(range);
-
-    if (match) {
-      var start = match[2],
-          end = match[3];
-
-      if (start.indexOf('?') !== -1) {
-        this.start = parseInt(start.replace('?', '0'), 16);
-        this.end = parseInt(start.replace('?', 'f'), 16);
-      } else {
-        this.start = parseInt(start, 16);
-
-        if (end) {
-          this.end = parseInt(end, 16);
+      if (match) {
+        if (match[2].indexOf('?') !== -1) {
+          start = parseInt(match[2].replace('?', '0'), 16);
+          end = parseInt(match[2].replace('?', 'f'), 16);
         } else {
-          this.end = this.start;
+          start = parseInt(match[2], 16);
+
+          if (match[3]) {
+            end = parseInt(match[3], 16);
+          } else {
+            end = start;
+          }
         }
+
+        this.ranges.push(new fontloader.Range(start, end));
+      } else {
+        throw new SyntaxError();
       }
-    } else {
-      throw new SyntaxError();
     }
   };
 
   var UnicodeRange = fontloader.UnicodeRange;
 
   /**
-   * @param {number} codePoint
-   * @return {boolean}
+   * @param {string} str
+   * @return {fontloader.UnicodeRange}
    */
-  UnicodeRange.prototype.contains = function (codePoint) {
-    return codePoint >= this.start && codePoint <= this.end;
+  UnicodeRange.parse = function (str) {
+    var codePoints = [],
+        tmp = {};
+
+    for (var i = 0; i < str.length; i++) {
+      var codePoint = str.charCodeAt(i);
+
+      if ((codePoint & 0xF800) === 0xD800 && i < str.length) {
+        var nextCodePoint = str.charCodeAt(i + 1);
+        if ((nextCodePoint & 0xFC00) === 0xDC00) {
+          tmp[((codePoint & 0x3FF) << 10) + (nextCodePoint & 0x3FF) + 0x10000] = true;
+        } else {
+          tmp[codePoint] = true;
+        }
+        i++;
+      } else {
+        tmp[codePoint] = true;
+      }
+    }
+
+    for (var codePoint in tmp) {
+      codePoints.push('u+' + parseInt(codePoint, 10).toString(16));
+    }
+
+    return new UnicodeRange(codePoints.join(','));
+  };
+
+  /**
+   * @return {string}
+   */
+  UnicodeRange.prototype.toTestString = function () {
+    var codePoints = [];
+
+    if (this.ranges.length === 1 && this.ranges[0].start === 0x00 && this.ranges[0].end === 0x10ffff) {
+      codePoints = [66, 69, 83, 98, 115, 119, 121];
+    } else {
+      for (var i = 0; i < this.ranges.length && codePoints.length < 7; i++) {
+        var range = this.ranges[i];
+
+        for (var j = range.start; j < range.end + 1 && codePoints.length < 7; j++) {
+          // Ignore C0 and C1 control codes. This is no guarantee that the first
+          // 10 characters in our unicode range are printable (and usable for font
+          // load detection) but it is better than nothing.
+          if (j > 0x20 && // C0 + space
+              (j < 0x80 || j > 0x9f)) { // C1
+            codePoints.push(j);
+          }
+        }
+      }
+
+      // This should only happen when the given unicode range consists
+      // only of control characters. Give up and use the default string.
+      if (codePoints.length === 0) {
+        codePoints = [66, 69, 83, 98, 115, 119, 121];
+      }
+    }
+
+    var result = '';
+
+    for (var i = 0; i < codePoints.length; i++) {
+      if (codePoints[i] >= 0x21 && codePoints[i] <= 0x7e) {
+        result += String.fromCharCode(codePoints[i]);
+      } else if (codePoints[i] <= 0xFFFF) {
+        result += '\\u' + (codePoints[i] + 0x10000).toString(16).substr(-4);
+      } else {
+        var low = (codePoints[i] - 0x10000) % 0x400 + 0xdc00,
+            high = Math.floor((codePoints[i] - 0x10000) / 0x400) + 0xd800;
+
+        result += '\\u' + (high + 0x10000).toString(16).substr(-4) +
+                  '\\u' + (low + 0x10000).toString(16).substr(-4);
+      }
+    }
+
+    return result;
   };
 
   /**
    * @return {string}
    */
   UnicodeRange.prototype.toString = function () {
-    if (this.start === this.end) {
-      return 'u+' + this.start.toString(16);
-    } else {
-      return 'u+' + this.start.toString(16) + '-' + this.end.toString(16);
-    }
+    return this.ranges.join(',');
   };
 });

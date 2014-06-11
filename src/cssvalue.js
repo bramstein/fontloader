@@ -46,14 +46,7 @@ goog.scope(function () {
       return /^(((ultra|extra|semi)-)?(condensed|expanded)|normal)$/.test(value) && value || null;
     },
     UNICODE_RANGE: function (value) {
-      var ranges = value.split(/\s*,\s*/),
-          result = [];
-
-      for (var i = 0; i < ranges.length; i++) {
-        result.push(new UnicodeRange(ranges[i]));
-      }
-
-      return result;
+      return new UnicodeRange(value);
     },
     VARIANT: function (value) {
       return /^(small-caps|normal)$/.test(value) && value || null;

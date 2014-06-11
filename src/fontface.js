@@ -3,12 +3,14 @@ goog.provide('fontloader.FontFace');
 goog.require('fontloader.FontFaceLoadStatus');
 goog.require('fontloader.FontFaceLoader');
 goog.require('fontloader.CssValue');
+goog.require('fontloader.UnicodeRange');
 goog.require('fontloader.util');
 
 goog.scope(function () {
   var FontFaceLoader = fontloader.FontFaceLoader,
       FontFaceLoadStatus = fontloader.FontFaceLoadStatus,
       CssValue = fontloader.CssValue,
+      UnicodeRange = fontloader.UnicodeRange,
       Parsers = CssValue.Parsers,
       util = fontloader.util;
 
@@ -92,7 +94,11 @@ goog.scope(function () {
       fontface['style'] = fontface.parse(descriptors['style'] || 'normal', Parsers.STYLE).toString();
       fontface['weight'] = fontface.parse(descriptors['weight'] || 'normal', Parsers.WEIGHT).toString();
       fontface['stretch'] = fontface.parse(descriptors['stretch'] || 'normal', Parsers.STRETCH).toString();
-      fontface['unicodeRange'] = fontface.parse(descriptors['unicodeRange'] || 'u+0-10FFFF', Parsers.UNICODE_RANGE).toString();
+
+      var unicodeRange = new UnicodeRange(descriptors['unicodeRange'] || 'u+0-10ffff');
+
+      fontface['unicodeRange'] = unicodeRange.toString();
+      fontface['testString'] = unicodeRange.toTestString();
       fontface['variant'] = fontface.parse(descriptors['variant'] || 'normal', Parsers.VARIANT).toString();
       fontface['featureSettings'] = fontface.parse(descriptors['featureSettings'] || 'normal', Parsers.FEATURE_SETTINGS).toString();
 

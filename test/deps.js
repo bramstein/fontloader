@@ -2,12 +2,13 @@
 goog.addDependency("../../src/binarydata.js", ["fontloader.BinaryData"], []);
 goog.addDependency("../../src/cssvalue.js", ["fontloader.CssValue"], ["fontloader.util","fontloader.UnicodeRange","fontloader.Url"]);
 goog.addDependency("../../src/debug.js", ["debug"], []);
-goog.addDependency("../../src/fontface.js", ["fontloader.FontFace"], ["fontloader.FontFaceLoadStatus","fontloader.FontFaceLoader","fontloader.CssValue","fontloader.util"]);
+goog.addDependency("../../src/fontface.js", ["fontloader.FontFace"], ["fontloader.FontFaceLoadStatus","fontloader.FontFaceLoader","fontloader.CssValue","fontloader.UnicodeRange","fontloader.util"]);
 goog.addDependency("../../src/fontfacedescriptors.js", ["fontloader.FontFaceDescriptors"], []);
 goog.addDependency("../../src/fontfaceloader.js", ["fontloader.FontFaceLoader"], ["fontloader.Ruler","fontloader.util"]);
 goog.addDependency("../../src/fontfaceloadstatus.js", ["fontloader.FontFaceLoadStatus"], []);
 goog.addDependency("../../src/polyfill.js", ["fontloader"], ["fontloader.FontFace"]);
+goog.addDependency("../../src/range.js", ["fontloader.Range"], []);
 goog.addDependency("../../src/ruler.js", ["fontloader.Ruler"], ["fontloader.util","fontloader.CssValue"]);
-goog.addDependency("../../src/unicoderange.js", ["fontloader.UnicodeRange"], []);
+goog.addDependency("../../src/unicoderange.js", ["fontloader.UnicodeRange"], ["fontloader.Range"]);
 goog.addDependency("../../src/url.js", ["fontloader.Url"], []);
 goog.addDependency("../../src/util.js", ["fontloader.util"], []);
