@@ -115,7 +115,11 @@ goog.scope(function () {
 
         // TODO: We could detect the format here and set the correct mime type
         fontface['src'] = 'url(data:font/opentype;base64,' + window.btoa(buffer) + ')';
-        fontface.load();
+
+        // trigger asynchronous loading
+        setTimeout(function () {
+          fontface.load();
+        }, 0);
         resolve(fontface);
       } else {
         throw new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list.");

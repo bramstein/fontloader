@@ -55,8 +55,10 @@ describe('FontFace', function () {
         expect(e).to.be.a(SyntaxError);
         done();
       });
+    });
 
-      font = new FontFace('My Family', true, {});
+    it('rejects the promise if the source url is not a string or arraybuffer', function (done) {
+      var font = new FontFace('My Family', true, {});
       font.load().catch(function (e) {
         expect(e).to.be.a(SyntaxError);
         done();
@@ -208,16 +210,15 @@ describe('FontFace', function () {
 
       var font = new FontFace('My Family', new ArrayBuffer(4), {});
 
-      expect(font.status).to.eql(FontFaceLoadStatus.LOADING);
-      font.promise.then(function (f) {
+      expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+
+      font.load().then(function (f) {
         expect(font.status).to.eql(FontFaceLoadStatus.LOADED);
         expect(f).to.eql('font');
         done();
       }, function (r) {
         done(r);
       });
-
-      done();
     });
   });
 
@@ -227,5 +228,4 @@ describe('FontFace', function () {
       expect(font.toCss()).to.eql('@font-face{font-family:My Family;font-style:normal;font-weight:normal;font-stretch:normal;font-variant:normal;font-feature-settings:normal;-moz-font-feature-settings:normal;-webkit-font-feature-settings:normal;unicode-range:u+0-10ffff;src:url(font.woff)}');
     });
   });
-
 });
