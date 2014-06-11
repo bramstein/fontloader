@@ -132,6 +132,16 @@ describe('FontFaceLoader', function () {
   });
 
   describe('#load', function () {
+    var defaultTimeout = null;
+
+    beforeEach(function () {
+      defaultTimeout = FontFaceLoader.DEFAULT_TIMEOUT;
+    });
+
+    afterEach(function () {
+      FontFaceLoader.DEFAULT_TIMEOUT = defaultTimeout;
+    });
+
     it('should load a font and resolve the promise', function (done) {
       var font = new FontFace(
             'test1',
@@ -220,6 +230,8 @@ describe('FontFaceLoader', function () {
             {}
           ),
           loader = new FontFaceLoader(font);
+
+      FontFaceLoader.DEFAULT_TIMEOUT = 50;
 
       var count = document.styleSheets.length;
 
