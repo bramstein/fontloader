@@ -92,11 +92,10 @@ goog.scope(function () {
    * @return {string}
    */
   UnicodeRange.prototype.toTestString = function () {
-    var codePoints = [],
-        defaultCodePoints = [66, 69, 83, 98, 115, 119, 121];
+    var codePoints = [];
 
     if (this.ranges.length === 1 && this.ranges[0].start === 0x00 && this.ranges[0].end === 0x10ffff) {
-      codePoints = defaultCodePoints;
+      codePoints = [66, 69, 83, 98, 115, 119, 121];
     } else {
       for (var i = 0; i < this.ranges.length && codePoints.length < 7; i++) {
         var range = this.ranges[i];
@@ -110,12 +109,6 @@ goog.scope(function () {
             codePoints.push(j);
           }
         }
-      }
-
-      // This should only happen when the given unicode range consists
-      // only of control characters. Give up and use the default string.
-      if (codePoints.length === 0) {
-        codePoints = defaultCodePoints;
       }
     }
 

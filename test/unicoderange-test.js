@@ -109,8 +109,8 @@ describe('UnicodeRange', function () {
       expect(new UnicodeRange('u+41,u+48').toTestString()).to.eql('AH');
     });
 
-    it('uses the default test string when given only control characters', function () {
-      expect(new UnicodeRange('u+00').toTestString()).to.eql('BESbswy');
+    it('returns an empty string when given only control characters', function () {
+      expect(new UnicodeRange('u+00').toTestString()).to.eql('');
     });
 
     it('uses the first 7 characters when given a range including control characters', function () {
