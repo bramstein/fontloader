@@ -183,7 +183,7 @@ describe('FontFaceLoader', function () {
           ),
           loader = new FontFaceLoader(font);
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 50;
+      FontFaceLoader.DEFAULT_TIMEOUT = 200;
 
       loader.load().then(function (x) {
         done(new Error('Should not be called'));
@@ -222,7 +222,7 @@ describe('FontFaceLoader', function () {
       });
     });
 
-    it('should remove the stylesheet if the font fails to load', function (done) {
+    it('removes the stylesheet if the font fails to load', function (done) {
       var font = new FontFace(
             'test4',
             'url(unknown?#iefix) format(embedded-opentype),' +
@@ -231,7 +231,7 @@ describe('FontFaceLoader', function () {
           ),
           loader = new FontFaceLoader(font);
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 50;
+      FontFaceLoader.DEFAULT_TIMEOUT = 200;
 
       var count = document.styleSheets.length;
 
@@ -240,6 +240,114 @@ describe('FontFaceLoader', function () {
       }, function (r) {
         expect(document.styleSheets.length).to.eql(count);
         done();
+      });
+    });
+
+    it('loads a font with a custom unicode range within ASCII', function (done) {
+      var font = new FontFace(
+            'test5',
+            'url(assets/subset.eot?#iefix) format(embedded-opentype),' +
+            'url(assets/subset.woff) format(woff)',
+            {
+              unicodeRange: 'u+0021'
+            }
+          ),
+          loader = new FontFaceLoader(font),
+          ruler = new Ruler('\u0021'),
+          before = -1;
+
+      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+
+      ruler.insert();
+      ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
+
+      before = ruler.getWidth();
+      ruler.setStyle(font.getStyle());
+      loader.load().then(function (x) {
+        var active = ruler.getWidth();
+        expect(active).to.not.eql(before);
+        setTimeout(function () {
+          var after = ruler.getWidth();
+          expect(after).to.eql(active);
+          expect(after).to.not.eql(before);
+          ruler.remove();
+          done();
+        }, 0);
+      }, function (r) {
+        ruler.remove();
+        done(r);
+      });
+    });
+
+    it('loads a font with a custom unicode range outside ASCII (but within the BMP)', function (done) {
+      var font = new FontFace(
+            'test6',
+            'url(assets/subset.eot?#iefix) format(embedded-opentype),' +
+            'url(assets/subset.woff) format(woff)',
+            {
+              unicodeRange: 'u+4e2d,u+56fd'
+            }
+          ),
+          loader = new FontFaceLoader(font),
+          ruler = new Ruler('\u4e2d\u56fd'),
+          before = -1;
+
+      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+
+      ruler.insert();
+      ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
+
+      before = ruler.getWidth();
+      ruler.setStyle(font.getStyle());
+      loader.load().then(function (x) {
+        var active = ruler.getWidth();
+        expect(active).to.not.eql(before);
+        setTimeout(function () {
+          var after = ruler.getWidth();
+          expect(after).to.eql(active);
+          expect(after).to.not.eql(before);
+          ruler.remove();
+          done();
+        }, 0);
+      }, function (r) {
+        ruler.remove();
+        done(r);
+      });
+    });
+
+    it('loads a font with a custom unicode range outside the BMP', function (done) {
+      var font = new FontFace(
+            'test7',
+            'url(assets/subset.eot?#iefix) format(embedded-opentype),' +
+            'url(assets/subset.woff) format(woff)',
+            {
+              unicodeRange: 'u+10ffff'
+            }
+          ),
+          loader = new FontFaceLoader(font),
+          ruler = new Ruler('\udbff\udfff'),
+          before = -1;
+
+      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+
+      ruler.insert();
+      ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
+
+      before = ruler.getWidth();
+      ruler.setStyle(font.getStyle());
+      loader.load().then(function (x) {
+        var active = ruler.getWidth();
+        expect(active).to.not.eql(before);
+        setTimeout(function () {
+          var after = ruler.getWidth();
+          expect(after).to.eql(active);
+          expect(after).to.not.eql(before);
+          ruler.remove();
+          done();
+        }, 0);
+      }, function (r) {
+        ruler.remove();
+        done(r);
       });
     });
   });
