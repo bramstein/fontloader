@@ -80,10 +80,8 @@ goog.scope(function () {
    * @return {string}
    */
   UnicodeRange.prototype.encodeCodePoint = function (codePoint) {
-    if (codePoint >= 0x21 && codePoint <= 0x7e) {
+    if (codePoint <= 0xffff) {
       return String.fromCharCode(codePoint);
-    } else if (codePoint <= 0xffff) {
-      return '\\u' + (codePoint + 0x10000).toString(16).substr(-4);
     } else {
       return this.encodeCodePoint(Math.floor((codePoint - 0x10000) / 0x400) + 0xd800) +
              this.encodeCodePoint((codePoint - 0x10000) % 0x400 + 0xdc00);

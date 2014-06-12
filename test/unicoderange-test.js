@@ -76,17 +76,18 @@ describe('UnicodeRange', function () {
     });
 
     it('should encode control characters correctly', function () {
-      expect(unicodeRange.encodeCodePoint(0)).to.eql('\\u0000');
-      expect(unicodeRange.encodeCodePoint(127)).to.eql('\\u007f');
+      expect(unicodeRange.encodeCodePoint(0)).to.eql('\u0000');
+      expect(unicodeRange.encodeCodePoint(127)).to.eql('\u007f');
     });
 
     it('should always encode code points in the BMP that are not safe', function () {
-      expect(unicodeRange.encodeCodePoint(20013)).to.eql('\\u4e2d');
-      expect(unicodeRange.encodeCodePoint(22269)).to.eql('\\u56fd');
+      expect(unicodeRange.encodeCodePoint(20013)).to.eql('\u4e2d');
+      expect(unicodeRange.encodeCodePoint(22269)).to.eql('\u56fd');
     });
 
     it('should encode code points outside the BMP as surrogate pairs', function () {
-      expect(unicodeRange.encodeCodePoint(119558)).to.eql('\\ud834\\udf06');
+      expect(unicodeRange.encodeCodePoint(119558)).to.eql('\ud834\udf06');
+      expect(unicodeRange.encodeCodePoint(0x10ffff)).to.eql('\udbff\udfff');
     });
   });
 
@@ -117,11 +118,11 @@ describe('UnicodeRange', function () {
     });
 
     it('uses BMP characters as test string', function () {
-      expect(new UnicodeRange('u+4e2d,u+56fd').toTestString()).to.eql('\\u4e2d\\u56fd');
+      expect(new UnicodeRange('u+4e2d,u+56fd').toTestString()).to.eql('\u4e2d\u56fd');
     });
 
     it('correctly generates surrogate pairs for characters outside the BMP', function () {
-      expect(new UnicodeRange('u+1d306').toTestString()).to.eql('\\ud834\\udf06');
+      expect(new UnicodeRange('u+1d306').toTestString()).to.eql('\ud834\udf06');
     });
   });
 
