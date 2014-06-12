@@ -145,8 +145,8 @@ describe('FontFaceLoader', function () {
     it('should load a font and resolve the promise', function (done) {
       var font = new FontFace(
             'test1',
-            'url(assets/sourcesanspro/sourcesanspro-regular.eot?#iefix) format(embedded-opentype),' +
-            'url(assets/sourcesanspro/sourcesanspro-regular.woff) format(woff)',
+            'url(assets/sourcesanspro-regular.eot?#iefix) format(embedded-opentype),' +
+            'url(assets/sourcesanspro-regular.woff) format(woff)',
             {}
           ),
           loader = new FontFaceLoader(font),
@@ -195,8 +195,8 @@ describe('FontFaceLoader', function () {
     it('should load a font and resolve the promise even if the font is already loaded', function (done) {
       var font = new FontFace(
             'test3',
-            'url(assets/sourcesanspro/sourcesanspro-regular.eot?#iefix) format(embedded-opentype),' +
-            'url(assets/sourcesanspro/sourcesanspro-regular.woff) format(woff)',
+            'url(assets/sourcesanspro-regular.eot?#iefix) format(embedded-opentype),' +
+            'url(assets/sourcesanspro-regular.woff) format(woff)',
             {}
           ),
           loader = new FontFaceLoader(font),
