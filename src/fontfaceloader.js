@@ -51,7 +51,7 @@ goog.scope(function () {
         started = goog.now(),
         rulerA = new Ruler(this.text),
         rulerB = new Ruler(this.text),
-        head = document.head || document.getElementsByTagName('head')[0],
+        referenceElement = document.getElementsByTagName('script')[0],
         styleElement = document.createElement('style');
 
     return new Promise(function (resolve, reject) {
@@ -63,7 +63,7 @@ goog.scope(function () {
           if (goog.now() - started >= FontFaceLoader.DEFAULT_TIMEOUT) {
             rulerA.remove();
             rulerB.remove();
-            head.removeChild(styleElement);
+            referenceElement.parentNode.removeChild(styleElement);
             reject(new Error('Timeout'));
           } else {
             goog.global.setTimeout(function () {
@@ -77,27 +77,24 @@ goog.scope(function () {
         }
       }
 
-      if (head) {
-        styleElement.setAttribute('type', 'text/css');
+      styleElement.setAttribute('type', 'text/css');
 
-        if (styleElement.styleSheet) {
-          styleElement.styleSheet.cssText = css;
-        } else {
-          styleElement.appendChild(document.createTextNode(css));
-        }
-
-        head.appendChild(styleElement);
-
-        rulerA.insert();
-        rulerA.setStyle(util.extend({}, font.getStyle(), { 'font-family': font.family + ',sans-serif' }));
-
-        rulerB.insert();
-        rulerB.setStyle(util.extend({}, font.getStyle(), { 'font-family': font.family + ',serif' }));
-
-        check();
+      if (styleElement.styleSheet) {
+        styleElement.styleSheet.cssText = css;
       } else {
-        reject(new SyntaxError("Could not find 'head' element in document."));
+        styleElement.appendChild(document.createTextNode(css));
       }
+
+      referenceElement.parentNode.insertBefore(styleElement, referenceElement);
+      //head.appendChild(styleElement);
+
+      rulerA.insert();
+      rulerA.setStyle(util.extend({}, font.getStyle(), { 'font-family': font.family + ',sans-serif' }));
+
+      rulerB.insert();
+      rulerB.setStyle(util.extend({}, font.getStyle(), { 'font-family': font.family + ',serif' }));
+
+      check();
     });
   };
 
