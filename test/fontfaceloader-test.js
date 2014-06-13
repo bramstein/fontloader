@@ -153,6 +153,8 @@ describe('FontFaceLoader', function () {
           ruler = new Ruler('hello world'),
           before = -1;
 
+      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+
       ruler.insert();
       ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
 
@@ -183,7 +185,7 @@ describe('FontFaceLoader', function () {
           ),
           loader = new FontFaceLoader(font);
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+      FontFaceLoader.DEFAULT_TIMEOUT = 50;
 
       loader.load().then(function (x) {
         done(new Error('Should not be called'));
@@ -202,6 +204,8 @@ describe('FontFaceLoader', function () {
           loader = new FontFaceLoader(font),
           ruler = new Ruler('hello world'),
           before = -1;
+
+      FontFaceLoader.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
       ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
@@ -231,7 +235,7 @@ describe('FontFaceLoader', function () {
           ),
           loader = new FontFaceLoader(font);
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+      FontFaceLoader.DEFAULT_TIMEOUT = 50;
 
       var count = document.styleSheets.length;
 
