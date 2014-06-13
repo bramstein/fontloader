@@ -354,5 +354,25 @@ describe('FontFaceLoader', function () {
         done(r);
       });
     });
+
+    it('rejects the promise if the font loads but is given the wrong unicode range', function (done) {
+      var font = new FontFace(
+            'test2',
+            'url(assets/subset.eot?#iefix) format(embedded-opentype),' +
+            'url(assets/subset.woff) format(woff)',
+            {
+              unicodeRange: 'u+23' // not in the font
+            }
+          ),
+          loader = new FontFaceLoader(font);
+
+      FontFaceLoader.DEFAULT_TIMEOUT = 50;
+
+      loader.load().then(function (x) {
+        done(new Error('Should not be called'));
+      }, function (r) {
+        done();
+      });
+    });
   });
 });
