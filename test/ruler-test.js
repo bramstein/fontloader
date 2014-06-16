@@ -1,4 +1,4 @@
-describe('fontloader.Ruler', function () {
+describe('Ruler', function () {
   var Ruler = fontloader.Ruler;
 
   describe('#constructor', function () {

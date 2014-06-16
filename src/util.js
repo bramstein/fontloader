@@ -31,32 +31,4 @@ goog.scope(function () {
    * @return {boolean}
    */
   util.isArray = goog.isDef(Array.isArray) ? Array.isArray : util.nonNativeIsArray;
-
-  /**
-   *
-   * @param {Array.<*>} array
-   * @param {function(*, function(Error))} iterator
-   * @param {function(Error)=} opt_callback
-   */
-  util.forEach = function (array, iterator, opt_callback) {
-    var callback = opt_callback || goog.nullFunction(),
-        completedCount = 0;
-
-    if (!array.length) {
-      callback(null);
-    }
-
-    for (var i = 0; i < array.length; i += 1) {
-      iterator(array[i], function (err) {
-        if (err) {
-          callback(err);
-        } else {
-          completedCount += 1;
-          if (completedCount >= array.length) {
-            callback(null);
-          }
-        }
-      });
-    }
-  };
 });

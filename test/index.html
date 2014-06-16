@@ -9,6 +9,7 @@
   <body>
     <div id="mocha"></div>
     <script>CLOSURE_NO_DEPS = true;</script>
+    <script src="../vendor/bramstein/promise.min.js"></script>
     <script src="../vendor/google/base.js"></script>
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="../node_modules/expect.js/expect.js"></script>
@@ -20,15 +21,18 @@
       goog.require('fontloader');
       mocha.ui('bdd').reporter(Mocha.BrowserStack);
     </script>
-    <script src="./fontloader-test.js"></script>
-    <script src="./fontwatcher-test.js"></script>
-    <script src="./ruler-test.js"></script>
     <script src="./util-test.js"></script>
+    <script src="./range-test.js"></script>
+    <script src="./unicoderange-test.js"></script>
     <script src="./cssvalue-test.js"></script>
+    <script src="./ruler-test.js"></script>
+    <script src="./fontloader-test.js"></script>
+    <script src="./fontface-test.js"></script>
+    <script src="./fontfaceobserver-test.js"></script>
     <script>
       window.onload = function () {
         mocha.run();
-      };  
+      };
     </script>
   </body>
 </html>

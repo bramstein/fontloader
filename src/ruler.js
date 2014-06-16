@@ -1,11 +1,11 @@
 goog.provide('fontloader.Ruler');
 
 goog.require('fontloader.util');
-goog.require('fontloader.CSSValue');
+goog.require('fontloader.CssValue');
 
 goog.scope(function () {
   var util = fontloader.util,
-      CSSValue = fontloader.CSSValue;
+      CssValue = fontloader.CssValue;
 
   /**
    * @constructor
@@ -63,14 +63,14 @@ goog.scope(function () {
   };
 
   /**
-   * @param {fontloader.CSSValue} style
+   * @param {fontloader.CssValue} style
    *
    * @return {fontloader.Ruler}
    */
   Ruler.prototype.setStyle = function (style) {
     var styles = util.extend({}, style, Ruler.STYLES);
 
-    this.el.style.cssText = CSSValue.serialize(styles, true);
+    this.el.style.cssText = CssValue.serialize(styles, true);
     return this;
   };
 });

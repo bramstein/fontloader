@@ -1,4 +1,4 @@
-describe('fontloader.util', function () {
+describe('util', function () {
   var util = fontloader.util;
 
   describe('extend', function () {
@@ -34,46 +34,6 @@ describe('fontloader.util', function () {
       expect(util.isArray({})).to.be(false);
       expect(util.isArray(1)).to.be(false);
       expect(util.isArray('array')).to.be(false);
-    });
-  });
-
-  describe('forEach', function () {
-    it('iterates over an array and calls the complete callback', function (done) {
-      var result = [];
-      util.forEach([1, 2, 3], function (value, callback) {
-        result.push(value);
-        callback();
-      }, function () {
-        expect(result).to.eql([1, 2, 3]);
-        done();
-      });
-    });
-
-    it('iterates over an array and returns early when an error occurs', function (done) {
-      var result = [];
-
-      util.forEach([1, 2, 3], function (value, callback) {
-        if (value <= 2) {
-          result.push(value);
-          callback();
-        } else {
-          callback(new Error('Something went wrong'));
-        }
-      }, function (err) {
-        expect(result).to.eql([1, 2]);
-        expect(err).not.to.be(null);
-        done();
-      });
-    });
-
-    it('iterates over an array with an asynchronous work load', function (done) {
-      util.forEach([1, 2, 3], function (value, callback) {
-        setTimeout(function () {
-          callback();
-        }, value);
-      }, function (err) {
-        done();
-      });
     });
   });
 });
