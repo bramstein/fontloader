@@ -125,14 +125,14 @@ describe('FontFace', function () {
     });
 
     it('returns immediately if the font is already loaded', function () {
-      var font = new FontFace('My Family', 'url(font.woff)', {});
+      var font = new FontFace('My Family', 'url(unknown.woff)', {});
       font.status = FontFaceLoadStatus.LOADED;
 
       expect(font.load()).to.eql(font.promise);
     });
 
     it('resolves when the font loads', function (done) {
-      var font = new FontFace('My Family', 'url(font.woff)', {});
+      var font = new FontFace('My Family', 'url(unknown.woff)', {});
 
       FontFaceObserver.prototype.start = function () {
         return Promise.resolve(font);
@@ -148,7 +148,7 @@ describe('FontFace', function () {
     });
 
     it('resolves when the font loads with a delay', function (done) {
-      var font = new FontFace('My Family', 'url(font.woff)', {});
+      var font = new FontFace('My Family', 'url(unknown.woff)', {});
 
       FontFaceObserver.prototype.start = function () {
         return new Promise(function (resolve) {
@@ -168,7 +168,7 @@ describe('FontFace', function () {
     });
 
     it('rejects when the font fails to load', function (done) {
-      var font = new FontFace('My Family', 'url(font.woff)', {});
+      var font = new FontFace('My Family', 'url(unknown.woff)', {});
 
       FontFaceObserver.prototype.start = function () {
         return Promise.reject(font);
@@ -184,7 +184,7 @@ describe('FontFace', function () {
     });
 
     it('rejects when the font fails to load with a delay', function (done) {
-      var font = new FontFace('My Family', 'url(font.woff)', {});
+      var font = new FontFace('My Family', 'url(unknown.woff)', {});
 
       FontFaceObserver.prototype.start = function () {
         return new Promise(function (resolve, reject) {
