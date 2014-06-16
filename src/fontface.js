@@ -82,6 +82,11 @@ goog.scope(function () {
     this.testString;
 
     /**
+     * @type {Element}
+     */
+    this.styleElement = null;
+
+    /**
      * This attribute is non-standard and should not be used.
      *
      * @type {Promise}
@@ -151,23 +156,23 @@ goog.scope(function () {
    */
   FontFace.prototype.load = function () {
     var fontface = this,
-        referenceElement = document.getElementsByTagName('script')[0],
-        styleElement = document.createElement('style');
+        referenceElement = document.getElementsByTagName('script')[0];
 
     if (fontface['status'] !== FontFaceLoadStatus.UNLOADED) {
       return fontface['promise'];
     } else {
       fontface['status'] = FontFaceLoadStatus.LOADING;
 
-      styleElement.setAttribute('type', 'text/css');
+      fontface.styleElement = document.createElement('style');
+      fontface.styleElement.setAttribute('type', 'text/css');
 
-      if (styleElement.styleSheet) {
-        styleElement.styleSheet.cssText = fontface.toCss();
+      if (fontface.styleElement.styleSheet) {
+        fontface.styleElement.styleSheet.cssText = fontface.toCss();
       } else {
-        styleElement.appendChild(document.createTextNode(fontface.toCss()));
+        fontface.styleElement.appendChild(document.createTextNode(fontface.toCss()));
       }
 
-      referenceElement.parentNode.insertBefore(styleElement, referenceElement);
+      referenceElement.parentNode.insertBefore(fontface.styleElement, referenceElement);
 
       return fontface['promise'].then(function () {
         var observer = new FontFaceObserver(fontface).start();
@@ -175,12 +180,24 @@ goog.scope(function () {
         observer.then(function () {
           fontface['status'] = FontFaceLoadStatus.LOADED;
         }, function () {
+          fontface.unload();
           fontface['status'] = FontFaceLoadStatus.ERROR;
-          referenceElement.parentNode.removeChild(styleElement);
         });
         return observer;
       });
     }
+  };
+
+  /**
+   * Unloads this FontFace by removing the stylesheet
+   * from the document.
+   */
+  FontFace.prototype.unload = function () {
+    var fontface = this;
+
+    fontface.styleElement.parentNode.removeChild(fontface.styleElement);
+    fontface.styleElement = null;
+    fontface['status'] = FontFaceLoadStatus.UNLOADED;
   };
 
   /**
