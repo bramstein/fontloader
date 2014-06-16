@@ -203,23 +203,25 @@ describe('FontFace', function () {
       });
     });
 
-    it('loads immediately when given an arraybuffer', function (done) {
-      FontFaceLoader.prototype.load = function () {
-        return Promise.resolve('font');
-      };
+    if (window['ArrayBuffer']) {
+      it('loads immediately when given an arraybuffer', function (done) {
+        FontFaceLoader.prototype.load = function () {
+          return Promise.resolve('font');
+        };
 
-      var font = new FontFace('My Family', new ArrayBuffer(4), {});
+        var font = new FontFace('My Family', new ArrayBuffer(4), {});
 
-      expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+        expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
 
-      font.load().then(function (f) {
-        expect(font.status).to.eql(FontFaceLoadStatus.LOADED);
-        expect(f).to.eql('font');
-        done();
-      }, function (r) {
-        done(r);
+        font.load().then(function (f) {
+          expect(font.status).to.eql(FontFaceLoadStatus.LOADED);
+          expect(f).to.eql('font');
+          done();
+        }, function (r) {
+          done(r);
+        });
       });
-    });
+    }
   });
 
   describe('#toCss', function () {
