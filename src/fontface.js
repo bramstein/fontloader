@@ -225,6 +225,7 @@ goog.scope(function () {
   };
 
   /**
+   * @private
    * Returns a CSS representation of this FontFace.
    *
    * @return {string}
