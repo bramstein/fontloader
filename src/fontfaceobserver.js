@@ -45,14 +45,11 @@ goog.scope(function () {
    * @return {IThenable}
    */
   FontFaceObserver.prototype.start = function () {
-    var css = this.font.toCss(),
-        font = this.font,
-        that = this,
+    var that = this,
+        font = that.font,
         started = goog.now(),
-        rulerA = new Ruler(this.text),
-        rulerB = new Ruler(this.text),
-        referenceElement = document.getElementsByTagName('script')[0],
-        styleElement = document.createElement('style');
+        rulerA = new Ruler(that.text),
+        rulerB = new Ruler(that.text);
 
     return new Promise(function (resolve, reject) {
        function check() {
@@ -63,7 +60,6 @@ goog.scope(function () {
           if (goog.now() - started >= FontFaceObserver.DEFAULT_TIMEOUT) {
             rulerA.remove();
             rulerB.remove();
-            referenceElement.parentNode.removeChild(styleElement);
             reject(new Error('Timeout'));
           } else {
             goog.global.setTimeout(function () {
@@ -76,17 +72,6 @@ goog.scope(function () {
           resolve(that.font);
         }
       }
-
-      styleElement.setAttribute('type', 'text/css');
-
-      if (styleElement.styleSheet) {
-        styleElement.styleSheet.cssText = css;
-      } else {
-        styleElement.appendChild(document.createTextNode(css));
-      }
-
-      referenceElement.parentNode.insertBefore(styleElement, referenceElement);
-      //head.appendChild(styleElement);
 
       rulerA.insert();
       rulerA.setStyle(util.extend({}, font.getStyle(), { 'font-family': font.family + ',sans-serif' }));

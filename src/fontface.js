@@ -150,12 +150,24 @@ goog.scope(function () {
    * @return {IThenable}
    */
   FontFace.prototype.load = function () {
-    var fontface = this;
+    var fontface = this,
+        referenceElement = document.getElementsByTagName('script')[0],
+        styleElement = document.createElement('style');
 
     if (fontface['status'] !== FontFaceLoadStatus.UNLOADED) {
       return fontface['promise'];
     } else {
       fontface['status'] = FontFaceLoadStatus.LOADING;
+
+      styleElement.setAttribute('type', 'text/css');
+
+      if (styleElement.styleSheet) {
+        styleElement.styleSheet.cssText = fontface.toCss();
+      } else {
+        styleElement.appendChild(document.createTextNode(fontface.toCss()));
+      }
+
+      referenceElement.parentNode.insertBefore(styleElement, referenceElement);
 
       return fontface['promise'].then(function () {
         var observer = new FontFaceObserver(fontface).start();
@@ -164,6 +176,7 @@ goog.scope(function () {
           fontface['status'] = FontFaceLoadStatus.LOADED;
         }, function () {
           fontface['status'] = FontFaceLoadStatus.ERROR;
+          referenceElement.parentNode.removeChild(styleElement);
         });
         return observer;
       });

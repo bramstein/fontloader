@@ -149,7 +149,6 @@ describe('FontFaceObserver', function () {
             'url(assets/sourcesanspro-regular.woff) format(woff)',
             {}
           ),
-          loader = new FontFaceObserver(font),
           ruler = new Ruler('hello world'),
           before = -1;
 
@@ -160,7 +159,7 @@ describe('FontFaceObserver', function () {
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
-      loader.start().then(function (x) {
+      font.load().then(function (x) {
         var active = ruler.getWidth();
         expect(active).to.not.eql(before);
         setTimeout(function () {
@@ -182,12 +181,11 @@ describe('FontFaceObserver', function () {
             'url(unknown.eot?#iefix) format(embedded-opentype),' +
             'url(unknown.woff) format(woff)',
             {}
-          ),
-          loader = new FontFaceObserver(font);
+          );
 
       FontFaceObserver.DEFAULT_TIMEOUT = 50;
 
-      loader.start().then(function (x) {
+      font.load().then(function (x) {
         done(new Error('Should not be called'));
       }, function (r) {
         done();
@@ -201,7 +199,6 @@ describe('FontFaceObserver', function () {
             'url(assets/sourcesanspro-regular.woff) format(woff)',
             {}
           ),
-          loader = new FontFaceObserver(font),
           ruler = new Ruler('hello world'),
           before = -1;
 
@@ -212,8 +209,8 @@ describe('FontFaceObserver', function () {
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
-      loader.start().then(function (x) {
-        loader.start().then(function (x) {
+      font.load().then(function (x) {
+        font.load().then(function (x) {
           ruler.remove();
           done();
         }, function (r) {
@@ -232,14 +229,13 @@ describe('FontFaceObserver', function () {
             'url(unknown?#iefix) format(embedded-opentype),' +
             'url(unknown.woff) format(woff)',
             {}
-          ),
-          loader = new FontFaceObserver(font);
+          );
 
       FontFaceObserver.DEFAULT_TIMEOUT = 50;
 
       var count = document.styleSheets.length;
 
-      loader.start().then(function () {
+      font.load().then(function () {
         done(new Error('Should not call resolve'));
       }, function (r) {
         expect(document.styleSheets.length).to.eql(count);
@@ -256,7 +252,6 @@ describe('FontFaceObserver', function () {
               unicodeRange: 'u+0021'
             }
           ),
-          loader = new FontFaceObserver(font),
           ruler = new Ruler('\u0021'),
           before = -1;
 
@@ -267,7 +262,7 @@ describe('FontFaceObserver', function () {
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
-      loader.start().then(function (x) {
+      font.load().then(function (x) {
         var active = ruler.getWidth();
         expect(active).to.not.eql(before);
         setTimeout(function () {
@@ -292,7 +287,6 @@ describe('FontFaceObserver', function () {
               unicodeRange: 'u+4e2d,u+56fd'
             }
           ),
-          loader = new FontFaceObserver(font),
           ruler = new Ruler('\u4e2d\u56fd'),
           before = -1;
 
@@ -303,7 +297,7 @@ describe('FontFaceObserver', function () {
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
-      loader.start().then(function (x) {
+      font.load().then(function (x) {
         var active = ruler.getWidth();
         expect(active).to.not.eql(before);
         setTimeout(function () {
@@ -328,7 +322,6 @@ describe('FontFaceObserver', function () {
               unicodeRange: 'u+10ffff'
             }
           ),
-          loader = new FontFaceObserver(font),
           ruler = new Ruler('\udbff\udfff'),
           before = -1;
 
@@ -339,7 +332,7 @@ describe('FontFaceObserver', function () {
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
-      loader.start().then(function (x) {
+      font.load().then(function (x) {
         var active = ruler.getWidth();
         expect(active).to.not.eql(before);
         setTimeout(function () {
@@ -363,12 +356,11 @@ describe('FontFaceObserver', function () {
             {
               unicodeRange: 'u+23' // not in the font
             }
-          ),
-          loader = new FontFaceObserver(font);
+          );
 
       FontFaceObserver.DEFAULT_TIMEOUT = 50;
 
-      loader.start().then(function (x) {
+      font.load().then(function (x) {
         done(new Error('Should not be called'));
       }, function (r) {
         done();
