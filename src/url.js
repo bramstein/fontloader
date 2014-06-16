@@ -16,7 +16,7 @@ goog.scope(function () {
   Url.prototype.toString = function () {
     var result = 'url(' + encodeURIComponent(this.url) + ')';
     if (this.format) {
-      result += ' format(' + this.format + ')';
+      result += ' format(\'' + this.format + '\')';
     }
     return result;
   };
