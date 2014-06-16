@@ -1,4 +1,4 @@
-goog.provide('fontloader.FontFaceLoader');
+goog.provide('fontloader.FontFaceObserver');
 
 goog.require('fontloader.Ruler');
 goog.require('fontloader.util');
@@ -11,7 +11,7 @@ goog.scope(function () {
    * @constructor
    * @param {fontloader.FontFace} font
    */
-  fontloader.FontFaceLoader = function (font) {
+  fontloader.FontFaceObserver = function (font) {
     this.font = font;
 
     /**
@@ -39,12 +39,12 @@ goog.scope(function () {
     ruler.remove();
   };
 
-  var FontFaceLoader = fontloader.FontFaceLoader;
+  var FontFaceObserver = fontloader.FontFaceObserver;
 
   /**
    * @return {IThenable}
    */
-  FontFaceLoader.prototype.load = function () {
+  FontFaceObserver.prototype.start = function () {
     var css = this.font.toCss(),
         font = this.font,
         that = this,
@@ -60,7 +60,7 @@ goog.scope(function () {
             widthB = rulerB.getWidth();
 
         if (that.isFallbackFont(widthA, widthB) || that.isLastResortFont(widthA, widthB)) {
-          if (goog.now() - started >= FontFaceLoader.DEFAULT_TIMEOUT) {
+          if (goog.now() - started >= FontFaceObserver.DEFAULT_TIMEOUT) {
             rulerA.remove();
             rulerB.remove();
             referenceElement.parentNode.removeChild(styleElement);
@@ -101,18 +101,18 @@ goog.scope(function () {
   /**
    * @type {number}
    */
-  FontFaceLoader.DEFAULT_TIMEOUT = 3000;
+  FontFaceObserver.DEFAULT_TIMEOUT = 3000;
 
   /**
    * @type {null|boolean}
    */
-  FontFaceLoader.HAS_WEBKIT_FALLBACK_BUG = null;
+  FontFaceObserver.HAS_WEBKIT_FALLBACK_BUG = null;
 
   /**
    * @private
    * @return {string}
    */
-  FontFaceLoader.prototype.getUserAgent = function () {
+  FontFaceObserver.prototype.getUserAgent = function () {
     return goog.global.navigator.userAgent;
   };
 
@@ -122,16 +122,16 @@ goog.scope(function () {
    *
    * @return {boolean}
    */
-  FontFaceLoader.prototype.hasWebKitFallbackBug = function () {
-    if (goog.isNull(FontFaceLoader.HAS_WEBKIT_FALLBACK_BUG)) {
+  FontFaceObserver.prototype.hasWebKitFallbackBug = function () {
+    if (goog.isNull(FontFaceObserver.HAS_WEBKIT_FALLBACK_BUG)) {
       var match = /AppleWeb[kK]it\/([0-9]+)(?:\.([0-9]+))/.exec(this.getUserAgent());
 
-      FontFaceLoader.HAS_WEBKIT_FALLBACK_BUG = !!match &&
+      FontFaceObserver.HAS_WEBKIT_FALLBACK_BUG = !!match &&
                                             (parseInt(match[1], 10) < 536 ||
                                              (parseInt(match[1], 10) === 536 &&
                                               parseInt(match[2], 10) <= 11));
     }
-    return FontFaceLoader.HAS_WEBKIT_FALLBACK_BUG;
+    return FontFaceObserver.HAS_WEBKIT_FALLBACK_BUG;
   };
 
   /**
@@ -140,7 +140,7 @@ goog.scope(function () {
    * @return {boolean}
    * @private
    */
-  FontFaceLoader.prototype.isFallbackFont = function (widthA, widthB) {
+  FontFaceObserver.prototype.isFallbackFont = function (widthA, widthB) {
     return widthA === this.cache.sansserif &&
            widthB === this.cache.serif;
   };
@@ -151,7 +151,7 @@ goog.scope(function () {
    * @return {boolean}
    * @private
    */
-  FontFaceLoader.prototype.isLastResortFont = function (widthA, widthB) {
+  FontFaceObserver.prototype.isLastResortFont = function (widthA, widthB) {
     return this.hasWebKitFallbackBug() &&
            ((widthA === this.cache.sansserif &&
              widthB === this.cache.sansserif) ||

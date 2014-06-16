@@ -1,13 +1,13 @@
 goog.provide('fontloader.FontFace');
 
 goog.require('fontloader.FontFaceLoadStatus');
-goog.require('fontloader.FontFaceLoader');
+goog.require('fontloader.FontFaceObserver');
 goog.require('fontloader.CssValue');
 goog.require('fontloader.UnicodeRange');
 goog.require('fontloader.util');
 
 goog.scope(function () {
-  var FontFaceLoader = fontloader.FontFaceLoader,
+  var FontFaceObserver = fontloader.FontFaceObserver,
       FontFaceLoadStatus = fontloader.FontFaceLoadStatus,
       CssValue = fontloader.CssValue,
       UnicodeRange = fontloader.UnicodeRange,
@@ -158,14 +158,14 @@ goog.scope(function () {
       fontface['status'] = FontFaceLoadStatus.LOADING;
 
       return fontface['promise'].then(function () {
-        var loader = new FontFaceLoader(fontface).load();
+        var observer = new FontFaceObserver(fontface).start();
 
-        loader.then(function () {
+        observer.then(function () {
           fontface['status'] = FontFaceLoadStatus.LOADED;
         }, function () {
           fontface['status'] = FontFaceLoadStatus.ERROR;
         });
-        return loader;
+        return observer;
       });
     }
   };

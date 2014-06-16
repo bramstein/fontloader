@@ -1,6 +1,6 @@
 describe('FontFace', function () {
   var FontFace = fontloader.FontFace,
-      FontFaceLoader = fontloader.FontFaceLoader,
+      FontFaceObserver = fontloader.FontFaceObserver,
       FontFaceLoadStatus = fontloader.FontFaceLoadStatus;
 
   describe('#constructor', function () {
@@ -114,14 +114,14 @@ describe('FontFace', function () {
   });
 
   describe('#load', function () {
-    var loadMethod = null;
+    var startMethod = null;
 
     beforeEach(function () {
-      loadMethod = FontFaceLoader.prototype.load;
+      startMethod = FontFaceObserver.prototype.start;
     });
 
     afterEach(function () {
-      FontFaceLoader.prototype.load = loadMethod;
+      FontFaceObserver.prototype.start = startMethod;
     });
 
     it('returns immediately if the font is already loaded', function () {
@@ -134,7 +134,7 @@ describe('FontFace', function () {
     it('resolves when the font loads', function (done) {
       var font = new FontFace('My Family', 'url(font.woff)', {});
 
-      FontFaceLoader.prototype.load = function () {
+      FontFaceObserver.prototype.start = function () {
         return Promise.resolve(font);
       };
 
@@ -150,7 +150,7 @@ describe('FontFace', function () {
     it('resolves when the font loads with a delay', function (done) {
       var font = new FontFace('My Family', 'url(font.woff)', {});
 
-      FontFaceLoader.prototype.load = function () {
+      FontFaceObserver.prototype.start = function () {
         return new Promise(function (resolve) {
           setTimeout(function () {
             resolve(font);
@@ -170,7 +170,7 @@ describe('FontFace', function () {
     it('rejects when the font fails to load', function (done) {
       var font = new FontFace('My Family', 'url(font.woff)', {});
 
-      FontFaceLoader.prototype.load = function () {
+      FontFaceObserver.prototype.start = function () {
         return Promise.reject(font);
       };
 
@@ -186,7 +186,7 @@ describe('FontFace', function () {
     it('rejects when the font fails to load with a delay', function (done) {
       var font = new FontFace('My Family', 'url(font.woff)', {});
 
-      FontFaceLoader.prototype.load = function () {
+      FontFaceObserver.prototype.start = function () {
         return new Promise(function (resolve, reject) {
           setTimeout(function () {
             reject(font);
@@ -205,7 +205,7 @@ describe('FontFace', function () {
 
     if (window['ArrayBuffer']) {
       it('loads immediately when given an arraybuffer', function (done) {
-        FontFaceLoader.prototype.load = function () {
+        FontFaceObserver.prototype.start = function () {
           return Promise.resolve('font');
         };
 

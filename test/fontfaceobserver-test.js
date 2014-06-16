@@ -1,5 +1,5 @@
-describe('FontFaceLoader', function () {
-  var FontFaceLoader = fontloader.FontFaceLoader,
+describe('FontFaceObserver', function () {
+  var FontFaceObserver = fontloader.FontFaceObserver,
       FontFace = fontloader.FontFace,
       Ruler = fontloader.Ruler,
       util = fontloader.util;
@@ -7,7 +7,7 @@ describe('FontFaceLoader', function () {
   describe('#constructor', function () {
     it('should accept a FontFace instance an initialise the font cache', function () {
       var font = new FontFace('Test', 'url(unknown.woff)', {}),
-          loader = new FontFaceLoader(font);
+          loader = new FontFaceObserver(font);
 
       expect(loader.cache).to.not.be(undefined);
       expect(loader.cache.sansserif).to.not.be(0);
@@ -22,7 +22,7 @@ describe('FontFaceLoader', function () {
 
     beforeEach(function () {
       font = new FontFace('Test', 'url(unknown.woff)', {});
-      loader = new FontFaceLoader(font);
+      loader = new FontFaceObserver(font);
 
       loader.cache = {
         sansserif: 10,
@@ -47,7 +47,7 @@ describe('FontFaceLoader', function () {
 
     beforeEach(function () {
       font = new FontFace('Test', 'url(unknown.woff)', {});
-      loader = new FontFaceLoader(font);
+      loader = new FontFaceObserver(font);
 
       loader.cache = {
         sansserif: 10,
@@ -55,11 +55,11 @@ describe('FontFaceLoader', function () {
         monospace: 15
       };
 
-      FontFaceLoader.HAS_WEBKIT_FALLBACK_BUG = true;
+      FontFaceObserver.HAS_WEBKIT_FALLBACK_BUG = true;
     });
 
     it('returns false when the WebKit fallback bug is not present even if it matches a last resort font', function () {
-      FontFaceLoader.HAS_WEBKIT_FALLBACK_BUG = false;
+      FontFaceObserver.HAS_WEBKIT_FALLBACK_BUG = false;
 
       expect(loader.isLastResortFont(10, 10)).to.be(false);
       expect(loader.isLastResortFont(12, 12)).to.be(false);
@@ -85,9 +85,9 @@ describe('FontFaceLoader', function () {
 
     beforeEach(function () {
       font = new FontFace('Test', 'url(unknown.woff)', {});
-      loader = new FontFaceLoader(font);
+      loader = new FontFaceObserver(font);
 
-      FontFaceLoader.HAS_WEBKIT_FALLBACK_BUG = null;
+      FontFaceObserver.HAS_WEBKIT_FALLBACK_BUG = null;
 
       getUserAgent = sinon.stub(loader, 'getUserAgent');
     });
@@ -131,15 +131,15 @@ describe('FontFaceLoader', function () {
     });
   });
 
-  describe('#load', function () {
+  describe('#start', function () {
     var defaultTimeout = null;
 
     beforeEach(function () {
-      defaultTimeout = FontFaceLoader.DEFAULT_TIMEOUT;
+      defaultTimeout = FontFaceObserver.DEFAULT_TIMEOUT;
     });
 
     afterEach(function () {
-      FontFaceLoader.DEFAULT_TIMEOUT = defaultTimeout;
+      FontFaceObserver.DEFAULT_TIMEOUT = defaultTimeout;
     });
 
     it('should load a font and resolve the promise', function (done) {
@@ -149,18 +149,18 @@ describe('FontFaceLoader', function () {
             'url(assets/sourcesanspro-regular.woff) format(woff)',
             {}
           ),
-          loader = new FontFaceLoader(font),
+          loader = new FontFaceObserver(font),
           ruler = new Ruler('hello world'),
           before = -1;
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+      FontFaceObserver.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
       ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
-      loader.load().then(function (x) {
+      loader.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active).to.not.eql(before);
         setTimeout(function () {
@@ -183,11 +183,11 @@ describe('FontFaceLoader', function () {
             'url(unknown.woff) format(woff)',
             {}
           ),
-          loader = new FontFaceLoader(font);
+          loader = new FontFaceObserver(font);
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 50;
+      FontFaceObserver.DEFAULT_TIMEOUT = 50;
 
-      loader.load().then(function (x) {
+      loader.start().then(function (x) {
         done(new Error('Should not be called'));
       }, function (r) {
         done();
@@ -201,19 +201,19 @@ describe('FontFaceLoader', function () {
             'url(assets/sourcesanspro-regular.woff) format(woff)',
             {}
           ),
-          loader = new FontFaceLoader(font),
+          loader = new FontFaceObserver(font),
           ruler = new Ruler('hello world'),
           before = -1;
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+      FontFaceObserver.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
       ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
-      loader.load().then(function (x) {
-        loader.load().then(function (x) {
+      loader.start().then(function (x) {
+        loader.start().then(function (x) {
           ruler.remove();
           done();
         }, function (r) {
@@ -233,13 +233,13 @@ describe('FontFaceLoader', function () {
             'url(unknown.woff) format(woff)',
             {}
           ),
-          loader = new FontFaceLoader(font);
+          loader = new FontFaceObserver(font);
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 50;
+      FontFaceObserver.DEFAULT_TIMEOUT = 50;
 
       var count = document.styleSheets.length;
 
-      loader.load().then(function () {
+      loader.start().then(function () {
         done(new Error('Should not call resolve'));
       }, function (r) {
         expect(document.styleSheets.length).to.eql(count);
@@ -256,18 +256,18 @@ describe('FontFaceLoader', function () {
               unicodeRange: 'u+0021'
             }
           ),
-          loader = new FontFaceLoader(font),
+          loader = new FontFaceObserver(font),
           ruler = new Ruler('\u0021'),
           before = -1;
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+      FontFaceObserver.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
       ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
-      loader.load().then(function (x) {
+      loader.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active).to.not.eql(before);
         setTimeout(function () {
@@ -292,18 +292,18 @@ describe('FontFaceLoader', function () {
               unicodeRange: 'u+4e2d,u+56fd'
             }
           ),
-          loader = new FontFaceLoader(font),
+          loader = new FontFaceObserver(font),
           ruler = new Ruler('\u4e2d\u56fd'),
           before = -1;
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+      FontFaceObserver.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
       ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
-      loader.load().then(function (x) {
+      loader.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active).to.not.eql(before);
         setTimeout(function () {
@@ -328,18 +328,18 @@ describe('FontFaceLoader', function () {
               unicodeRange: 'u+10ffff'
             }
           ),
-          loader = new FontFaceLoader(font),
+          loader = new FontFaceObserver(font),
           ruler = new Ruler('\udbff\udfff'),
           before = -1;
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 200;
+      FontFaceObserver.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
       ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
-      loader.load().then(function (x) {
+      loader.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active).to.not.eql(before);
         setTimeout(function () {
@@ -364,11 +364,11 @@ describe('FontFaceLoader', function () {
               unicodeRange: 'u+23' // not in the font
             }
           ),
-          loader = new FontFaceLoader(font);
+          loader = new FontFaceObserver(font);
 
-      FontFaceLoader.DEFAULT_TIMEOUT = 50;
+      FontFaceObserver.DEFAULT_TIMEOUT = 50;
 
-      loader.load().then(function (x) {
+      loader.start().then(function (x) {
         done(new Error('Should not be called'));
       }, function (r) {
         done();
