@@ -171,6 +171,26 @@ goog.scope(function () {
   };
 
   /**
+   * @param {fontloader.FontFace} other
+   * @return true if this FontFace equals other
+   */
+  FontFace.prototype.equals = function (other) {
+    var fontface = this;
+
+    // This equality is based on whether a browser considers
+    // the font to be equal. Even though this FontFace might
+    // point to a different font, it is considerd the same
+    // if these properties are identical.
+    return fontface['family'] === other['family'] &&
+           fontface['style'] === other['style'] &&
+           fontface['weight'] === other['weight'] &&
+           fontface['stretch'] === other['stretch'] &&
+           fontface['variant'] === other['variant'] &&
+           fontface['unicodeRange'] === other['unicodeRange'] &&
+           fontface['featureSettings'] === other['featureSettings'];
+  };
+
+  /**
    * Returns all the CSS properties to apply
    * this FontFace to an element.
    *

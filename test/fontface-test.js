@@ -228,4 +228,37 @@ describe('FontFace', function () {
       expect(font.toCss()).to.eql('@font-face{font-family:My Family;font-style:normal;font-weight:normal;font-stretch:normal;font-variant:normal;font-feature-settings:normal;-moz-font-feature-settings:normal;-webkit-font-feature-settings:normal;unicode-range:u+0-10ffff;src:url(font.woff)}');
     });
   });
+
+  describe('#equals', function () {
+    it('equals the same font', function () {
+      var font = new FontFace('My Family', 'url(font.woff)', {});
+
+      expect(font.equals(font)).to.be(true);
+    });
+
+    it('does not equal a different font', function () {
+      var font = new FontFace('My Family', 'url(font.woff)', {}),
+          other = new FontFace('My Other Family', 'url(font.woff)', {});
+
+      expect(font.equals(other)).to.be(false);
+    });
+
+    it('equals the same font with the same descriptors', function () {
+      var font = new FontFace('My Family', 'url(font.woff)', {
+            weight: 'bold'
+          }),
+          other = new FontFace('My Family', 'url(font.woff)', {
+            weight: 'bold'
+          });
+
+      expect(font.equals(other)).to.be(true);
+    });
+
+    it('equals the same font even if the font data is different', function () {
+      var font = new FontFace('My Family', 'url(font.woff)', {}),
+          other = new FontFace('My Family', 'url(other.woff)', {});
+
+      expect(font.equals(other)).to.be(true);
+    });
+  });
 });
