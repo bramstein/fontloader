@@ -76,6 +76,108 @@ goog.scope(function () {
   };
 
   /**
+   * @private
+   * @enum {number}
+   */
+  CssValue.ParserState = {
+    VARIATION: 1,
+    LINE_HEIGHT: 2,
+    FONT_FAMILY: 3,
+    BEFORE_FONT_FAMILY: 4
+  };
+
+  /**
+   * @param {string} str
+   * @return {fontloader.CssValue}
+   */
+  CssValue.parse = function (str) {
+    var state = CssValue.ParserState.VARIATION,
+        buffer = '',
+        result = {
+          'font-family': []
+        };
+
+    for (var c, i = 0; c = str.charAt(i); i += 1) {
+      if (state === CssValue.ParserState.BEFORE_FONT_FAMILY && (c === '"' || c === "'")) {
+        var index = i + 1;
+
+        // consume the entire string
+        do {
+          index = str.indexOf(c, index) + 1;
+          if (!index) {
+            // If a string is not closed by a ' or " return null.
+            return null;
+          }
+        } while (str.charAt(index - 2) === '\\');
+
+        result['font-family'].push(str.slice(i, index));
+
+        i = index - 1;
+        state = CssValue.ParserState.FONT_FAMILY;
+        buffer = '';
+      } else if (state === CssValue.ParserState.FONT_FAMILY && c === ',') {
+        state = CssValue.ParserState.BEFORE_FONT_FAMILY;
+        buffer = '';
+      } else if (state === CssValue.ParserState.BEFORE_FONT_FAMILY && c === ',') {
+        var identifier = CssValue.Parsers.FAMILY(buffer);
+
+        if (identifier) {
+          result['font-family'].push(identifier);
+        }
+        buffer = '';
+      } else if (state === CssValue.ParserState.VARIATION && (c === ' ' || c === '/')) {
+        if (/^((xx|x)-large|(xx|s)-small|small|large|medium)$/.test(buffer) ||
+            /^(larg|small)er$/.test(buffer) ||
+            /^(\+|-)?([0-9]*\.)?[0-9]+(em|ex|ch|rem|vh|vw|vmin|vmax|px|mm|cm|in|pt|pc|%)$/.test(buffer)) {
+          if (c === '/') {
+            state = CssValue.ParserState.LINE_HEIGHT;
+          } else {
+            state = CssValue.ParserState.BEFORE_FONT_FAMILY;
+          }
+          result['font-size'] = buffer;
+        } else if (CssValue.Parsers.STYLE(buffer)) {
+          result['font-style'] = buffer;
+        } else if (CssValue.Parsers.VARIANT(buffer)) {
+          result['font-variant'] = buffer;
+        } else if (CssValue.Parsers.WEIGHT(buffer)) {
+          result['font-weight'] = buffer;
+        } else if (CssValue.Parsers.STRETCH(buffer)) {
+          result['font-stretch'] = buffer;
+        }
+        buffer = '';
+      } else if (state === CssValue.ParserState.LINE_HEIGHT && c === ' ') {
+        if (/^(\+|-)?([0-9]*\.)?[0-9]+(em|ex|ch|rem|vh|vw|vmin|vmax|px|mm|cm|in|pt|pc|%)?$/.test(buffer)) {
+          result['line-height'] = buffer;
+        }
+        state = CssValue.ParserState.BEFORE_FONT_FAMILY;
+        buffer = '';
+      } else {
+        buffer += c;
+      }
+    }
+
+    // This is for the case where a string was specified followed by
+    // an identifier, but without a separating comma.
+    if (state === CssValue.ParserState.FONT_FAMILY && !/^\s*$/.test(buffer)) {
+      return null;
+    }
+
+    if (state === CssValue.ParserState.BEFORE_FONT_FAMILY) {
+      var identifier = CssValue.Parsers.FAMILY(buffer);
+
+      if (identifier) {
+        result['font-family'].push(identifier);
+      }
+    }
+
+    if (result['font-size'] && result['font-family'].length) {
+      return result;
+    } else {
+      return null;
+    }
+  };
+
+  /**
    * @param {fontloader.CssValue} value
    * @param {boolean=} opt_important
    * @return {string}
