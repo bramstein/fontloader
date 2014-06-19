@@ -163,7 +163,7 @@ describe('FontFaceSet', function () {
     it('returns an empty array', function () {
       var set = new FontFaceSet();
 
-      expect(set.match('300px MyFamily', 'test'), 'to have length', 0);
+      expect(set.match('300px "My Family"'), 'to have length', 0);
     });
 
     it('returns one match', function () {
@@ -173,6 +173,37 @@ describe('FontFaceSet', function () {
       set.add(font);
 
       expect(set.match('16px "My Family"'), 'to equal', [font]);
+    });
+
+    it('returns two matches', function () {
+      var set = new FontFaceSet(),
+          font1 = new FontFace('My Family', 'url(font.woff)', {}),
+          font2 = new FontFace('My Other Family', 'url(font.woff)', {});
+
+      set.add(font1);
+      set.add(font2);
+
+      expect(set.match('16px "My Family", "My Other Family"'), 'to equal', [font1, font2]);
+    });
+
+    it('returns one match out of two possible', function () {
+      var set = new FontFaceSet(),
+          font1 = new FontFace('My Family', 'url(font.woff)', {}),
+          font2 = new FontFace('My Other Family', 'url(font.woff)', {});
+
+      set.add(font1);
+      set.add(font2);
+
+      expect(set.match('16px "My Other Family"'), 'to equal', [font2]);
+    });
+
+    it('rejects a match because of a mismatching unicode range', function () {
+      var set = new FontFaceSet(),
+          font = new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'u+0' });
+
+      set.add(font);
+
+      expect(set.match('16px "My Family"'), 'to equal', []);
     });
   });
 });
