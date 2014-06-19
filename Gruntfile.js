@@ -45,7 +45,10 @@ module.exports = function (grunt) {
         "-W030": true,
 
         // Don't make functions within loops
-        "-W083": true
+        "-W083": true,
+
+        // Wrap the /regexp/ literal in parens to disambiguate the slash operator
+        "-W092": true
       }
     },
     closurecompiler: {
