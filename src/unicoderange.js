@@ -52,18 +52,18 @@ goog.scope(function () {
         tmp = {};
 
     for (var i = 0; i < str.length; i++) {
-      var codePoint = str.charCodeAt(i);
+      var charCode = str.charCodeAt(i);
 
-      if ((codePoint & 0xF800) === 0xD800 && i < str.length) {
-        var nextCodePoint = str.charCodeAt(i + 1);
-        if ((nextCodePoint & 0xFC00) === 0xDC00) {
-          tmp[((codePoint & 0x3FF) << 10) + (nextCodePoint & 0x3FF) + 0x10000] = true;
+      if ((charCode & 0xF800) === 0xD800 && i < str.length) {
+        var nextCharCode = str.charCodeAt(i + 1);
+        if ((nextCharCode & 0xFC00) === 0xDC00) {
+          tmp[((charCode & 0x3FF) << 10) + (nextCharCode & 0x3FF) + 0x10000] = true;
         } else {
-          tmp[codePoint] = true;
+          tmp[charCode] = true;
         }
         i++;
       } else {
-        tmp[codePoint] = true;
+        tmp[charCode] = true;
       }
     }
 
@@ -129,8 +129,8 @@ goog.scope(function () {
 
     var result = '';
 
-    for (var i = 0; i < codePoints.length; i++) {
-      result += this.encodeCodePoint(codePoints[i]);
+    for (var l = 0; l < codePoints.length; l++) {
+      result += this.encodeCodePoint(codePoints[l]);
     }
 
     return result;
