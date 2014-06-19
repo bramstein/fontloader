@@ -94,7 +94,13 @@ goog.scope(function () {
     var state = CssValue.ParserState.VARIATION,
         buffer = '',
         result = {
-          'font-family': []
+          family: [],
+          size: null,
+          style: 'normal',
+          variant: 'normal',
+          weight: 'normal',
+          stretch: 'normal',
+          lineHeight: 'normal'
         };
 
     for (var c, i = 0; c = str.charAt(i); i += 1) {
@@ -110,7 +116,7 @@ goog.scope(function () {
           }
         } while (str.charAt(index - 2) === '\\');
 
-        result['font-family'].push(str.slice(i + 1, index - 1));
+        result.family.push(str.slice(i + 1, index - 1));
 
         i = index - 1;
         state = CssValue.ParserState.FONT_FAMILY;
@@ -122,7 +128,7 @@ goog.scope(function () {
         var identifier = CssValue.Parsers.FAMILY(buffer);
 
         if (identifier) {
-          result['font-family'].push(identifier);
+          result.family.push(identifier);
         }
         buffer = '';
       } else if (state === CssValue.ParserState.VARIATION && (c === ' ' || c === '/')) {
@@ -134,20 +140,20 @@ goog.scope(function () {
           } else {
             state = CssValue.ParserState.BEFORE_FONT_FAMILY;
           }
-          result['font-size'] = buffer;
+          result.size = buffer;
         } else if (CssValue.Parsers.STYLE(buffer)) {
-          result['font-style'] = buffer;
+          result.style = buffer;
         } else if (CssValue.Parsers.VARIANT(buffer)) {
-          result['font-variant'] = buffer;
+          result.variant = buffer;
         } else if (CssValue.Parsers.WEIGHT(buffer)) {
-          result['font-weight'] = buffer;
+          result.weight = buffer;
         } else if (CssValue.Parsers.STRETCH(buffer)) {
-          result['font-stretch'] = buffer;
+          result.stretch = buffer;
         }
         buffer = '';
       } else if (state === CssValue.ParserState.LINE_HEIGHT && c === ' ') {
         if (/^(\+|-)?([0-9]*\.)?[0-9]+(em|ex|ch|rem|vh|vw|vmin|vmax|px|mm|cm|in|pt|pc|%)?$/.test(buffer)) {
-          result['line-height'] = buffer;
+          result.lineHeight = buffer;
         }
         state = CssValue.ParserState.BEFORE_FONT_FAMILY;
         buffer = '';
@@ -166,11 +172,11 @@ goog.scope(function () {
       var identifier = CssValue.Parsers.FAMILY(buffer);
 
       if (identifier) {
-        result['font-family'].push(identifier);
+        result.family.push(identifier);
       }
     }
 
-    if (result['font-size'] && result['font-family'].length) {
+    if (result.size && result.family.length) {
       return result;
     } else {
       return null;
