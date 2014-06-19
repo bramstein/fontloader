@@ -110,7 +110,7 @@ goog.scope(function () {
           }
         } while (str.charAt(index - 2) === '\\');
 
-        result['font-family'].push(str.slice(i, index));
+        result['font-family'].push(str.slice(i + 1, index - 1));
 
         i = index - 1;
         state = CssValue.ParserState.FONT_FAMILY;
