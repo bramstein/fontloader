@@ -93,6 +93,7 @@ goog.scope(function () {
   CssValue.parse = function (str) {
     var state = CssValue.ParserState.VARIATION,
         buffer = '',
+        c = null,
         result = {
           family: [],
           size: null,
@@ -103,7 +104,8 @@ goog.scope(function () {
           lineHeight: 'normal'
         };
 
-    for (var c, i = 0; c = str.charAt(i); i += 1) {
+    for (var i = 0; i < str.length; i += 1) {
+      c = str.charAt(i);
       if (state === CssValue.ParserState.BEFORE_FONT_FAMILY && (c === '"' || c === "'")) {
         var index = i + 1;
 
