@@ -7,20 +7,20 @@ describe('FontFace', function () {
     it('throws when called without arguments', function () {
       expect(function () {
         new FontFace();
-      }).to.throwException();
+      }, 'to throw exception');
     });
 
     it('throws when called with less than three arguments', function () {
       expect(function () {
         new FontFace('My Family');
-      }).to.throwException();
+      }, 'to throw exception');
     });
 
     // use feature detection so these tests do not fail on
     // older browsers that do not support array buffers.
     if (window['ArrayBuffer']) {
       it('parses source data', function () {
-        expect(new FontFace('My Family', new ArrayBuffer(4), {}).src).to.eql('url(data:font/opentype;base64,AAAAAA==)');
+        expect(new FontFace('My Family', new ArrayBuffer(4), {}).src, 'to equal', 'url(data:font/opentype;base64,AAAAAA==)');
       });
     }
 
@@ -37,22 +37,22 @@ describe('FontFace', function () {
     //});
 
     it('parses source urls', function () {
-      expect(new FontFace('My Family', 'url(font.woff)', {}).src).to.eql('url(font.woff)');
-      expect(new FontFace('My Family', 'url("font.woff")', {}).src).to.eql('url(font.woff)');
-      expect(new FontFace('My Family', "url('font.woff')", {}).src).to.eql("url(font.woff)");
-      expect(new FontFace('My Family', 'url(font.woff),url(font.otf)', {}).src).to.eql('url(font.woff),url(font.otf)');
-      expect(new FontFace('My Family', 'url(font.woff), url(font.otf)', {}).src).to.eql('url(font.woff),url(font.otf)');
+      expect(new FontFace('My Family', 'url(font.woff)', {}).src, 'to equal', 'url(font.woff)');
+      expect(new FontFace('My Family', 'url("font.woff")', {}).src, 'to equal', 'url(font.woff)');
+      expect(new FontFace('My Family', "url('font.woff')", {}).src, 'to equal', "url(font.woff)");
+      expect(new FontFace('My Family', 'url(font.woff),url(font.otf)', {}).src, 'to equal', 'url(font.woff),url(font.otf)');
+      expect(new FontFace('My Family', 'url(font.woff), url(font.otf)', {}).src, 'to equal', 'url(font.woff),url(font.otf)');
     });
 
     it('parses source urls with formats', function () {
-      expect(new FontFace('My Family', 'url(font.woff) format(woff)', {}).src).to.eql('url(font.woff) format(\'woff\')');
-      expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).src).to.eql('url(font.woff) format(\'woff\'),url(font.otf) format(\'opentype\')');
+      expect(new FontFace('My Family', 'url(font.woff) format(woff)', {}).src, 'to equal', 'url(font.woff) format(\'woff\')');
+      expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).src, 'to equal', 'url(font.woff) format(\'woff\'),url(font.otf) format(\'opentype\')');
     });
 
     it('rejects the promise if source urls are invalid', function (done) {
       var font = new FontFace('My Family', 'font.woff', {});
       font.load().catch(function (e) {
-        expect(e).to.be.a(SyntaxError);
+        expect(e, 'to be a', SyntaxError);
         done();
       });
     });
@@ -60,24 +60,24 @@ describe('FontFace', function () {
     it('rejects the promise if the source url is not a string or arraybuffer', function (done) {
       var font = new FontFace('My Family', true, {});
       font.load().catch(function (e) {
-        expect(e).to.be.a(SyntaxError);
+        expect(e, 'to be a', SyntaxError);
         done();
       });
     });
 
     it('parses descriptors', function () {
-      expect(new FontFace('My Family', 'url(font.woff)', { style: 'italic' }).style).to.eql('italic');
-      expect(new FontFace('My Family', 'url(font.woff)', { weight: 'bold' }).weight).to.eql('bold');
-      expect(new FontFace('My Family', 'url(font.woff)', { stretch: 'condensed' }).stretch).to.eql('condensed');
-      expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'u+ff' }).unicodeRange).to.eql('u+ff');
-      expect(new FontFace('My Family', 'url(font.woff)', { variant: 'small-caps' }).variant).to.eql('small-caps');
+      expect(new FontFace('My Family', 'url(font.woff)', { style: 'italic' }).style, 'to equal', 'italic');
+      expect(new FontFace('My Family', 'url(font.woff)', { weight: 'bold' }).weight, 'to equal', 'bold');
+      expect(new FontFace('My Family', 'url(font.woff)', { stretch: 'condensed' }).stretch, 'to equal', 'condensed');
+      expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'u+ff' }).unicodeRange, 'to equal', 'u+ff');
+      expect(new FontFace('My Family', 'url(font.woff)', { variant: 'small-caps' }).variant, 'to equal', 'small-caps');
     });
 
     it('rejects the promise if the descriptors are not strings', function (done) {
       var font = new FontFace('My Family', 'url(font.woff)', { style: true });
 
       font.load().catch(function (e) {
-        expect(e).to.be.a(SyntaxError);
+        expect(e, 'to be a', SyntaxError);
         done();
       });
     });
@@ -85,7 +85,7 @@ describe('FontFace', function () {
     it('rejects the promise if descriptors are invalid', function (done) {
       var font = new FontFace('My Family', 'font.woff', { style: 'red' });
       font.load().catch(function (e) {
-        expect(e).to.be.a(SyntaxError);
+        expect(e, 'to be a', SyntaxError);
         done();
       });
     });
@@ -93,12 +93,12 @@ describe('FontFace', function () {
     it('defaults descriptors if not given', function () {
       var font = new FontFace('My Family', 'url(font.woff)', {});
 
-      expect(font.style).to.eql('normal');
-      expect(font.weight).to.eql('normal');
-      expect(font.stretch).to.eql('normal');
-      expect(font.unicodeRange).to.eql('u+0-10ffff');
-      expect(font.variant).to.eql('normal');
-      expect(font.featureSettings).to.eql('normal');
+      expect(font.style, 'to equal', 'normal');
+      expect(font.weight, 'to equal', 'normal');
+      expect(font.stretch, 'to equal', 'normal');
+      expect(font.unicodeRange, 'to equal', 'u+0-10ffff');
+      expect(font.variant, 'to equal', 'normal');
+      expect(font.featureSettings, 'to equal', 'normal');
     });
   });
 
@@ -108,8 +108,8 @@ describe('FontFace', function () {
 
       expect(function () {
         font.validate('hello', function () { return null; });
-      }).to.throwException();
-      expect(font.parse('hello', function () { return 'hello'; })).to.eql('hello');
+      }, 'to throw exception');
+      expect(font.parse('hello', function () { return 'hello'; }), 'to equal', 'hello');
     });
   });
 
@@ -128,7 +128,7 @@ describe('FontFace', function () {
       var font = new FontFace('My Family', 'url(unknown.woff)', {});
       font.status = FontFaceLoadStatus.LOADED;
 
-      expect(font.load()).to.eql(font.promise);
+      expect(font.load(), 'to equal', font.promise);
     });
 
     it('resolves when the font loads', function (done) {
@@ -138,11 +138,11 @@ describe('FontFace', function () {
         return Promise.resolve(font);
       };
 
-      expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
 
       font.load().then(function (f) {
-        expect(font).to.eql(f);
-        expect(font.status).to.eql(FontFaceLoadStatus.LOADED);
+        expect(font, 'to equal', f);
+        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
         done();
       });
     });
@@ -158,11 +158,11 @@ describe('FontFace', function () {
         });
       };
 
-      expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
 
       font.load().then(function (f) {
-        expect(font).to.eql(f);
-        expect(font.status).to.eql(FontFaceLoadStatus.LOADED);
+        expect(font, 'to equal', f);
+        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
         done();
       });
     });
@@ -174,11 +174,11 @@ describe('FontFace', function () {
         return Promise.reject(font);
       };
 
-      expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
 
       font.load().catch(function (f) {
-        expect(font).to.eql(f);
-        expect(font.status).to.eql(FontFaceLoadStatus.ERROR);
+        expect(font, 'to equal', f);
+        expect(font.status, 'to equal', FontFaceLoadStatus.ERROR);
         done();
       });
     });
@@ -194,11 +194,11 @@ describe('FontFace', function () {
         });
       };
 
-      expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
 
       font.load().catch(function (f) {
-        expect(font).to.eql(f);
-        expect(font.status).to.eql(FontFaceLoadStatus.ERROR);
+        expect(font, 'to equal', f);
+        expect(font.status, 'to equal', FontFaceLoadStatus.ERROR);
         done();
       });
     });
@@ -211,11 +211,11 @@ describe('FontFace', function () {
 
         var font = new FontFace('My Family', new ArrayBuffer(4), {});
 
-        expect(font.status).to.eql(FontFaceLoadStatus.UNLOADED);
+        expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
 
         font.load().then(function (f) {
-          expect(font.status).to.eql(FontFaceLoadStatus.LOADED);
-          expect(f).to.eql('font');
+          expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
+          expect(f, 'to equal', 'font');
           done();
         }, function (r) {
           done(r);
@@ -227,7 +227,7 @@ describe('FontFace', function () {
   describe('#toCss', function () {
     it('generates valid CSS', function () {
       var font = new FontFace('My Family', 'url(font.woff)', {});
-      expect(font.toCss()).to.eql('@font-face{font-family:My Family;font-style:normal;font-weight:normal;font-stretch:normal;font-variant:normal;font-feature-settings:normal;-moz-font-feature-settings:normal;-webkit-font-feature-settings:normal;unicode-range:u+0-10ffff;src:url(font.woff)}');
+      expect(font.toCss(), 'to equal', '@font-face{font-family:My Family;font-style:normal;font-weight:normal;font-stretch:normal;font-variant:normal;font-feature-settings:normal;-moz-font-feature-settings:normal;-webkit-font-feature-settings:normal;unicode-range:u+0-10ffff;src:url(font.woff)}');
     });
   });
 
@@ -235,14 +235,14 @@ describe('FontFace', function () {
     it('equals the same font', function () {
       var font = new FontFace('My Family', 'url(font.woff)', {});
 
-      expect(font.equals(font)).to.be(true);
+      expect(font.equals(font), 'to be true');
     });
 
     it('does not equal a different font', function () {
       var font = new FontFace('My Family', 'url(font.woff)', {}),
           other = new FontFace('My Other Family', 'url(font.woff)', {});
 
-      expect(font.equals(other)).to.be(false);
+      expect(font.equals(other), 'to be false');
     });
 
     it('equals the same font with the same descriptors', function () {
@@ -253,14 +253,14 @@ describe('FontFace', function () {
             weight: 'bold'
           });
 
-      expect(font.equals(other)).to.be(true);
+      expect(font.equals(other), 'to be true');
     });
 
     it('equals the same font even if the font data is different', function () {
       var font = new FontFace('My Family', 'url(font.woff)', {}),
           other = new FontFace('My Family', 'url(other.woff)', {});
 
-      expect(font.equals(other)).to.be(true);
+      expect(font.equals(other), 'to be true');
     });
   });
 });

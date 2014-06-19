@@ -11,8 +11,8 @@
     <script>CLOSURE_NO_DEPS = true;</script>
     <script src="../vendor/bramstein/promise.min.js"></script>
     <script src="../vendor/google/base.js"></script>
+    <script src="../vendor/sunesimonsen/unexpected.js"></script>
     <script src="../node_modules/mocha/mocha.js"></script>
-    <script src="../node_modules/expect.js/expect.js"></script>
     <script src="../node_modules/sinon/pkg/sinon.js"></script>
     <script src="../node_modules/mocha-browserstack/lib/mocha-browserstack.js"></script>
     <script src="helper.js"></script>
@@ -20,6 +20,8 @@
     <script>
       goog.require('fontloader');
       mocha.ui('bdd').reporter(Mocha.BrowserStack);
+
+      expect = weknowhow.expect;
     </script>
     <script src="./util-test.js"></script>
     <script src="./range-test.js"></script>
@@ -29,6 +31,7 @@
     <script src="./fontloader-test.js"></script>
     <script src="./fontface-test.js"></script>
     <script src="./fontfaceobserver-test.js"></script>
+    <script src="./fontfaceset-test.js"></script>
     <script>
       window.onload = function () {
         mocha.run();
