@@ -14,7 +14,7 @@ goog.scope(function () {
   var Url = fontloader.Url;
 
   Url.prototype.toString = function () {
-    var result = 'url(' + encodeURIComponent(this.url) + ')';
+    var result = 'url(' + encodeURI(this.url) + ')';
     if (this.format) {
       result += ' format(\'' + this.format + '\')';
     }
