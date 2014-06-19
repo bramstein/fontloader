@@ -100,12 +100,6 @@ describe('CssValue', function () {
         'line-height': '16px'
       }), 'to equal', 'font-size:12px;line-height:16px');
     });
-
-    it('serializes a property with multiple values', function () {
-      expect(CssValue.serialize({
-        'font-family': ['Arial', 'Verdana', 'sans-serif']
-      }), 'to equal', 'font-family:Arial,Verdana,sans-serif');
-    });
   });
 
   describe('parse', function () {

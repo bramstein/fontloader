@@ -17,18 +17,4 @@ goog.scope(function () {
     }
     return arguments[0];
   };
-
-  /**
-   * @param {*} v
-   * @return {boolean}
-   */
-  util.nonNativeIsArray = function (v) {
-    return Object.prototype.toString.call(v) === '[object Array]';
-  };
-
-  /**
-   * @param {*} v
-   * @return {boolean}
-   */
-  util.isArray = goog.isDef(Array.isArray) ? Array.isArray : util.nonNativeIsArray;
 });

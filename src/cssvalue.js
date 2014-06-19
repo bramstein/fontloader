@@ -195,11 +195,7 @@ goog.scope(function () {
       if (value.hasOwnProperty(style)) {
         var property = style + ':';
 
-        if (util.isArray(value[style])) {
-          property += value[style].join(',');
-        } else {
-          property += value[style];
-        }
+        property += value[style];
 
         if (opt_important) {
           property += ' !important';

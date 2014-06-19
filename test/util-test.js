@@ -22,18 +22,4 @@ describe('util', function () {
       expect(util.extend({ hello: 'world' }, { hello: 'human' }), 'to equal', { hello: 'human' });
     });
   });
-
-  describe('nonNativeIsArray', function () {
-    it('returns true when the value is an array', function () {
-      expect(util.isArray([]), 'to be true');
-      expect(util.isArray([1, 2]), 'to be true');
-      expect(util.isArray(new Array()), 'to be true');
-    });
-
-    it('returns false when the value is not an array', function () {
-      expect(util.isArray({}), 'to be false');
-      expect(util.isArray(1), 'to be false');
-      expect(util.isArray('array'), 'to be false');
-    });
-  });
 });
