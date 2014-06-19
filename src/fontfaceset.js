@@ -96,7 +96,7 @@ goog.scope(function () {
    * @return true if the value was deleted, false otherwise.
    */
   FontFaceSet.prototype['delete'] = function (value) {
-    var index = this.indexOf(value);;
+    var index = this.indexOf(value);
 
     if (index !== -1) {
       this.data.splice(index, 1);
