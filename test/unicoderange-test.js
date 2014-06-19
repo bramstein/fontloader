@@ -143,4 +143,25 @@ describe('UnicodeRange', function () {
       expect(new UnicodeRange('u+0,u+f').toString()).to.eql('u+0,u+f');
     });
   });
+
+  describe('#intersects', function () {
+    it('returns true if at least one point intersects', function () {
+      expect(new UnicodeRange('u+0').intersects(new UnicodeRange('u+0'))).to.be(true);
+      expect(new UnicodeRange('u+0-2').intersects(new UnicodeRange('u+2'))).to.be(true);
+    });
+
+    it('returns false if there is no intersection', function () {
+      expect(new UnicodeRange('u+0').intersects(new UnicodeRange('u+1'))).to.be(false);
+      expect(new UnicodeRange('u+0-5').intersects(new UnicodeRange('u+6'))).to.be(false);
+    });
+
+    it('returns true if at least one point intersects in multiple ranges', function () {
+      expect(new UnicodeRange('u+0,u+2').intersects(new UnicodeRange('u+2,u+0'))).to.be(true);
+      expect(new UnicodeRange('u+0-2,u+3').intersects(new UnicodeRange('u+3'))).to.be(true);
+    });
+
+    it('returns false if there is no intersection in multiple ranges', function () {
+      expect(new UnicodeRange('u+0,u+2').intersects(new UnicodeRange('u+1'))).to.be(false);
+    });
+  });
 });

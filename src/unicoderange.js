@@ -75,6 +75,21 @@ goog.scope(function () {
   };
 
   /**
+   * @param {fontloader.UnicodeRange} other
+   * @return {boolean} true if this UnicodeRange intersects with another
+   */
+  UnicodeRange.prototype.intersects = function (other) {
+    for (var i = 0; i < this.ranges.length; i++) {
+      for (var j = 0; j < other.ranges.length; j++) {
+        if (this.ranges[i].intersects(other.ranges[j])) {
+          return true;
+        }
+      }
+    }
+    return false;
+  };
+
+  /**
    * @private
    * @param {number} codePoint
    * @return {string}

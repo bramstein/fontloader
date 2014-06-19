@@ -18,6 +18,25 @@ describe('Range', function () {
     });
   });
 
+  describe('#intersects', function () {
+    function test(startA, endA, startB, endB) {
+      return new Range(startA, endA).intersects(new Range(startB, endB));
+    }
+
+    it('returns true on intersections', function () {
+      expect(test(0, 1,  0, 1)).to.be(true);
+      expect(test(0, 10, 0, 1)).to.be(true);
+      expect(test(0, 1, 0, 10)).to.be(true);
+      expect(test(0, 1, 1, 2)).to.be(true);
+      expect(test(1, 2, 0, 1)).to.be(true);
+    });
+
+    it('returns false when ranges do not intersect', function () {
+      expect(test(0, 1, 2, 3)).to.be(false);
+      expect(test(2, 3, 0, 1)).to.be(false);
+    });
+  });
+
   describe('#contains', function () {
     it('contains a code point', function () {
       expect(new Range(0, 15).contains(0)).to.be(true);

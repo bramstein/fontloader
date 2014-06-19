@@ -29,6 +29,14 @@ goog.scope(function () {
   };
 
   /**
+   * @param {fontloader.Range} other
+   * @return {boolean} true if this Range intersects other.
+   */
+  Range.prototype.intersects = function (other) {
+    return this.start <= other.end && this.end >= other.start;
+  };
+
+  /**
    * @return {string}
    */
   Range.prototype.toString = function () {
