@@ -1,4 +1,4 @@
-goog.provide('fontloader.Url');
+goog.provide('fontloader.css.Url');
 
 goog.scope(function () {
   /**
@@ -6,12 +6,12 @@ goog.scope(function () {
    * @param {string} url
    * @param {string=} opt_format
    */
-  fontloader.Url = function (url, opt_format) {
+  fontloader.css.Url = function (url, opt_format) {
     this.url = url;
     this.format = opt_format || null;
   };
 
-  var Url = fontloader.Url;
+  var Url = fontloader.css.Url;
 
   Url.prototype.toString = function () {
     var result = 'url(' + encodeURI(this.url) + ')';

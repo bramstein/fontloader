@@ -1,15 +1,15 @@
-goog.provide('fontloader.UnicodeRange');
+goog.provide('fontloader.css.UnicodeRange');
 
-goog.require('fontloader.Range');
+goog.require('fontloader.css.Range');
 
 goog.scope(function () {
   /**
    * @constructor
    * @param {string} input
    */
-  fontloader.UnicodeRange = function (input) {
+  fontloader.css.UnicodeRange = function (input) {
     /**
-     * @type {Array.<fontloader.Range>}
+     * @type {Array.<fontloader.css.Range>}
      */
     this.ranges = [];
 
@@ -34,18 +34,18 @@ goog.scope(function () {
           }
         }
 
-        this.ranges.push(new fontloader.Range(start, end));
+        this.ranges.push(new fontloader.css.Range(start, end));
       } else {
         throw new SyntaxError();
       }
     }
   };
 
-  var UnicodeRange = fontloader.UnicodeRange;
+  var UnicodeRange = fontloader.css.UnicodeRange;
 
   /**
    * @param {string} str
-   * @return {fontloader.UnicodeRange}
+   * @return {fontloader.css.UnicodeRange}
    */
   UnicodeRange.parse = function (str) {
     var codePoints = [],
@@ -75,7 +75,7 @@ goog.scope(function () {
   };
 
   /**
-   * @param {fontloader.UnicodeRange} other
+   * @param {fontloader.css.UnicodeRange} other
    * @return {boolean} true if this UnicodeRange intersects with another
    */
   UnicodeRange.prototype.intersects = function (other) {

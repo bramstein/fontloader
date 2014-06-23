@@ -1,8 +1,8 @@
 goog.provide('fontloader.CssValue');
 
 goog.require('fontloader.util');
-goog.require('fontloader.UnicodeRange');
-goog.require('fontloader.Url');
+goog.require('fontloader.css.UnicodeRange');
+goog.require('fontloader.css.Url');
 
 
 goog.scope(function () {
@@ -14,8 +14,8 @@ goog.scope(function () {
 
   var CssValue = fontloader.CssValue,
       util = fontloader.util,
-      UnicodeRange = fontloader.UnicodeRange,
-      Url = fontloader.Url;
+      UnicodeRange = fontloader.css.UnicodeRange,
+      Url = fontloader.css.Url;
 
   /**
    * @enum {function(string):*}

@@ -1,4 +1,4 @@
-goog.provide('fontloader.Range');
+goog.provide('fontloader.css.Range');
 
 goog.scope(function () {
   /**
@@ -6,7 +6,7 @@ goog.scope(function () {
    * @param {number} start
    * @param {number} end
    */
-  fontloader.Range = function (start, end) {
+  fontloader.css.Range = function (start, end) {
     /**
      * @type {number}
      */
@@ -18,7 +18,7 @@ goog.scope(function () {
     this.end = end;
   };
 
-  var Range = fontloader.Range;
+  var Range = fontloader.css.Range;
 
   /**
    * @param {number} codePoint
@@ -29,7 +29,7 @@ goog.scope(function () {
   };
 
   /**
-   * @param {fontloader.Range} other
+   * @param {fontloader.css.Range} other
    * @return {boolean} true if this Range intersects other.
    */
   Range.prototype.intersects = function (other) {

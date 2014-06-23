@@ -1,5 +1,5 @@
 describe('Url', function () {
-  var Url = fontloader.Url;
+  var Url = fontloader.css.Url;
 
   describe('#constructor', function () {
     it('creates an object', function () {

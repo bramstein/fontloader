@@ -3,14 +3,14 @@ goog.provide('fontloader.FontFace');
 goog.require('fontloader.FontFaceLoadStatus');
 goog.require('fontloader.FontFaceObserver');
 goog.require('fontloader.CssValue');
-goog.require('fontloader.UnicodeRange');
+goog.require('fontloader.css.UnicodeRange');
 goog.require('fontloader.util');
 
 goog.scope(function () {
   var FontFaceObserver = fontloader.FontFaceObserver,
       FontFaceLoadStatus = fontloader.FontFaceLoadStatus,
       CssValue = fontloader.CssValue,
-      UnicodeRange = fontloader.UnicodeRange,
+      UnicodeRange = fontloader.css.UnicodeRange,
       Parsers = CssValue.Parsers,
       util = fontloader.util;
 

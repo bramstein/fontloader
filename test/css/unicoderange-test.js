@@ -1,6 +1,6 @@
 describe('UnicodeRange', function () {
-  var UnicodeRange = fontloader.UnicodeRange,
-      Range = fontloader.Range;
+  var UnicodeRange = fontloader.css.UnicodeRange,
+      Range = fontloader.css.Range;
 
   describe('#constructor', function () {
     it('parses single code point', function () {
