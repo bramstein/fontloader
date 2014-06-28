@@ -1,12 +1,6 @@
 goog.provide('fontloader.Ruler');
 
-goog.require('fontloader.util');
-goog.require('fontloader.CssValue');
-
 goog.scope(function () {
-  var util = fontloader.util,
-      CssValue = fontloader.CssValue;
-
   /**
    * @constructor
    * @param {string} text
@@ -20,39 +14,17 @@ goog.scope(function () {
   var Ruler = fontloader.Ruler;
 
   /**
-   * @const
-   * @enum {string}
-   */
-  Ruler.STYLES = {
-    'visibility': 'hidden',
-    'position': 'absolute',
-    'width': 'auto',
-    'margin': '0',
-    'padding': '0',
-    'top': '0',
-    'left': '0',
-    'white-space': 'nowrap',
-    'font-size': '300px'
-  };
-
-  /**
    * Insert the ruler into the DOM
-   *
-   * @return {fontloader.Ruler}
    */
   Ruler.prototype.insert = function () {
     goog.global.document.body.appendChild(this.el);
-    return this;
   };
 
   /**
    * Remove the ruler from the DOM
-   *
-   * @return {fontloader.Ruler}
    */
   Ruler.prototype.remove = function () {
     goog.global.document.body.removeChild(this.el);
-    return this;
   };
 
   /**
@@ -63,14 +35,9 @@ goog.scope(function () {
   };
 
   /**
-   * @param {fontloader.CssValue} style
-   *
-   * @return {fontloader.Ruler}
+   * @param {string} style
    */
   Ruler.prototype.setStyle = function (style) {
-    var styles = util.extend({}, style, Ruler.STYLES);
-
-    this.el.style.cssText = CssValue.serialize(styles, true);
-    return this;
+    this.el.style.cssText = 'visibility:hidden;position:absolute;width:auto;margin:0;padding:0;top:0;white-space:nowrap;font-size:300px;' + style;
   };
 });

@@ -1,8 +1,7 @@
 describe('FontFaceObserver', function () {
   var FontFaceObserver = fontloader.FontFaceObserver,
       FontFace = fontloader.FontFace,
-      Ruler = fontloader.Ruler,
-      util = fontloader.util;
+      Ruler = fontloader.Ruler;
 
   describe('#constructor', function () {
     it('should accept a FontFace instance an initialise the font cache', function () {
@@ -155,7 +154,7 @@ describe('FontFaceObserver', function () {
       FontFaceObserver.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
-      ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
+      ruler.setStyle('font-family:monospace');
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
@@ -205,7 +204,7 @@ describe('FontFaceObserver', function () {
       FontFaceObserver.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
-      ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
+      ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
@@ -258,7 +257,7 @@ describe('FontFaceObserver', function () {
       FontFaceObserver.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
-      ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
+      ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
@@ -293,7 +292,7 @@ describe('FontFaceObserver', function () {
       FontFaceObserver.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
-      ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
+      ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
@@ -328,7 +327,7 @@ describe('FontFaceObserver', function () {
       FontFaceObserver.DEFAULT_TIMEOUT = 200;
 
       ruler.insert();
-      ruler.setStyle(util.extend(font.getStyle(), { 'font-family': 'monospace' }));
+      ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
       ruler.setStyle(font.getStyle());
@@ -344,7 +343,7 @@ describe('FontFaceObserver', function () {
         }, 0);
       }, function (r) {
         ruler.remove();
-        done(r);
+        done(new Error(r));
       });
     });
 

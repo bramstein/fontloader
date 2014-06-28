@@ -1,210 +1,83 @@
-goog.provide('fontloader.CssValue');
-
-goog.require('fontloader.util');
-goog.require('fontloader.css.UnicodeRange');
-goog.require('fontloader.css.Url');
-
+goog.provide('fontloader.CSSValue');
 
 goog.scope(function () {
+  fontloader.CSSValue = {};
+
+  var CSSValue = fontloader.CSSValue;
 
   /**
-   * @typedef {Object.<string, (string|!Array.<string>)>}
+   * @param {string} input
+   * @return {Object.<string,(string|Array.<string>)>}
    */
-  fontloader.CssValue = {};
+  CSSValue.parseFont = function (input) {
+    var element = document.createElement('span'),
+        result = {};
 
-  var CssValue = fontloader.CssValue,
-      util = fontloader.util,
-      UnicodeRange = fontloader.css.UnicodeRange,
-      Url = fontloader.css.Url;
+    element.style.cssText = 'font:' + input;
 
-  /**
-   * @enum {function(string):*}
-   */
-  CssValue.Parsers = {
-    FAMILY: function (value) {
-      if (value) {
-        var identifiers = value.replace(/^\s+|\s+$/, '').replace(/\s+/g, ' ').split(' ');
+    if (!element.style.fontFamily) {
+      throw new SyntaxError('Font syntax is invalid: ' + input);
+    } else {
+      var weight = element.style.fontWeight || 'normal';
 
-        for (var i = 0; i < identifiers.length; i += 1) {
-          if (/^(-?\d|--)/.test(identifiers[i]) ||
-              !/^([_a-zA-Z0-9-]|[^\0-\237]|(\\[0-9a-f]{1,6}(\r\n|[ \n\r\t\f])?|\\[^\n\r\f0-9a-f]))+$/.test(identifiers[i])) {
-            return null;
-          }
-        }
-        return identifiers.join(' ');
-      } else {
-        return null;
-      }
-    },
-    STYLE: function (value) {
-      return /^(italic|oblique|normal)$/.test(value) && value || null;
-    },
-    WEIGHT: function (value) {
-      return /^(bold(er)?|lighter|[1-9]00|normal)$/.test(value) && value || null;
-    },
-    STRETCH: function (value) {
-      return /^(((ultra|extra|semi)-)?(condensed|expanded)|normal)$/.test(value) && value || null;
-    },
-    UNICODE_RANGE: function (value) {
-      return new UnicodeRange(value);
-    },
-    VARIANT: function (value) {
-      return /^(small-caps|normal)$/.test(value) && value || null;
-    },
-    FEATURE_SETTINGS: function (value) {
-      return /^normal$/.test(value) && value || null;
-    },
-    SRC: function (value) {
-      var srcRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)( format\((\'|\"|)([^\'\"]+?)\4\))?/g,
-          match = null,
-          result = [],
-          valid = false;
-
-      while ((match = srcRegExp.exec(value))) {
-        if (match[2]) {
-          result.push(new Url(match[2], match[5]));
-          valid = true;
-        }
+      if (weight === 'normal') {
+        weight = '400';
+      } else if (weight === 'bold') {
+        weight = '700';
       }
 
-      if (valid) {
-        return result;
-      } else {
-        return null;
-      }
+      return {
+        style: element.style.fontStyle || 'normal',
+        variant: element.style.fontVariant || 'normal',
+        weight: weight,
+        stretch: element.style.fontStretch || 'normal',
+        family: CSSValue.parseFamily(element.style.fontFamily)
+      };
     }
   };
 
   /**
-   * @private
-   * @enum {number}
+   * @param {string} input
+   * @return {Array.<string>}
    */
-  CssValue.ParserState = {
-    VARIATION: 1,
-    LINE_HEIGHT: 2,
-    FONT_FAMILY: 3,
-    BEFORE_FONT_FAMILY: 4
-  };
+  CSSValue.parseFamily = function (input) {
+    var buffer = '',
+        result = [];
 
-  /**
-   * @param {string} str
-   * @return {fontloader.CssValue}
-   */
-  CssValue.parse = function (str) {
-    var state = CssValue.ParserState.VARIATION,
-        buffer = '',
-        c = null,
-        result = {
-          family: [],
-          size: null,
-          style: 'normal',
-          variant: 'normal',
-          weight: 'normal',
-          stretch: 'normal',
-          lineHeight: 'normal'
-        };
+    for (var i = 0; i < input.length; i++) {
+      var c = input.charAt(i);
 
-    for (var i = 0; i < str.length; i += 1) {
-      c = str.charAt(i);
-      if (state === CssValue.ParserState.BEFORE_FONT_FAMILY && (c === '"' || c === "'")) {
+      if (c === "'" || c === '"') {
         var index = i + 1;
 
-        // consume the entire string
         do {
-          index = str.indexOf(c, index) + 1;
-          if (!index) {
-            // If a string is not closed by a ' or " return null.
-            return null;
-          }
-        } while (str.charAt(index - 2) === '\\');
+          index = input.indexOf(c, index) + 1;
 
-        result.family.push(str.slice(i + 1, index - 1));
+          if (!index) {
+            throw new SyntaxError('Unclosed quote');
+          }
+        } while (input.charAt(index - 2) === '\\');
+
+        result.push(input.slice(i + 1, index - 1));
 
         i = index - 1;
-        state = CssValue.ParserState.FONT_FAMILY;
         buffer = '';
-      } else if (state === CssValue.ParserState.FONT_FAMILY && c === ',') {
-        state = CssValue.ParserState.BEFORE_FONT_FAMILY;
-        buffer = '';
-      } else if (state === CssValue.ParserState.BEFORE_FONT_FAMILY && c === ',') {
-        var identifier = CssValue.Parsers.FAMILY(buffer);
-
-        if (identifier) {
-          result.family.push(identifier);
+      } else if (c === ',') {
+        buffer = buffer.trim()
+        if (buffer !== '') {
+          result.push(buffer);
+          buffer = '';
         }
-        buffer = '';
-      } else if (state === CssValue.ParserState.VARIATION && (c === ' ' || c === '/')) {
-        if (/^((xx|x)-large|(xx|s)-small|small|large|medium)$/.test(buffer) ||
-            /^(larg|small)er$/.test(buffer) ||
-            /^(\+|-)?([0-9]*\.)?[0-9]+(em|ex|ch|rem|vh|vw|vmin|vmax|px|mm|cm|in|pt|pc|%)$/.test(buffer)) {
-          if (c === '/') {
-            state = CssValue.ParserState.LINE_HEIGHT;
-          } else {
-            state = CssValue.ParserState.BEFORE_FONT_FAMILY;
-          }
-          result.size = buffer;
-        } else if (CssValue.Parsers.STYLE(buffer)) {
-          result.style = buffer;
-        } else if (CssValue.Parsers.VARIANT(buffer)) {
-          result.variant = buffer;
-        } else if (CssValue.Parsers.WEIGHT(buffer)) {
-          result.weight = buffer;
-        } else if (CssValue.Parsers.STRETCH(buffer)) {
-          result.stretch = buffer;
-        }
-        buffer = '';
-      } else if (state === CssValue.ParserState.LINE_HEIGHT && c === ' ') {
-        if (/^(\+|-)?([0-9]*\.)?[0-9]+(em|ex|ch|rem|vh|vw|vmin|vmax|px|mm|cm|in|pt|pc|%)?$/.test(buffer)) {
-          result.lineHeight = buffer;
-        }
-        state = CssValue.ParserState.BEFORE_FONT_FAMILY;
-        buffer = '';
       } else {
         buffer += c;
       }
     }
 
-    // This is for the case where a string was specified followed by
-    // an identifier, but without a separating comma.
-    if (state === CssValue.ParserState.FONT_FAMILY && !/^\s*$/.test(buffer)) {
-      return null;
+    buffer = buffer.trim();
+    if (buffer !== '') {
+      result.push(buffer);
     }
 
-    if (state === CssValue.ParserState.BEFORE_FONT_FAMILY) {
-      var identifier = CssValue.Parsers.FAMILY(buffer);
-
-      if (identifier) {
-        result.family.push(identifier);
-      }
-    }
-
-    if (result.size && result.family.length) {
-      return result;
-    } else {
-      return null;
-    }
-  };
-
-  /**
-   * @param {fontloader.CssValue} value
-   * @param {boolean=} opt_important
-   * @return {string}
-   */
-  CssValue.serialize = function (value, opt_important) {
-    var result = [];
-
-    for (var style in value) {
-      if (value.hasOwnProperty(style)) {
-        var property = style + ':';
-
-        property += value[style];
-
-        if (opt_important) {
-          property += ' !important';
-        }
-        result.push(property);
-      }
-    }
-    return result.join(';');
+    return result;
   };
 });

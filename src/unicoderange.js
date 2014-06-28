@@ -1,19 +1,29 @@
-goog.provide('fontloader.css.UnicodeRange');
+goog.provide('fontloader.UnicodeRange');
 
-goog.require('fontloader.css.Range');
+goog.require('fontloader.Range');
 
 goog.scope(function () {
   /**
    * @constructor
-   * @param {string} input
+   * @param {Array.<fontloader.Range>} ranges
    */
-  fontloader.css.UnicodeRange = function (input) {
+  fontloader.UnicodeRange = function (ranges) {
     /**
-     * @type {Array.<fontloader.css.Range>}
+     * @type {Array.<fontloader.Range>}
      */
-    this.ranges = [];
+    this.ranges = ranges;
+  };
 
+  var UnicodeRange = fontloader.UnicodeRange,
+      Range = fontloader.Range;
+
+  /**
+   * @param {string} input
+   * @return {fontloader.UnicodeRange}
+   */
+  UnicodeRange.parse = function (input) {
     var ranges = input.split(/\s*,\s*/),
+        result = [],
         start = null,
         end = null;
 
@@ -34,20 +44,20 @@ goog.scope(function () {
           }
         }
 
-        this.ranges.push(new fontloader.css.Range(start, end));
+        result.push(new Range(start, end));
       } else {
         throw new SyntaxError();
       }
     }
-  };
 
-  var UnicodeRange = fontloader.css.UnicodeRange;
+    return new UnicodeRange(result);
+  };
 
   /**
    * @param {string} str
-   * @return {fontloader.css.UnicodeRange}
+   * @return {fontloader.UnicodeRange}
    */
-  UnicodeRange.parse = function (str) {
+  UnicodeRange.parseString = function (str) {
     var codePoints = [],
         tmp = {};
 
@@ -71,11 +81,11 @@ goog.scope(function () {
       codePoints.push('u+' + parseInt(codePoint, 10).toString(16));
     }
 
-    return new UnicodeRange(codePoints.join(','));
+    return UnicodeRange.parse(codePoints.join(','));
   };
 
   /**
-   * @param {fontloader.css.UnicodeRange} other
+   * @param {fontloader.UnicodeRange} other
    * @return {boolean} true if this UnicodeRange intersects with another
    */
   UnicodeRange.prototype.intersects = function (other) {
@@ -86,6 +96,14 @@ goog.scope(function () {
         }
       }
     }
+    return false;
+  };
+
+  /**
+   * @param {fontloader.UnicodeRange} other
+   * @return {boolean}
+   */
+  UnicodeRange.prototype.equals = function (other) {
     return false;
   };
 
@@ -106,7 +124,7 @@ goog.scope(function () {
   /**
    * @return {string}
    */
-  UnicodeRange.prototype.toTestString = function () {
+  UnicodeRange.prototype.getTestString = function () {
     var codePoints = [];
 
     if (this.ranges.length === 1 && this.ranges[0].start === 0x00 && this.ranges[0].end === 0x10ffff) {

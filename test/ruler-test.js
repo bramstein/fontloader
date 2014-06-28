@@ -56,13 +56,13 @@ describe('Ruler', function () {
     });
 
     it('sets the style correctly', function () {
-      r.setStyle({ 'line-height': '150px' });
-      expect(r.el.style['lineHeight'], 'to equal', '150px');
+      r.setStyle('line-height: 150px');
+      expect(r.el.style.lineHeight, 'to equal', '150px');
     });
 
     it('overrides style properties necessary to properly measure', function () {
-      r.setStyle({ 'font-size': '12px' });
-      expect(r.el.style['fontSize'], 'to equal', '300px');
+      r.setStyle('font-size: 300px');
+      expect(r.el.style.fontSize, 'to equal', '300px');
     });
   });
 });

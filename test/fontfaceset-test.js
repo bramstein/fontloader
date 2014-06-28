@@ -39,34 +39,6 @@ describe('FontFaceSet', function () {
     });
   });
 
-  describe('#indexOf', function () {
-    it('returns -1 for an empty set', function () {
-      var set = new FontFaceSet();
-
-      expect(set.indexOf(1), 'to equal', -1);
-    });
-
-    it('returns the index if found', function () {
-      var set = new FontFaceSet();
-
-      set.add(1);
-      set.add(2);
-
-      expect(set.indexOf(1), 'to equal', 0);
-      expect(set.indexOf(2), 'to equal', 1);
-    });
-
-    it('returns -1 if not found', function () {
-      var set = new FontFaceSet();
-
-      set.add(1);
-      set.add(2);
-
-      expect(set.indexOf(3), 'to equal', -1);
-      expect(set.indexOf(4), 'to equal', -1);
-    });
-  });
-
   describe('#has', function () {
     it('has items that are in the set', function () {
       var set = new FontFaceSet();
@@ -86,19 +58,6 @@ describe('FontFaceSet', function () {
 
       expect(set.has(2), 'to be false');
       expect(set.has(4), 'to be false');
-    });
-
-    it('uses equal method when available', function () {
-      var set = new FontFaceSet();
-
-      set.add({
-        equals: function (value) {
-          return true;
-        }
-      });
-
-      expect(set.has(1), 'to be true');
-      expect(set.has(2), 'to be true');
     });
   });
 

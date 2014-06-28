@@ -1,5 +1,5 @@
-describe('Range', function () {
-  var Range = fontloader.css.Range;
+describe('css.Range', function () {
+  var Range = fontloader.Range;
 
   describe('#constructor', function () {
     it('creates a range', function () {

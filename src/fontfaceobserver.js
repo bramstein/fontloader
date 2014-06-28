@@ -1,17 +1,18 @@
 goog.provide('fontloader.FontFaceObserver');
 
 goog.require('fontloader.Ruler');
-goog.require('fontloader.util');
 
 goog.scope(function () {
-  var Ruler = fontloader.Ruler,
-      util = fontloader.util;
+  var Ruler = fontloader.Ruler;
 
   /**
    * @constructor
    * @param {fontloader.FontFace} font
    */
   fontloader.FontFaceObserver = function (font) {
+    /**
+     * @type {fontloader.FontFace}
+     */
     this.font = font;
 
     /**
@@ -26,23 +27,36 @@ goog.scope(function () {
     /**
      * @type {string}
      */
-    this.text = font['testString'];
+    this.text = font.getUnicodeRange().getTestString();
 
-    var ruler = new Ruler(this.text);
-
-    ruler.insert();
-
-    this.cache.serif = ruler.setStyle(util.extend({}, font.getStyle(), { 'font-family': 'serif' })).getWidth();
-    this.cache.sansserif = ruler.setStyle(util.extend({}, font.getStyle(), { 'font-family': 'sans-serif' })).getWidth();
-    this.cache.monospace = ruler.setStyle(util.extend({}, font.getStyle(), { 'font-family': 'monospace' })).getWidth();
-
-    ruler.remove();
+    this.init();
   };
 
   var FontFaceObserver = fontloader.FontFaceObserver;
 
   /**
-   * @return {IThenable}
+   * @private
+   */
+  FontFaceObserver.prototype.init = function () {
+    var ruler = new Ruler(this.text),
+        style = this.font.getStyle();
+
+    ruler.insert();
+
+    ruler.setStyle(style + 'font-family: serif');
+    this.cache.serif = ruler.getWidth();
+
+    ruler.setStyle(style + 'font-family: sans-serif');
+    this.cache.sansserif = ruler.getWidth();
+
+    ruler.setStyle(style + 'font-family: monospace');
+    this.cache.monospace = ruler.getWidth();
+
+    ruler.remove();
+  };
+
+  /**
+   * @return {IThenable.<fontloader.FontFace>}
    */
   FontFaceObserver.prototype.start = function () {
     var that = this,
@@ -69,15 +83,17 @@ goog.scope(function () {
         } else {
           rulerA.remove();
           rulerB.remove();
-          resolve(that.font);
+          resolve(font);
         }
       }
 
+      var style = font.getStyle();
+
       rulerA.insert();
-      rulerA.setStyle(util.extend({}, font.getStyle(), { 'font-family': font.family + ',sans-serif' }));
+      rulerA.setStyle(style + 'font-family:' + font['family'] + ',sans-serif');
 
       rulerB.insert();
-      rulerB.setStyle(util.extend({}, font.getStyle(), { 'font-family': font.family + ',serif' }));
+      rulerB.setStyle(style + 'font-family:' + font['family'] + ',serif');
 
       check();
     });

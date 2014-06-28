@@ -24,92 +24,64 @@ describe('FontFace', function () {
       });
     }
 
-    // TODO: I'm still making up my mind about this. The Chrome implementation parses
-    // parameters synchronously which makes sense to me, as long as font loading and
-    // parsing is done asynchronously.
-    //it('parses parameters asynchronously', function (done) {
-    //  var font = new FontFace('My Family', 'url(font.woff)', {});
-    //  expect(font.family).to.eql(null);
-    //  setTimeout(function () {
-    //    expect(font.family).to.eql('My Family');
-    //    done();
-    //  }, 0);
-    //});
-
     it('parses source urls', function () {
       expect(new FontFace('My Family', 'url(font.woff)', {}).src, 'to equal', 'url(font.woff)');
-      expect(new FontFace('My Family', 'url("font.woff")', {}).src, 'to equal', 'url(font.woff)');
-      expect(new FontFace('My Family', "url('font.woff')", {}).src, 'to equal', "url(font.woff)");
+      expect(new FontFace('My Family', 'url("font.woff")', {}).src, 'to equal', 'url("font.woff")');
+      expect(new FontFace('My Family', "url('font.woff')", {}).src, 'to equal', 'url(\'font.woff\')');
       expect(new FontFace('My Family', 'url(font.woff),url(font.otf)', {}).src, 'to equal', 'url(font.woff),url(font.otf)');
-      expect(new FontFace('My Family', 'url(font.woff), url(font.otf)', {}).src, 'to equal', 'url(font.woff),url(font.otf)');
+      expect(new FontFace('My Family', 'url(font.woff), url(font.otf)', {}).src, 'to equal', 'url(font.woff), url(font.otf)');
     });
 
     it('parses source urls with formats', function () {
-      expect(new FontFace('My Family', 'url(font.woff) format(woff)', {}).src, 'to equal', 'url(font.woff) format(\'woff\')');
-      expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).src, 'to equal', 'url(font.woff) format(\'woff\'),url(font.otf) format(\'opentype\')');
+      expect(new FontFace('My Family', 'url(font.woff) format(woff)', {}).src, 'to equal', 'url(font.woff) format(woff)');
+      expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).src, 'to equal', 'url(font.woff) format(woff), url(font.otf) format(opentype)');
     });
 
-    it('rejects the promise if source urls are invalid', function (done) {
-      var font = new FontFace('My Family', 'font.woff', {});
-      font.load().catch(function (e) {
-        expect(e, 'to be a', SyntaxError);
-        done();
-      });
+    it('throws a syntax error if source urls are invalid', function () {
+      expect(function () {
+        new FontFace('My Family', 'font.woff', {});
+      }, 'to throw exception');
     });
 
-    it('rejects the promise if the source url is not a string or arraybuffer', function (done) {
-      var font = new FontFace('My Family', true, {});
-      font.load().catch(function (e) {
-        expect(e, 'to be a', SyntaxError);
-        done();
-      });
+    it('throws a syntax error if the source url is not a string or arraybuffer', function () {
+      expect(function () {
+        new FontFace('My Family', true, {});
+      }, 'to throw exception');
     });
 
     it('parses descriptors', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { style: 'italic' }).style, 'to equal', 'italic');
-      expect(new FontFace('My Family', 'url(font.woff)', { weight: 'bold' }).weight, 'to equal', 'bold');
-      expect(new FontFace('My Family', 'url(font.woff)', { stretch: 'condensed' }).stretch, 'to equal', 'condensed');
-      expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'u+ff' }).unicodeRange, 'to equal', 'u+ff');
+      expect(new FontFace('My Family', 'url(font.woff)', { weight: 'bold' }).weight, 'to equal', '700');
+      expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'U+FF' }).unicodeRange, 'to equal', 'U+FF');
       expect(new FontFace('My Family', 'url(font.woff)', { variant: 'small-caps' }).variant, 'to equal', 'small-caps');
     });
 
-    it('rejects the promise if the descriptors are not strings', function (done) {
-      var font = new FontFace('My Family', 'url(font.woff)', { style: true });
-
-      font.load().catch(function (e) {
-        expect(e, 'to be a', SyntaxError);
-        done();
-      });
+    // This one is currently disabled because browsers do not yet accept font-stretch as part of the font shorthand
+    // syntax. Fortunately, this also means the browser does not support font-stretch, so we can just ignore it for now.
+    xit('parses descriptors with stretch', function () {
+      expect(new FontFace('My Family', 'url(font.woff)', { stretch: 'condensed' }).stretch, 'to equal', 'condensed');
     });
 
-    it('rejects the promise if descriptors are invalid', function (done) {
-      var font = new FontFace('My Family', 'font.woff', { style: 'red' });
-      font.load().catch(function (e) {
-        expect(e, 'to be a', SyntaxError);
-        done();
-      });
+    it('throws a syntax error if descriptors are not strings', function () {
+      expect(function () {
+        new FontFace('My Family', 'url(font.woff)', { style: true });
+      }, 'to throw exception');
+    });
+
+    it('throws a syntax error if descriptors are invalid', function () {
+      expect(function () {
+        new FontFace('My Family', 'url(font.woff)', { style: 'red' });
+      }, 'to throw exception');
     });
 
     it('defaults descriptors if not given', function () {
       var font = new FontFace('My Family', 'url(font.woff)', {});
 
       expect(font.style, 'to equal', 'normal');
-      expect(font.weight, 'to equal', 'normal');
-      expect(font.stretch, 'to equal', 'normal');
-      expect(font.unicodeRange, 'to equal', 'u+0-10ffff');
+      expect(font.weight, 'to equal', '400');
+      expect(font.unicodeRange, 'to equal', 'U+0-10FFFF');
       expect(font.variant, 'to equal', 'normal');
       expect(font.featureSettings, 'to equal', 'normal');
-    });
-  });
-
-  describe('#parse', function () {
-    it('parses descriptors', function () {
-      var font = new FontFace('My Family', 'url(font.woff)', {});
-
-      expect(function () {
-        font.validate('hello', function () { return null; });
-      }, 'to throw exception');
-      expect(font.parse('hello', function () { return 'hello'; }), 'to equal', 'hello');
     });
   });
 
@@ -122,13 +94,6 @@ describe('FontFace', function () {
 
     afterEach(function () {
       FontFaceObserver.prototype.start = startMethod;
-    });
-
-    it('returns immediately if the font is already loaded', function () {
-      var font = new FontFace('My Family', 'url(unknown.woff)', {});
-      font.status = FontFaceLoadStatus.LOADED;
-
-      expect(font.load(), 'to equal', font.promise);
     });
 
     it('resolves when the font loads', function (done) {
@@ -222,45 +187,5 @@ describe('FontFace', function () {
         });
       });
     }
-  });
-
-  describe('#toCss', function () {
-    it('generates valid CSS', function () {
-      var font = new FontFace('My Family', 'url(font.woff)', {});
-      expect(font.toCss(), 'to equal', '@font-face{font-family:My Family;font-style:normal;font-weight:normal;font-stretch:normal;font-variant:normal;font-feature-settings:normal;-moz-font-feature-settings:normal;-webkit-font-feature-settings:normal;unicode-range:u+0-10ffff;src:url(font.woff)}');
-    });
-  });
-
-  describe('#equals', function () {
-    it('equals the same font', function () {
-      var font = new FontFace('My Family', 'url(font.woff)', {});
-
-      expect(font.equals(font), 'to be true');
-    });
-
-    it('does not equal a different font', function () {
-      var font = new FontFace('My Family', 'url(font.woff)', {}),
-          other = new FontFace('My Other Family', 'url(font.woff)', {});
-
-      expect(font.equals(other), 'to be false');
-    });
-
-    it('equals the same font with the same descriptors', function () {
-      var font = new FontFace('My Family', 'url(font.woff)', {
-            weight: 'bold'
-          }),
-          other = new FontFace('My Family', 'url(font.woff)', {
-            weight: 'bold'
-          });
-
-      expect(font.equals(other), 'to be true');
-    });
-
-    it('equals the same font even if the font data is different', function () {
-      var font = new FontFace('My Family', 'url(font.woff)', {}),
-          other = new FontFace('My Family', 'url(other.woff)', {});
-
-      expect(font.equals(other), 'to be true');
-    });
   });
 });
