@@ -68,7 +68,7 @@ goog.scope(function () {
       },
       'family': {
         get: function () {
-          return this.getCssProperty('fontFamily');;
+          return CSSValue.parseFamily(this.getCssProperty('fontFamily'))[0];
         },
         set: function (value) {
           this.setCssProperty('fontFamily', value);
