@@ -108,8 +108,8 @@ describe('CSSValue', function () {
     });
 
     it('correctly parses font-weight', function () {
-      expect(CSSValue.parseFont('normal 12px serif'), 'to have properties', { weight: '400' });
-      expect(CSSValue.parseFont('bold 12px serif'), 'to have properties', { weight: '700' });
+      expect(CSSValue.parseFont('normal 12px serif'), 'to have properties', { weight: 'normal' });
+      expect(CSSValue.parseFont('bold 12px serif'), 'to have properties', { weight: 'bold' });
       expect(CSSValue.parseFont('bolder 12px serif'), 'to have properties', { weight: 'bolder' });
       expect(CSSValue.parseFont('lighter 12px serif'), 'to have properties', { weight: 'lighter' });
 

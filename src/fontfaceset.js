@@ -113,6 +113,16 @@ goog.scope(function () {
    * @return {Array.<fontloader.FontFace>} Returns all matching FontFace's in this set
    */
   FontFaceSet.prototype.match = function (font, opt_text) {
+    function normalizeWeight(weight) {
+      if (weight === 'bold') {
+        return '700';
+      } else if (weight === 'normal') {
+        return '400';
+      } else {
+        return weight;
+      }
+    }
+
     var properties = CSSValue.parseFont(font),
         textRange = UnicodeRange.parseString(opt_text || '\u0020');
 
@@ -123,7 +133,7 @@ goog.scope(function () {
         if (fontface['family'] === families[i] &&
             fontface['style'] === properties.style &&
             fontface['variant'] === properties.variant &&
-            fontface['weight'] === properties.weight &&
+            normalizeWeight(fontface['weight']) === normalizeWeight(properties.weight) &&
             fontface.getUnicodeRange().intersects(textRange)) {
           return true;
         }

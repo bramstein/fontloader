@@ -18,18 +18,10 @@ goog.scope(function () {
     if (!element.style.fontFamily) {
       throw new SyntaxError('Font syntax is invalid: ' + input);
     } else {
-      var weight = element.style.fontWeight || 'normal';
-
-      if (weight === 'normal') {
-        weight = '400';
-      } else if (weight === 'bold') {
-        weight = '700';
-      }
-
       return {
         style: element.style.fontStyle || 'normal',
         variant: element.style.fontVariant || 'normal',
-        weight: weight,
+        weight: element.style.fontWeight || 'normal',
         stretch: element.style.fontStretch || 'normal',
         family: CSSValue.parseFamily(element.style.fontFamily)
       };

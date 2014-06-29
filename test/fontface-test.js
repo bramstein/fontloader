@@ -51,7 +51,7 @@ describe('FontFace', function () {
 
     it('parses descriptors', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { style: 'italic' }).style, 'to equal', 'italic');
-      expect(new FontFace('My Family', 'url(font.woff)', { weight: 'bold' }).weight, 'to equal', '700');
+      expect(new FontFace('My Family', 'url(font.woff)', { weight: 'bold' }).weight, 'to equal', 'bold');
       expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'U+FF' }).unicodeRange, 'to equal', 'U+FF');
       expect(new FontFace('My Family', 'url(font.woff)', { variant: 'small-caps' }).variant, 'to equal', 'small-caps');
     });
@@ -78,7 +78,7 @@ describe('FontFace', function () {
       var font = new FontFace('My Family', 'url(font.woff)', {});
 
       expect(font.style, 'to equal', 'normal');
-      expect(font.weight, 'to equal', '400');
+      expect(font.weight, 'to equal', 'normal');
       expect(font.unicodeRange, 'to equal', 'U+0-10FFFF');
       expect(font.variant, 'to equal', 'normal');
       expect(font.featureSettings, 'to equal', 'normal');

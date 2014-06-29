@@ -92,14 +92,7 @@ goog.scope(function () {
       },
       'weight': {
         get: function () {
-          var weight = this.getCssProperty('fontWeight');
-
-          if (weight === 'bold') {
-            weight = '700';
-          } else if (weight === 'normal') {
-            weight = '400';
-          }
-          return weight;
+          return this.getCssProperty('fontWeight');;
         },
         set: function (value) {
           this.setCssProperty('fontWeight', value);
