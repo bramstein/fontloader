@@ -24,70 +24,12 @@ describe('CSSValue', function () {
       }, 'to throw exception');
     });
 
-    it('ignores non-terminated strings', function () {
-      expect(function () {
-        CSSValue.parseFont('12px "Comic');
-      }, 'to throw exception');
-
-      expect(function () {
-        CSSValue.parseFont('12px "Comic, serif');
-      }, 'to throw exception');
-
-      expect(function () {
-        CSSValue.parseFont("12px 'Comic");
-      }, 'to throw exception');
-
-      expect(function () {
-        CSSValue.parseFont("12px 'Comic, serif");
-      }, 'to throw exception');
-    });
-
     it('parses a simple font specification correctly', function () {
       expect(CSSValue.parseFont('12px serif'), 'to have properties', { family: ['serif'] });
     });
 
     it('returns multiple font families', function () {
       expect(CSSValue.parseFont('12px Arial, Verdana, serif'), 'to have properties', { family: ['Arial', 'Verdana', 'serif'] });
-
-    });
-
-    it('handles quoted family names correctly', function () {
-      expect(CSSValue.parseFont('12px "Times New Roman"'), 'to have properties', { family: ['Times New Roman'] });
-      expect(CSSValue.parseFont("12px 'Times New Roman'"), 'to have properties', { family: ['Times New Roman'] });
-
-      expect(CSSValue.parseFont('12px "Times\\\' New Roman"'), 'to have properties', { family: ["Times\\\' New Roman"] });
-      expect(CSSValue.parseFont("12px 'Times\\\" New Roman'"), 'to have properties', { family: ['Times" New Roman'] });
-
-      expect(CSSValue.parseFont('12px "Times\\\" New Roman"'), 'to have properties', { family: ['Times" New Roman'] });
-      expect(CSSValue.parseFont("12px 'Times\\\' New Roman'"), 'to have properties', { family: ["Times\\\' New Roman"] });
-    });
-
-    it('handles unquoted identifiers correctly', function () {
-      expect(CSSValue.parseFont('12px Times New Roman'), 'to have properties', { family: ['Times New Roman'] });
-      expect(CSSValue.parseFont('12px Times New Roman, Comic Sans MS'), 'to have properties', { family: ['Times New Roman', 'Comic Sans MS'] });
-    });
-
-    // Examples taken from: http://mathiasbynens.be/notes/unquoted-font-family
-    xit('correctly returns null on invalid identifiers', function () {
-      expect(function () {
-         CSSValue.parseFont('12px Red/Black');
-      }, 'to throw exception');
-
-      expect(function () {
-        CSSValue.parseFont("12px 'Lucida' Grande");
-      }, 'to throw exception');
-
-      expect(function () {
-        CSSValue.parseFont('12px Ahem!');
-      }, 'to throw exception');
-
-      expect(function () {
-        CSSValue.parseFont('12px Hawaii 5-0');
-      }, 'to throw exception');
-
-      expect(function () {
-        CSSValue.parseFont('12px $42');
-      }, 'to throw exception');
     });
 
     it('correctly parses escaped characters in identifiers', function () {
@@ -127,6 +69,54 @@ describe('CSSValue', function () {
       expect(CSSValue.parseFont('expanded 12px serif'), 'to have properties', { stretch: 'expanded' });
       expect(CSSValue.parseFont('extra-expanded 12px serif'), 'to have properties', { stretch: 'extra-expanded' });
       expect(CSSValue.parseFont('ultra-expanded 12px serif'), 'to have properties', { stretch: 'ultra-expanded' });
+    });
+  });
+
+  describe('#parseFamily', function () {
+    it('parses a single family', function () {
+      expect(CSSValue.parseFamily('serif'), 'to equal', ['serif']);
+    });
+
+    it('parses multiple identifiers', function () {
+      expect(CSSValue.parseFamily('Comic Sans'), 'to equal', ['Comic Sans']);
+    });
+
+    it('parses multiple families', function () {
+      expect(CSSValue.parseFamily('Comic Sans, sans-serif'), 'to equal', ['Comic Sans', 'sans-serif']);
+    });
+
+    it('rejects malformed strings', function () {
+      expect(function () {
+        CSSValue.parseFamily('"Comic');
+      }, 'to throw exception');
+
+      expect(function () {
+        CSSValue.parseFont('"Comic, serif');
+      }, 'to throw exception');
+
+      expect(function () {
+        CSSValue.parseFont("'Comic");
+      }, 'to throw exception');
+
+      expect(function () {
+        CSSValue.parseFont("'Comic, serif");
+      }, 'to throw exception');
+    });
+
+    it('handles quoted family names correctly', function () {
+      expect(CSSValue.parseFamily('"Times New Roman"'), 'to equal', ['Times New Roman']);
+      expect(CSSValue.parseFamily("'Times New Roman'"), 'to equal', ['Times New Roman']);
+
+      expect(CSSValue.parseFamily('"Times\\\' New Roman"'), 'to equal', ["Times\\\' New Roman"]);
+      expect(CSSValue.parseFamily("'Times\\\" New Roman'"), 'to equal', ['Times\\\" New Roman']);
+
+      expect(CSSValue.parseFamily('12px "Times\\\" New Roman"'), 'to equal', ['Times\\\" New Roman']);
+      expect(CSSValue.parseFamily("12px 'Times\\\' New Roman'"), 'to equal', ["Times\\\' New Roman"]);
+    });
+
+    it('handles unquoted identifiers correctly', function () {
+      expect(CSSValue.parseFamily('Times New Roman'), 'to equal', ['Times New Roman']);
+      expect(CSSValue.parseFamily('Times New Roman, Comic Sans MS'), 'to equal', ['Times New Roman', 'Comic Sans MS']);
     });
   });
 });

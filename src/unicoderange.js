@@ -78,10 +78,16 @@ goog.scope(function () {
     }
 
     for (var codePoint in tmp) {
-      codePoints.push('u+' + parseInt(codePoint, 10).toString(16));
+      codePoints.push(parseInt(codePoint, 10));
     }
 
-    return UnicodeRange.parse(codePoints.join(','));
+    codePoints.sort(function (a, b) {
+      return a - b;
+    });
+
+    return UnicodeRange.parse(codePoints.map(function (codePoint) {
+      return 'u+' + codePoint.toString(16);
+    }).join(','));
   };
 
   /**

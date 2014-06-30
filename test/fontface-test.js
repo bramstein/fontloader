@@ -37,12 +37,6 @@ describe('FontFace', function () {
       expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).src, 'to equal', 'url(font.woff) format(woff), url(font.otf) format(opentype)');
     });
 
-    it('throws a syntax error if source urls are invalid', function () {
-      expect(function () {
-        new FontFace('My Family', 'font.woff', {});
-      }, 'to throw exception');
-    });
-
     it('throws a syntax error if the source url is not a string or arraybuffer', function () {
       expect(function () {
         new FontFace('My Family', true, {});
@@ -60,18 +54,6 @@ describe('FontFace', function () {
     // syntax. Fortunately, this also means the browser does not support font-stretch, so we can just ignore it for now.
     xit('parses descriptors with stretch', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { stretch: 'condensed' }).stretch, 'to equal', 'condensed');
-    });
-
-    it('throws a syntax error if descriptors are not strings', function () {
-      expect(function () {
-        new FontFace('My Family', 'url(font.woff)', { style: true });
-      }, 'to throw exception');
-    });
-
-    it('throws a syntax error if descriptors are invalid', function () {
-      expect(function () {
-        new FontFace('My Family', 'url(font.woff)', { style: 'red' });
-      }, 'to throw exception');
     });
 
     it('defaults descriptors if not given', function () {

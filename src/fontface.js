@@ -20,39 +20,88 @@ goog.scope(function () {
    */
   fontloader.FontFace = function (family, source, descriptors) {
     if (arguments.length !== 3) {
-      throw new TypeError("Failed to construct 'FontFace': 3 arguments required, but only " + arguments.length + " present.");
+      throw new TypeError('Three arguments required, but only ' + arguments.length + ' present.');
     }
 
-    var fontface = this;
-
     /**
+     * @private
      * @type {!fontloader.FontFaceLoadStatus}
      */
     this.loadStatus = fontloader.FontFaceLoadStatus.UNLOADED;
 
     /**
-     * @type {string}
-     */
-    this.src;
-
-    /**
-     * @type {string}
-     */
-    this.testString;
-
-    /**
-     * @type {fontloader.UnicodeRange}
-     */
-    this.range;
-
-    /**
+     * @private
      * @type {Element}
      */
     this.styleElement = document.createElement('style');
 
-    document.head.appendChild(this.styleElement);
+    /**
+     * @private
+     * @type {string}
+     */
+    this.src;
 
-    this.styleElement.sheet.insertRule('@font-face{}', 0);
+    if (typeof source === 'string') {
+      this.src = source;
+    } else if (source && typeof source.byteLength === "number") {
+      var bytes = new Uint8Array(/** @type {ArrayBuffer} */ (source)),
+          buffer = '';
+
+      for (var i = 0, l = bytes.length; i < l; i++) {
+        buffer += String.fromCharCode(bytes[i]);
+      }
+
+      // TODO: We could detect the format here and set the correct mime type and format
+      this.src = 'url(data:font/opentype;base64,' + window.btoa(buffer) + ')';
+    } else if (typeof source !== 'string') {
+      throw new SyntaxError('The source provided (\'' + source + '\') could not be parsed as a value list.');
+    }
+
+    /**
+     * @private
+     * @dict
+     */
+    this.properties = {
+      'font-family': family,
+      'font-style': descriptors['style'] || 'normal',
+      'font-variant': descriptors['variant'] || 'normal',
+      'font-weight': descriptors['weight'] || 'normal',
+      'unicode-range': descriptors['unicodeRange'] || 'U+0-10FFFF',
+      'font-feature-settings': descriptors['featureSettings'] || 'normal',
+      '-moz-font-feature-settings': descriptors['featureSettings'] || 'normal',
+      '-webkit-font-feature-settings': descriptors['featureSettings'] || 'normal'
+    };
+
+    /**
+     * @private
+     * @type {fontloader.UnicodeRange}
+     */
+    this.range = UnicodeRange.parse(this.properties['unicode-range']);
+
+    /**
+     * @type {fontloader.FontFace}
+     */
+    var fontface = this;
+
+    /**
+     * @private
+     * @type {function(*)}
+     */
+    this.resolve;
+
+    /**
+     * @private
+     * @type {function(*)}
+     */
+    this.reject;
+
+    /**
+     * @type {IThenable.<fontloader.FontFace>}
+     */
+    this.promise = new Promise(function (resolve, reject) {
+      fontface.resolve = resolve;
+      fontface.reject = reject;
+    });
 
     Object.defineProperties(this, {
       'status': {
@@ -62,101 +111,82 @@ goog.scope(function () {
       },
       'loaded': {
         get: function () {
-          // FIXME
-          return Promise.resolve(true);
+          return this.promise.then(function (x) {
+            return true;
+          }, function (r) {
+            return false;
+          });
         }
       },
       'family': {
         get: function () {
-          return CSSValue.parseFamily(this.getCssProperty('fontFamily'))[0];
+          return CSSValue.parseFamily(this.properties['font-family'])[0];
         },
         set: function (value) {
-          this.setCssProperty('fontFamily', value);
+          this.properties['font-family'] = value;
+          this.updateCss();
         }
       },
       'style': {
         get: function () {
-          return this.getCssProperty('fontStyle');
+          return this.properties['font-style'];
         },
         set: function (value) {
-          this.setCssProperty('fontStyle', value);
+          this.properties['font-style'] = value;
+          this.updateCss();
         }
       },
       'variant': {
         get: function () {
-          return this.getCssProperty('fontVariant');
+          return this.properties['font-variant'];
         },
         set: function (value) {
-          this.setCssProperty('fontVariant', value);
+          this.properties['font-variant'] = value;
+          this.updateCss();
         }
       },
       'weight': {
         get: function () {
-          return this.getCssProperty('fontWeight');;
+          return this.properties['font-weight'];
         },
         set: function (value) {
-          this.setCssProperty('fontWeight', value);
+          this.properties['font-weight'] = value;
+          this.updateCss();
         }
       },
       'stretch': {
         get: function () {
-          return this.getCssProperty('fontStretch');
+          return this.properties['font-stretch'];
         },
         set: function (value) {
-          this.setCssProperty('fontStretch', value);
+          this.properties['font-stretch'] = value;
+          this.updateCss();
         }
       },
       'unicodeRange': {
         get: function () {
-          return this.getCssProperty('unicodeRange');
+          return this.properties['unicode-range'];
         },
         set: function (value) {
-          this.setCssProperty('unicodeRange', value);
+          this.properties['unicode-range'] = value;
           this.range = UnicodeRange.parse(value);
+          this.updateCss();
         }
       },
       'featureSettings': {
         get: function () {
-          return this.getCssProperty('fontFeatureSettings') ||
-                 this.getCssProperty('mozFontFeatureSettings') ||
-                 this.getCssProperty('webkitFontFeatureSettings');
+          return this.properties['font-feature-settings'];
         },
         set: function (value) {
-          this.setCssProperty('fontFeatureSettings', value);
-          this.setCssProperty('mozFontFeatureSettings', value);
-          this.setCssProperty('webkitFontFeatureSettings', value);
+          this.properties['font-feature-settings'] = value;
+          this.properties['-moz-font-feature-settings'] = value;
+          this.properties['-webkit-font-feature-settings'] = value;
+          this.updateCss();
         }
       }
     });
 
-    this['family'] = family;
-    this['style'] = descriptors['style'] || 'normal';
-    this['variant'] = descriptors['variant'] || 'normal';
-    this['weight'] = descriptors['weight'] || 'normal';
-    this['stretch'] = descriptors['stretch'] || 'normal';
-    this['unicodeRange'] = descriptors['unicodeRange'] || 'U+0-10FFFF';
-    this['featureSettings'] = descriptors['featureSettings'] || 'normal';
-
-    if (typeof source === 'string') {
-      this.src = source;
-    } else if (source && typeof source.byteLength === "number") {
-      var bytes = new Uint8Array(source),
-          buffer = '';
-
-      for (var i = 0, l = bytes.length; i < l; i++) {
-        buffer += String.fromCharCode(bytes[i]);
-      }
-
-      // TODO: We could detect the format here and set the correct mime type and format
-      this.src = 'url(data:font/opentype;base64,' + window.btoa(buffer) + ')';
-
-      // trigger asynchronous loading
-      setTimeout(function () {
-        fontface['load']();
-      }, 0);
-    } else {
-      throw new SyntaxError("Failed to construct 'FontFace': The source provided ('" + source + "') could not be parsed as a value list.");
-    }
+    this.updateCss();
   };
 
   var FontFace = fontloader.FontFace;
@@ -169,19 +199,32 @@ goog.scope(function () {
   };
 
   /**
-   * @param {string} key
-   * @return {string}
+   * @private
    */
-  FontFace.prototype.getCssProperty = function (key) {
-    return this.styleElement.sheet.cssRules[0].style[key];
+  FontFace.prototype.updateCss = function () {
+    var style = this.getStyle();
+
+    if (this.styleElement.childNodes[0]) {
+      this.styleElement.removeChild(this.styleElement.childNodes[0]);
+    }
+
+    style += 'src:' + this.src + ';';
+
+    this.styleElement.appendChild(document.createTextNode('@font-face{' + style + '}'));
   };
 
   /**
-   * @param {string} key
-   * @param {string} value
+   * @private
+   * @return {string}
    */
-  FontFace.prototype.setCssProperty = function (key, value) {
-    this.styleElement.sheet.cssRules[0].style[key] = value;
+  FontFace.prototype.guid = function () {
+    var d = Date.now;
+
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = (d + Math.random() * 16) % 16 | 0;
+      d = Math.floor(d / 16);
+      return (c === 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+    });
   };
 
   /**
@@ -191,24 +234,24 @@ goog.scope(function () {
     var fontface = this;
 
     if (fontface.loadStatus !== FontFaceLoadStatus.UNLOADED) {
-      return fontface['promise'];
+      return this.promise;;
     } else {
       fontface.loadStatus = FontFaceLoadStatus.LOADING;
 
-      fontface.setCssProperty('src', fontface.src);
+      document.head.appendChild(this.styleElement);
 
-      return new Promise(function (resolve, reject) {
-        var observer = new FontFaceObserver(fontface).start();
+      var observer = new FontFaceObserver(fontface);
 
-        observer.then(function () {
-          fontface.loadStatus = FontFaceLoadStatus.LOADED;
-          resolve(fontface);
-        }, function (r) {
-          fontface.unload();
-          fontface.loadStatus = FontFaceLoadStatus.ERROR;
-          reject(r);
-        });
+      observer.start().then(function (f) {
+        fontface.loadStatus = FontFaceLoadStatus.LOADED;
+        fontface.resolve(f);
+      }, function (r) {
+        fontface.unload();
+        fontface.loadStatus = FontFaceLoadStatus.ERROR;
+        fontface.reject(r);
       });
+
+      return this.promise;
     }
   };
 
@@ -225,17 +268,12 @@ goog.scope(function () {
    * @return {string}
    */
   FontFace.prototype.getStyle = function () {
-    return [
-      'font-family:' + this['family'],
-      'font-style:' + this['style'],
-      'font-weight:' + this['weight'],
-      'font-stretch:' + this['stretch'],
-      'unicode-range:' + this['unicodeRange'],
-      'font-variant:' + this['variant'],
-      'font-feature-settings:' + this['featureSettings'],
-      '-moz-font-feature-settings:' + this['featureSettings'],
-      'webkit-font-feature-settings:' + this['featureSettings'],
-      ''
-    ].join(';');
+    var style = '';
+
+    Object.keys(this.properties).forEach(function (property) {
+      style += property + ':' + this.properties[property] + ';';
+    }, this);
+
+    return style;
   };
 });
