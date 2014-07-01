@@ -17,8 +17,9 @@ goog.scope(function () {
    * @param {string} family
    * @param {string|fontloader.BinaryData} source
    * @param {fontloader.FontFaceDescriptors} descriptors
+   * @param {CSSRule=} opt_cssRule
    */
-  fontloader.FontFace = function (family, source, descriptors) {
+  fontloader.FontFace = function (family, source, descriptors, opt_cssRule) {
     if (arguments.length !== 3) {
       throw new TypeError('Three arguments required, but only ' + arguments.length + ' present.');
     }
@@ -30,10 +31,22 @@ goog.scope(function () {
     this.loadStatus = fontloader.FontFaceLoadStatus.UNLOADED;
 
     /**
-     * @private
-     * @type {Element}
+     * @type {CSSRule}
      */
-    this.styleElement = document.createElement('style');
+    this.cssRule;
+
+    if (opt_cssRule) {
+      this.cssRule = opt_cssRule;
+    } else {
+      // If we do not get an explicit CSSRule we create a new stylesheet,
+      // insert an empty rule and retrieve it.
+      var style = document.createElement('style');
+
+      style.appendChild(document.createTextNode('@font-face{}'));
+      document.head.appendChild(style);
+
+      this.cssRule = style.sheet.cssRules[0];
+    }
 
     /**
      * @private
@@ -202,15 +215,33 @@ goog.scope(function () {
    * @private
    */
   FontFace.prototype.updateCss = function () {
-    var style = this.getStyle();
-
-    if (this.styleElement.childNodes[0]) {
-      this.styleElement.removeChild(this.styleElement.childNodes[0]);
-    }
+    var style = this.getStyle(),
+        styleSheet = this.cssRule.parentStyleSheet,
+        index = this.indexOfRule(styleSheet, this.cssRule);
 
     style += 'src:' + this.src + ';';
 
-    this.styleElement.appendChild(document.createTextNode('@font-face{' + style + '}'));
+    if (index !== -1) {
+      styleSheet.deleteRule(index);
+      styleSheet.insertRule('@font-face{' + style + '}', index);
+      this.cssRule = styleSheet.cssRules[index];
+    } else {
+      throw new Error('FontFace references CSSRule that is no longer present.');
+    }
+  };
+
+  /**
+   * @param {CSSStyleSheet} styleSheet
+   * @param {CSSRule} cssRule
+   * @return {number}
+   */
+  FontFace.prototype.indexOfRule = function (styleSheet, cssRule) {
+    for (var i = 0; i < styleSheet.cssRules.length; i++) {
+      if (styleSheet.cssRules[i] === cssRule) {
+        return i;
+      }
+    }
+    return -1;
   };
 
   /**
@@ -234,11 +265,9 @@ goog.scope(function () {
     var fontface = this;
 
     if (fontface.loadStatus !== FontFaceLoadStatus.UNLOADED) {
-      return this.promise;;
+      return this.promise;
     } else {
       fontface.loadStatus = FontFaceLoadStatus.LOADING;
-
-      document.head.appendChild(this.styleElement);
 
       var observer = new FontFaceObserver(fontface);
 
@@ -246,7 +275,6 @@ goog.scope(function () {
         fontface.loadStatus = FontFaceLoadStatus.LOADED;
         fontface.resolve(f);
       }, function (r) {
-        fontface.unload();
         fontface.loadStatus = FontFaceLoadStatus.ERROR;
         fontface.reject(r);
       });
@@ -257,10 +285,17 @@ goog.scope(function () {
 
   /**
    * Unloads this FontFace by removing the stylesheet
-   * from the document.
+   * rule from the document.
    */
   FontFace.prototype.unload = function () {
-    document.head.removeChild(this.styleElement);
+    var styleSheet = this.cssRule.parentStyleSheet,
+        index = this.indexOfRule(styleSheet, this.cssRule);
+
+    if (index !== -1) {
+      styleSheet.deleteRule(index);
+      styleSheet.insertRule('@font-face{}', index);
+      this.cssRule = styleSheet.cssRules[index];
+    }
     this.loadStatus = FontFaceLoadStatus.UNLOADED;
   };
 

@@ -144,14 +144,13 @@ describe('FontFaceObserver', function () {
     it('should load a font and resolve the promise', function (done) {
       var font = new FontFace(
             'test1',
-            'url("assets/sourcesanspro-regular.eot?#iefix") format(\'embedded-opentype\'),' +
             'url("assets/sourcesanspro-regular.woff") format(\'woff\')',
             {}
           ),
           ruler = new Ruler('hello world'),
           before = -1;
 
-      FontFaceObserver.DEFAULT_TIMEOUT = 200;
+      FontFaceObserver.DEFAULT_TIMEOUT = 300;
 
       ruler.insert();
       ruler.setStyle('font-family:monospace');
@@ -177,7 +176,6 @@ describe('FontFaceObserver', function () {
     it('should load fail to load a font and reject the promise', function (done) {
       var font = new FontFace(
             'test2',
-            'url(unknown.eot?#iefix) format("embedded-opentype"),' +
             'url(unknown.woff) format("woff")',
             {}
           );
@@ -194,14 +192,13 @@ describe('FontFaceObserver', function () {
     it('should load a font and resolve the promise even if the font is already loaded', function (done) {
       var font = new FontFace(
             'test3',
-            'url(assets/sourcesanspro-regular.eot?#iefix) format("embedded-opentype"),' +
             'url(assets/sourcesanspro-regular.woff) format("woff")',
             {}
           ),
           ruler = new Ruler('hello world'),
           before = -1;
 
-      FontFaceObserver.DEFAULT_TIMEOUT = 200;
+      FontFaceObserver.DEFAULT_TIMEOUT = 300;
 
       ruler.insert();
       ruler.setStyle('font-family: monospace');
@@ -222,30 +219,35 @@ describe('FontFaceObserver', function () {
       });
     });
 
-    it('removes the stylesheet if the font fails to load', function (done) {
+    it('removes the stylesheet @font-face rule after unloading', function (done) {
       var font = new FontFace(
             'test4',
-            'url(unknown?#iefix) format("embedded-opentype"),' +
-            'url(unknown.woff) format("woff")',
+            'url(assets/sourcesanspro-regular.woff) format("woff")',
             {}
-          );
+          ),
+          ruler = new Ruler('hello world'),
+          before = -1;
 
-      FontFaceObserver.DEFAULT_TIMEOUT = 50;
+      FontFaceObserver.DEFAULT_TIMEOUT = 300;
 
-      var count = document.styleSheets.length;
+      ruler.insert();
+      ruler.setStyle('font-family:monospace');
 
-      font.load().then(function () {
-        done(new Error('Should not call resolve'));
-      }, function (r) {
-        expect(document.styleSheets.length, 'to equal', count);
+      before = ruler.getWidth();
+      ruler.setStyle(font.getStyle() + ';font-family: test4, monospace;');
+      font.load().then(function (x) {
+        expect(ruler.getWidth(), 'not to equal', before);
+        font.unload();
+        expect(ruler.getWidth(), 'to equal', before);
         done();
+      }, function (r) {
+        done(r);
       });
     });
 
     it('loads a font with a custom unicode range within ASCII', function (done) {
       var font = new FontFace(
             'test5',
-            'url(assets/subset.eot?#iefix) format("embedded-opentype"),' +
             'url(assets/subset.woff) format("woff")',
             {
               unicodeRange: 'u+0021'
@@ -254,7 +256,7 @@ describe('FontFaceObserver', function () {
           ruler = new Ruler('\u0021'),
           before = -1;
 
-      FontFaceObserver.DEFAULT_TIMEOUT = 200;
+      FontFaceObserver.DEFAULT_TIMEOUT = 300;
 
       ruler.insert();
       ruler.setStyle('font-family: monospace');
@@ -280,7 +282,6 @@ describe('FontFaceObserver', function () {
     it('loads a font with a custom unicode range outside ASCII (but within the BMP)', function (done) {
       var font = new FontFace(
             'test6',
-            'url(assets/subset.eot?#iefix) format("embedded-opentype"),' +
             'url(assets/subset.woff) format("woff")',
             {
               unicodeRange: 'u+4e2d,u+56fd'
@@ -289,7 +290,7 @@ describe('FontFaceObserver', function () {
           ruler = new Ruler('\u4e2d\u56fd'),
           before = -1;
 
-      FontFaceObserver.DEFAULT_TIMEOUT = 200;
+      FontFaceObserver.DEFAULT_TIMEOUT = 300;
 
       ruler.insert();
       ruler.setStyle('font-family: monospace');
@@ -315,7 +316,6 @@ describe('FontFaceObserver', function () {
     it('loads a font with a custom unicode range outside the BMP', function (done) {
       var font = new FontFace(
             'test7',
-            'url(assets/subset.eot?#iefix) format("embedded-opentype"),' +
             'url(assets/subset.woff) format("woff")',
             {
               unicodeRange: 'u+10ffff'
@@ -324,7 +324,7 @@ describe('FontFaceObserver', function () {
           ruler = new Ruler('\udbff\udfff'),
           before = -1;
 
-      FontFaceObserver.DEFAULT_TIMEOUT = 200;
+      FontFaceObserver.DEFAULT_TIMEOUT = 300;
 
       ruler.insert();
       ruler.setStyle('font-family: monospace');
@@ -349,8 +349,7 @@ describe('FontFaceObserver', function () {
 
     it('rejects the promise if the font loads but is given the wrong unicode range', function (done) {
       var font = new FontFace(
-            'test2',
-            'url(assets/subset.eot?#iefix) format("embedded-opentype"),' +
+            'test8',
             'url(assets/subset.woff) format("woff")',
             {
               unicodeRange: 'u+23' // not in the font
