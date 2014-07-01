@@ -249,7 +249,7 @@ goog.scope(function () {
    * @return {string}
    */
   FontFace.prototype.guid = function () {
-    var d = Date.now;
+    var d = Date.now();
 
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
       var r = (d + Math.random() * 16) % 16 | 0;
