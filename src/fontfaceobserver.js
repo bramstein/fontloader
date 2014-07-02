@@ -7,13 +7,25 @@ goog.scope(function () {
 
   /**
    * @constructor
-   * @param {fontloader.FontFace} font
+   * @param {string} family
+   * @param {string} style
+   * @param {string} text
    */
-  fontloader.FontFaceObserver = function (font) {
+  fontloader.FontFaceObserver = function (family, style, text) {
     /**
-     * @type {fontloader.FontFace}
+     * @type {string}
      */
-    this.font = font;
+    this.family = family;
+
+    /**
+     * @type {string}
+     */
+    this.style = style;
+
+    /**
+     * @type {string}
+     */
+    this.text = text;
 
     /**
      * @type {{sansserif: number, serif: number, monospace: number}}
@@ -24,11 +36,6 @@ goog.scope(function () {
       monospace: 0
     };
 
-    /**
-     * @type {string}
-     */
-    this.text = font.getUnicodeRange().getTestString();
-
     this.init();
   };
 
@@ -38,32 +45,32 @@ goog.scope(function () {
    * @private
    */
   FontFaceObserver.prototype.init = function () {
-    var ruler = new Ruler(this.text),
-        style = this.font.getStyle();
+    var ruler = new Ruler(this.text);
 
     ruler.insert();
 
-    ruler.setStyle(style + 'font-family: serif');
+    ruler.setStyle(this.style + 'font-family: serif');
     this.cache.serif = ruler.getWidth();
 
-    ruler.setStyle(style + 'font-family: sans-serif');
+    ruler.setStyle(this.style + 'font-family: sans-serif');
     this.cache.sansserif = ruler.getWidth();
 
-    ruler.setStyle(style + 'font-family: monospace');
+    ruler.setStyle(this.style + 'font-family: monospace');
     this.cache.monospace = ruler.getWidth();
 
     ruler.remove();
   };
 
   /**
-   * @return {IThenable.<fontloader.FontFace>}
+   * @return {IThenable.<string>}
    */
   FontFaceObserver.prototype.start = function () {
     var that = this,
-        font = that.font,
+        family = this.family,
+        style = this.style,
         started = goog.now(),
-        rulerA = new Ruler(that.text),
-        rulerB = new Ruler(that.text);
+        rulerA = new Ruler(this.text),
+        rulerB = new Ruler(this.text);
 
     return new Promise(function (resolve, reject) {
        function check() {
@@ -74,7 +81,7 @@ goog.scope(function () {
           if (goog.now() - started >= FontFaceObserver.DEFAULT_TIMEOUT) {
             rulerA.remove();
             rulerB.remove();
-            reject(new Error('Timeout'));
+            reject(new Error('Timeout while loading \'' + family + '\'.'));
           } else {
             goog.global.setTimeout(function () {
               check();
@@ -83,17 +90,15 @@ goog.scope(function () {
         } else {
           rulerA.remove();
           rulerB.remove();
-          resolve(font);
+          resolve(family);
         }
       }
 
-      var style = font.getStyle();
-
       rulerA.insert();
-      rulerA.setStyle(style + 'font-family:' + font['family'] + ',sans-serif');
+      rulerA.setStyle(style + 'font-family:' + family + ',sans-serif');
 
       rulerB.insert();
-      rulerB.setStyle(style + 'font-family:' + font['family'] + ',serif');
+      rulerB.setStyle(style + 'font-family:' + family + ',serif');
 
       check();
     });

@@ -142,22 +142,18 @@ describe('FontFaceObserver', function () {
     });
 
     it('should load a font and resolve the promise', function (done) {
-      var font = new FontFace(
-            'test1',
-            'url("assets/sourcesanspro-regular.woff") format(\'woff\')',
-            {}
-          ),
+      var observer = new FontFaceObserver('observer-test1', '', 'hello world'),
           ruler = new Ruler('hello world'),
           before = -1;
 
       FontFaceObserver.DEFAULT_TIMEOUT = 300;
 
       ruler.insert();
-      ruler.setStyle('font-family:monospace');
+      ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
-      ruler.setStyle(font.getStyle());
-      font.load().then(function (x) {
+      ruler.setStyle('font-family: observer-test1');
+      observer.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active, 'not to equal', before);
         setTimeout(function () {
@@ -174,15 +170,11 @@ describe('FontFaceObserver', function () {
     });
 
     it('should load fail to load a font and reject the promise', function (done) {
-      var font = new FontFace(
-            'test2',
-            'url(unknown.woff) format("woff")',
-            {}
-          );
+      var observer = new FontFaceObserver('observer-test2', '', 'hello world');
 
       FontFaceObserver.DEFAULT_TIMEOUT = 50;
 
-      font.load().then(function (x) {
+      observer.start().then(function (x) {
         done(new Error('Should not be called'));
       }, function (r) {
         done();
@@ -190,11 +182,7 @@ describe('FontFaceObserver', function () {
     });
 
     it('should load a font and resolve the promise even if the font is already loaded', function (done) {
-      var font = new FontFace(
-            'test3',
-            'url(assets/sourcesanspro-regular.woff) format("woff")',
-            {}
-          ),
+      var observer = new FontFaceObserver('observer-test3', '', 'hello world'),
           ruler = new Ruler('hello world'),
           before = -1;
 
@@ -204,9 +192,9 @@ describe('FontFaceObserver', function () {
       ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
-      ruler.setStyle(font.getStyle());
-      font.load().then(function (x) {
-        font.load().then(function (x) {
+      ruler.setStyle('font-family: observer-test3');
+      observer.start().then(function (x) {
+        observer.start().then(function (x) {
           ruler.remove();
           done();
         }, function (r) {
@@ -219,40 +207,8 @@ describe('FontFaceObserver', function () {
       });
     });
 
-    it('removes the stylesheet @font-face rule after unloading', function (done) {
-      var font = new FontFace(
-            'test4',
-            'url(assets/sourcesanspro-regular.woff) format("woff")',
-            {}
-          ),
-          ruler = new Ruler('hello world'),
-          before = -1;
-
-      FontFaceObserver.DEFAULT_TIMEOUT = 300;
-
-      ruler.insert();
-      ruler.setStyle('font-family:monospace');
-
-      before = ruler.getWidth();
-      ruler.setStyle(font.getStyle() + ';font-family: test4, monospace;');
-      font.load().then(function (x) {
-        expect(ruler.getWidth(), 'not to equal', before);
-        font.unload();
-        expect(ruler.getWidth(), 'to equal', before);
-        done();
-      }, function (r) {
-        done(r);
-      });
-    });
-
     it('loads a font with a custom unicode range within ASCII', function (done) {
-      var font = new FontFace(
-            'test5',
-            'url(assets/subset.woff) format("woff")',
-            {
-              unicodeRange: 'u+0021'
-            }
-          ),
+      var observer = new FontFaceObserver('observer-test4', '', '\u0021'),
           ruler = new Ruler('\u0021'),
           before = -1;
 
@@ -262,8 +218,8 @@ describe('FontFaceObserver', function () {
       ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
-      ruler.setStyle(font.getStyle());
-      font.load().then(function (x) {
+      ruler.setStyle('font-family: observer-test4');
+      observer.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active, 'not to equal', before);
         setTimeout(function () {
@@ -276,17 +232,13 @@ describe('FontFaceObserver', function () {
       }, function (r) {
         ruler.remove();
         done(r);
+      }).catch(function (e) {
+       console.log(e);
       });
     });
 
     it('loads a font with a custom unicode range outside ASCII (but within the BMP)', function (done) {
-      var font = new FontFace(
-            'test6',
-            'url(assets/subset.woff) format("woff")',
-            {
-              unicodeRange: 'u+4e2d,u+56fd'
-            }
-          ),
+      var observer = new FontFaceObserver('observer-test5', '', '\u4e2d\u56df'),
           ruler = new Ruler('\u4e2d\u56fd'),
           before = -1;
 
@@ -296,8 +248,8 @@ describe('FontFaceObserver', function () {
       ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
-      ruler.setStyle(font.getStyle());
-      font.load().then(function (x) {
+      ruler.setStyle('font-family: observer-test5');
+      observer.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active, 'not to equal', before);
         setTimeout(function () {
@@ -314,13 +266,7 @@ describe('FontFaceObserver', function () {
     });
 
     it('loads a font with a custom unicode range outside the BMP', function (done) {
-      var font = new FontFace(
-            'test7',
-            'url(assets/subset.woff) format("woff")',
-            {
-              unicodeRange: 'u+10ffff'
-            }
-          ),
+      var observer = new FontFaceObserver('observer-test6', '', '\udbff\udfff'),
           ruler = new Ruler('\udbff\udfff'),
           before = -1;
 
@@ -330,8 +276,8 @@ describe('FontFaceObserver', function () {
       ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
-      ruler.setStyle(font.getStyle());
-      font.load().then(function (x) {
+      ruler.setStyle('font-family: observer-test6');
+      observer.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active, 'not to equal', before);
         setTimeout(function () {
@@ -348,17 +294,11 @@ describe('FontFaceObserver', function () {
     });
 
     it('rejects the promise if the font loads but is given the wrong unicode range', function (done) {
-      var font = new FontFace(
-            'test8',
-            'url(assets/subset.woff) format("woff")',
-            {
-              unicodeRange: 'u+23' // not in the font
-            }
-          );
+      var observer = new FontFaceObserver('observer-test7', '', '\u0023');
 
       FontFaceObserver.DEFAULT_TIMEOUT = 50;
 
-      font.load().then(function (x) {
+      observer.start().then(function (x) {
         done(new Error('Should not be called'));
       }, function (r) {
         done();

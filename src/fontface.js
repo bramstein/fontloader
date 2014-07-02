@@ -269,11 +269,11 @@ goog.scope(function () {
     } else {
       fontface.loadStatus = FontFaceLoadStatus.LOADING;
 
-      var observer = new FontFaceObserver(fontface);
+      var observer = new FontFaceObserver(this['family'], this.getStyle(), this.range.getTestString());
 
-      observer.start().then(function (f) {
+      observer.start().then(function () {
         fontface.loadStatus = FontFaceLoadStatus.LOADED;
-        fontface.resolve(f);
+        fontface.resolve(fontface);
       }, function (r) {
         fontface.loadStatus = FontFaceLoadStatus.ERROR;
         fontface.reject(r);

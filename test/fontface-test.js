@@ -1,7 +1,8 @@
 describe('FontFace', function () {
   var FontFace = fontloader.FontFace,
       FontFaceObserver = fontloader.FontFaceObserver,
-      FontFaceLoadStatus = fontloader.FontFaceLoadStatus;
+      FontFaceLoadStatus = fontloader.FontFaceLoadStatus,
+      Ruler = fontloader.Ruler;
 
   describe('#constructor', function () {
     it('throws when called without arguments', function () {
@@ -162,12 +163,67 @@ describe('FontFace', function () {
 
         font.load().then(function (f) {
           expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
-          expect(f, 'to equal', 'font');
+          expect(f, 'to equal', font);
           done();
         }, function (r) {
           done(r);
         });
       });
     }
+  });
+
+  describe('#unload', function () {
+    var startMethod = null;
+
+    beforeEach(function () {
+      startMethod = FontFaceObserver.prototype.start;
+    });
+
+    afterEach(function () {
+      FontFaceObserver.prototype.start = startMethod;
+    });
+
+    it('sets the status to unloaded when called', function () {
+      FontFaceObserver.prototype.start = function () {
+        return Promise.resolve('font');
+      };
+
+      var font = new FontFace('My Family', 'url(unknown.woff)', {});
+
+      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
+
+      font.load().then(function (f) {
+        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
+
+        font.unload();
+
+        expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
+      }, function (r) {
+        done(r);
+      });
+    });
+
+    it('removes the stylesheet rule from the DOM', function () {
+      var font = new FontFace('fontface-unload', 'url(assets/sourcesanspro-regular.woff)', {}),
+          ruler = new Ruler('hello world'),
+          before = -1;
+
+      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
+
+      ruler.insert();
+      ruler.setStyle('font-family: monospace');
+      before = ruler.getWidth();
+
+      ruler.setStyle('font-family: fontface-unload, monospace');
+      font.load().then(function (f) {
+        expect(ruler.getWidth(), 'not to equal', before);
+        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
+        font.unload();
+        expect(ruler.getWidth(), 'to equal', before);
+        expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
+      }, function (r) {
+        done(r);
+      });
+    });
   });
 });
