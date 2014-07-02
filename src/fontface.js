@@ -229,7 +229,7 @@ goog.scope(function () {
     } else {
       fontface.loadStatus = FontFaceLoadStatus.LOADING;
 
-      var observer = new FontFaceObserver(this['family'], this.getStyle(), this.range.getTestString());
+      var observer = new FontFaceObserver(this['family'], this.cssRule['cssText'], this.range.getTestString());
 
       observer.start().then(function () {
         fontface.loadStatus = FontFaceLoadStatus.LOADED;
@@ -241,12 +241,5 @@ goog.scope(function () {
 
       return this.promise;
     }
-  };
-
-  /**
-   * @return {string}
-   */
-  FontFace.prototype.getStyle = function () {
-    return this.cssRule['cssText'];
   };
 });
