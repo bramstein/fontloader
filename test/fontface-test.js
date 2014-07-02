@@ -17,27 +17,6 @@ describe('FontFace', function () {
       }, 'to throw exception');
     });
 
-    // use feature detection so these tests do not fail on
-    // older browsers that do not support array buffers.
-    if (window['ArrayBuffer']) {
-      it('parses source data', function () {
-        expect(new FontFace('My Family', new ArrayBuffer(4), {}).src, 'to equal', 'url(data:font/opentype;base64,AAAAAA==)');
-      });
-    }
-
-    it('parses source urls', function () {
-      expect(new FontFace('My Family', 'url(font.woff)', {}).src, 'to equal', 'url(font.woff)');
-      expect(new FontFace('My Family', 'url("font.woff")', {}).src, 'to equal', 'url("font.woff")');
-      expect(new FontFace('My Family', "url('font.woff')", {}).src, 'to equal', 'url(\'font.woff\')');
-      expect(new FontFace('My Family', 'url(font.woff),url(font.otf)', {}).src, 'to equal', 'url(font.woff),url(font.otf)');
-      expect(new FontFace('My Family', 'url(font.woff), url(font.otf)', {}).src, 'to equal', 'url(font.woff), url(font.otf)');
-    });
-
-    it('parses source urls with formats', function () {
-      expect(new FontFace('My Family', 'url(font.woff) format(woff)', {}).src, 'to equal', 'url(font.woff) format(woff)');
-      expect(new FontFace('My Family', 'url(font.woff) format(woff), url(font.otf) format(opentype)', {}).src, 'to equal', 'url(font.woff) format(woff), url(font.otf) format(opentype)');
-    });
-
     it('throws a syntax error if the source url is not a string or arraybuffer', function () {
       expect(function () {
         new FontFace('My Family', true, {});
@@ -47,7 +26,6 @@ describe('FontFace', function () {
     it('parses descriptors', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { style: 'italic' }).style, 'to equal', 'italic');
       expect(new FontFace('My Family', 'url(font.woff)', { weight: 'bold' }).weight, 'to equal', 'bold');
-      expect(new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'U+FF' }).unicodeRange, 'to equal', 'U+FF');
       expect(new FontFace('My Family', 'url(font.woff)', { variant: 'small-caps' }).variant, 'to equal', 'small-caps');
     });
 
@@ -62,9 +40,30 @@ describe('FontFace', function () {
 
       expect(font.style, 'to equal', 'normal');
       expect(font.weight, 'to equal', 'normal');
-      expect(font.unicodeRange, 'to equal', 'U+0-10FFFF');
       expect(font.variant, 'to equal', 'normal');
       expect(font.featureSettings, 'to equal', 'normal');
+    });
+
+    it('accepts and uses an existing CSSRule', function () {
+      var style = document.createElement('style');
+
+      style.appendChild(document.createTextNode('@font-face{ font-family: "My Family"; src: url(unknown.woff); }'));
+    });
+  });
+
+  describe('attributes', function () {
+    it('updates the CSS rule when setting a FontFace attribute', function () {
+      var font = new FontFace('My Family', 'url(unknown.woff)', {});
+
+      expect(font.weight, 'to equal', 'normal');
+
+      font.weight = '500';
+
+      expect(font.weight, 'to equal', '500');
+      expect(font.cssRule.cssText, 'to match', /font-weight:\s*500/);
+
+      font.weight = 'normal';
+      expect(font.cssRule.cssText, 'to match', /font-weight:\s*normal/);
     });
   });
 
@@ -170,60 +169,5 @@ describe('FontFace', function () {
         });
       });
     }
-  });
-
-  describe('#unload', function () {
-    var startMethod = null;
-
-    beforeEach(function () {
-      startMethod = FontFaceObserver.prototype.start;
-    });
-
-    afterEach(function () {
-      FontFaceObserver.prototype.start = startMethod;
-    });
-
-    it('sets the status to unloaded when called', function () {
-      FontFaceObserver.prototype.start = function () {
-        return Promise.resolve('font');
-      };
-
-      var font = new FontFace('My Family', 'url(unknown.woff)', {});
-
-      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
-
-      font.load().then(function (f) {
-        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
-
-        font.unload();
-
-        expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
-      }, function (r) {
-        done(r);
-      });
-    });
-
-    it('removes the stylesheet rule from the DOM', function () {
-      var font = new FontFace('fontface-unload', 'url(assets/sourcesanspro-regular.woff)', {}),
-          ruler = new Ruler('hello world'),
-          before = -1;
-
-      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
-
-      ruler.insert();
-      ruler.setStyle('font-family: monospace');
-      before = ruler.getWidth();
-
-      ruler.setStyle('font-family: fontface-unload, monospace');
-      font.load().then(function (f) {
-        expect(ruler.getWidth(), 'not to equal', before);
-        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
-        font.unload();
-        expect(ruler.getWidth(), 'to equal', before);
-        expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
-      }, function (r) {
-        done(r);
-      });
-    });
   });
 });
