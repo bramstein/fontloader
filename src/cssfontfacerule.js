@@ -58,13 +58,7 @@ goog.scope(function () {
       },
       'cssText': {
         get: function () {
-          var cssText = '';
-
-          for (var i = 0; i < this.cssRule.style.length; i++) {
-            cssText += this.cssRule.style[i] + ':' + this.getPropertyValue(this.cssRule.style[i]) + ';';
-          }
-
-          return '@font-face{' + cssText + '}';
+          return '@font-face{' + this.getCssText() + '}';
         },
         set: function (value) {
           this.update(value);
@@ -102,6 +96,19 @@ goog.scope(function () {
   };
 
   /**
+   * @return {string}
+   */
+  CSSFontFaceRule.prototype.getCssText = function () {
+    var cssText = '';
+
+    for (var i = 0; i < this.cssRule.style.length; i++) {
+      cssText += this.cssRule.style[i] + ':' + this.getPropertyValue(this.cssRule.style[i]) + ';';
+    }
+
+    return cssText;
+  };
+
+  /**
    * @private
    * @param {string} name
    * @return {string}
@@ -131,11 +138,7 @@ goog.scope(function () {
     if (CSSFontFaceRule.SUPPORTS_PROPERTIES) {
       this.cssRule.style.setProperty(name, value);
     } else {
-      var cssText = '';
-
-      for (var i = 0; i < this.cssRule.style.length; i++) {
-        cssText += this.cssRule.style[i] + ':' + this.getPropertyValue(this.cssRule.style[i]) + ';';
-      }
+      var cssText = this.getCssText();
 
       cssText += name + ':' + value;
 
