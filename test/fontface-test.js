@@ -23,6 +23,16 @@ describe('FontFace', function () {
       }, 'to throw exception');
     });
 
+    it('accepts family names starting with non-valid identifier characters', function () {
+      expect(new FontFace('3four', 'url(font.woff)', {}).family, 'to equal', '3four');
+      expect(new FontFace('-5f', 'url(font.woff)', {}).family, 'to equal', '-5f');
+      expect(new FontFace('--vendor', 'url(font.woff)', {}).family, 'to equal', '--vendor');
+    });
+
+    it('accepts randomly generated family names', function () {
+      expect(new FontFace('32de8a5-2e72-4ade-dc76-ea7ad7c', 'url(font.woff)', {}).family, 'to equal', '32de8a5-2e72-4ade-dc76-ea7ad7c');
+    });
+
     it('parses descriptors', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { style: 'italic' }).style, 'to equal', 'italic');
       expect(new FontFace('My Family', 'url(font.woff)', { weight: 'bold' }).weight, 'to equal', 'bold');

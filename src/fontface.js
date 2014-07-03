@@ -180,7 +180,7 @@ goog.scope(function () {
       }
     });
 
-    this['family'] = family;
+    this['family'] = '\'' + family + '\'';
     this['style'] = descriptors['style'] || 'normal';
     this['variant'] = descriptors['variant'] || 'normal';
     this['weight'] = descriptors['weight'] || 'normal';
