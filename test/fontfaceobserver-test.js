@@ -152,7 +152,7 @@ describe('FontFaceObserver', function () {
       ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
-      ruler.setStyle('font-family: observer-test1');
+      ruler.setStyle('font-family: observer-test1, monospace');
       observer.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active, 'not to equal', before);
@@ -192,7 +192,7 @@ describe('FontFaceObserver', function () {
       ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
-      ruler.setStyle('font-family: observer-test3');
+      ruler.setStyle('font-family: observer-test3, monospace');
       observer.start().then(function (x) {
         observer.start().then(function (x) {
           ruler.remove();
@@ -218,7 +218,7 @@ describe('FontFaceObserver', function () {
       ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
-      ruler.setStyle('font-family: observer-test4');
+      ruler.setStyle('font-family: observer-test4, monospace');
       observer.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active, 'not to equal', before);
@@ -248,7 +248,7 @@ describe('FontFaceObserver', function () {
       ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
-      ruler.setStyle('font-family: observer-test5');
+      ruler.setStyle('font-family: observer-test5, monospace');
       observer.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active, 'not to equal', before);
@@ -276,7 +276,7 @@ describe('FontFaceObserver', function () {
       ruler.setStyle('font-family: monospace');
 
       before = ruler.getWidth();
-      ruler.setStyle('font-family: observer-test6');
+      ruler.setStyle('font-family: observer-test6, monospace');
       observer.start().then(function (x) {
         var active = ruler.getWidth();
         expect(active, 'not to equal', before);
