@@ -63,11 +63,6 @@ goog.scope(function () {
         set: function (value) {
           this.update(value);
         }
-      },
-      'parentStyleSheet': {
-        get: function () {
-          return this.cssRule.parentStyleSheet;
-        }
       }
     });
   };
@@ -84,7 +79,7 @@ goog.scope(function () {
    * @return {number}
    */
   CSSFontFaceRule.prototype.indexOf = function () {
-    var styleSheet = this['parentStyleSheet'];
+    var styleSheet = this.cssRule.parentStyleSheet;
 
     for (var i = 0; i < styleSheet.cssRules.length; i++) {
       if (styleSheet.cssRules[i] === this.cssRule) {
@@ -163,7 +158,7 @@ goog.scope(function () {
     var index = this.indexOf();
 
     if (index !== -1) {
-      this['parentStyleSheet'].deleteRule(index);
+      this.cssRule.parentStyleSheet.deleteRule(index);
     }
   };
 
@@ -175,7 +170,7 @@ goog.scope(function () {
     var index = this.indexOf();
 
     if (index !== -1) {
-      var parentStyleSheet = this['parentStyleSheet'];
+      var parentStyleSheet = this.cssRule.parentStyleSheet;
 
       parentStyleSheet.deleteRule(index);
       parentStyleSheet.insertRule(cssText, index);

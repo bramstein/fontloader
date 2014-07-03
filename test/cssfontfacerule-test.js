@@ -29,7 +29,6 @@ describe('CSSFontFaceRule', function () {
       var rule = new CSSFontFaceRule(cssRule);
 
       expect(rule.style, 'to be an object');
-      expect(rule.parentStyleSheet, 'to equal', styleElement.sheet);
       expect(rule.cssText, 'to match', /^@font-face\s*{\s*font-family:\s*['"]?test['"]?;\s*}\s*$/);
     });
 
