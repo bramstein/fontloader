@@ -41,14 +41,12 @@ describe('CSSFontFaceRule', function () {
   });
 
   describe('@cssText', function () {
-    xit('can set cssText', function () {
-      insertRule('@font-face{font-family:test;}');
+    it('gets the cssText', function () {
+      insertRule('@font-face{font-family:test;font-weight:500;}');
 
       var rule = new CSSFontFaceRule(cssRule);
 
-      rule.cssText = '@font-face{font-family:hello;}';
-
-      expect(rule.cssText, 'to match', /^@font-face\s*{\s*font-family:\s*['"]?hello['"]?;\s*}\s*$/);
+      expect(rule.cssText, 'to match', /^@font-face\s*{\s*font-family:\s*['"]?test['"]?;\s*font-weight:\s*500;\s*}\s*$/);
     });
   });
 

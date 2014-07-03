@@ -59,9 +59,6 @@ goog.scope(function () {
       'cssText': {
         get: function () {
           return '@font-face{' + this.getCssText() + '}';
-        },
-        set: function (value) {
-          this.update(value);
         }
       }
     });
