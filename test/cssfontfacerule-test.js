@@ -75,12 +75,21 @@ describe('CSSFontFaceRule', function () {
       expect(rule.style['font-style'], 'to equal', 'normal');
     });
 
-    xit('sets the font-variant property', function () {
+    it('returns a value for the font-variant property', function () {
       insertRule('@font-face{font-variant:normal;}');
 
       var rule = new CSSFontFaceRule(cssRule);
 
       expect(rule.style['font-variant'], 'to equal', 'normal');
+    });
+
+    // This is disabled because it fails on Firefox. No matter
+    // what we set font-variant to, it always returns the empty
+    // string.
+    xit('sets the font-variant property', function () {
+      insertRule('@font-face{font-variant:normal;}');
+
+      var rule = new CSSFontFaceRule(cssRule);
 
       rule.style['font-variant'] = 'small-caps';
 

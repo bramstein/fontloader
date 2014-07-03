@@ -114,7 +114,17 @@ goog.scope(function () {
    * @return {string}
    */
   CSSFontFaceRule.prototype.getPropertyValue = function (name) {
-    return this.cssRule.style.getPropertyValue(name);
+    var value = this.cssRule.style.getPropertyValue(name);
+
+    // Firefox doesn't appear to support setting font-variant. Instead
+    // it always returns an empty string when asked for the font-variant
+    // property. We return 'normal' instead so the rest of the code can
+    // assume everything is normalised.
+    if (value === '') {
+      return 'normal';
+    } else {
+      return value;
+    }
   };
 
   /**

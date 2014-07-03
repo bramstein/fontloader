@@ -26,13 +26,17 @@ describe('FontFace', function () {
     it('parses descriptors', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { style: 'italic' }).style, 'to equal', 'italic');
       expect(new FontFace('My Family', 'url(font.woff)', { weight: 'bold' }).weight, 'to equal', 'bold');
-      expect(new FontFace('My Family', 'url(font.woff)', { variant: 'small-caps' }).variant, 'to equal', 'small-caps');
     });
 
     // This one is currently disabled because browsers do not yet accept font-stretch as part of the font shorthand
     // syntax. Fortunately, this also means the browser does not support font-stretch, so we can just ignore it for now.
     xit('parses descriptors with stretch', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { stretch: 'condensed' }).stretch, 'to equal', 'condensed');
+    });
+
+    // This one is currently disabled because Firefox does not support setting font-variant.
+    xit('parses descriptors with variant', function () {
+      expect(new FontFace('My Family', 'url(font.woff)', { variant: 'small-caps' }).variant, 'to equal', 'small-caps');
     });
 
     it('defaults descriptors if not given', function () {
