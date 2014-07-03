@@ -22,7 +22,7 @@ goog.scope(function () {
    * @param {CSSRule=} opt_cssRule
    */
   fontloader.FontFace = function (family, source, descriptors, opt_cssRule) {
-    if (arguments.length !== 3) {
+    if (arguments.length < 3) {
       throw new TypeError('Three arguments required, but only ' + arguments.length + ' present.');
     }
 
