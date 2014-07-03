@@ -55,12 +55,6 @@ goog.scope(function () {
      */
     this.properties = this.cssRule['style'];
 
-    /**
-     * @private
-     * @type {string}
-     */
-    this.src;
-
     if (typeof source === 'string') {
       this.properties['src'] = source;
     } else if (source && typeof source.byteLength === "number") {
