@@ -33,30 +33,25 @@ goog.scope(function () {
     this.loadStatus = fontloader.FontFaceLoadStatus.UNLOADED;
 
     /**
-     * @type {fontloader.CSSFontFaceRule}
+     * @type {string}
      */
-    this.cssRule;
-
-    if (opt_cssRule) {
-      this.cssRule = new CSSFontFaceRule(opt_cssRule);
-    } else {
-      // If we do not get an explicit CSSRule we create a new stylesheet,
-      // insert an empty rule and retrieve it.
-      var style = document.createElement('style');
-
-      style.appendChild(document.createTextNode('@font-face{}'));
-      document.head.appendChild(style);
-
-      this.cssRule = new CSSFontFaceRule(style.sheet.cssRules[0]);
-    }
+    this.internalFamily = 'xxxxxxx-xxxx-4xxx-yxxx-xxxxxxx'.replace(/[xy]/g, function (c) {
+      var r = (goog.now() + Math.random() * 16) % 16 | 0;
+      return (c === 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+    });
 
     /**
-     * @type {CSSStyleDeclaration}
+     * @type {boolean}
      */
-    this.properties = this.cssRule['style'];
+    this.cssConnected = false;
+
+    /**
+     * @type {string}
+     */
+    this.src;
 
     if (typeof source === 'string') {
-      this.properties['src'] = source;
+      this.src = source;
     } else if (source && typeof source.byteLength === "number") {
       var bytes = new Uint8Array(/** @type {ArrayBuffer} */ (source)),
           buffer = '';
@@ -66,10 +61,35 @@ goog.scope(function () {
       }
 
       // TODO: We could detect the format here and set the correct mime type and format
-      this.properties['src'] = 'url(data:font/opentype;base64,' + window.btoa(buffer) + ')';
+      this.src = 'url(data:font/opentype;base64,' + window.btoa(buffer) + ')';
     } else if (typeof source !== 'string') {
       throw new SyntaxError('The source provided (\'' + source + '\') could not be parsed as a value list.');
     }
+
+    /**
+     * @type {fontloader.CSSFontFaceRule}
+     */
+    this.cssRule;
+
+    if (opt_cssRule) {
+      this.cssRule = new CSSFontFaceRule(opt_cssRule);
+      this.cssConnected = true;
+    } else {
+      // If we do not get an explicit CSSRule we create a new stylesheet,
+      // insert an empty rule and retrieve it.
+      var style = document.createElement('style');
+
+      style.appendChild(document.createTextNode('@font-face{}'));
+      document.head.appendChild(style);
+
+      this.cssRule = new CSSFontFaceRule(style.sheet.cssRules[0], this.src);
+      this.cssConnected = false;
+    }
+
+    /**
+     * @type {CSSStyleDeclaration}
+     */
+    this.properties = this.cssRule['style'];
 
     /**
      * @private
@@ -102,6 +122,11 @@ goog.scope(function () {
       fontface.reject = reject;
     });
 
+    /**
+     * @type {string}
+     */
+    this.realFamily = family;
+
     Object.defineProperties(this, {
       'status': {
         get: function () {
@@ -119,10 +144,13 @@ goog.scope(function () {
       },
       'family': {
         get: function () {
-          return CSSValue.parseFamily(this.properties['font-family'])[0];
+          return this.realFamily;
         },
         set: function (value) {
-          this.properties['font-family'] = value;
+          this.realFamily = value;
+          if (this.cssConnected) {
+            this.setCssFamily(value);
+          }
         }
       },
       'style': {
@@ -180,7 +208,9 @@ goog.scope(function () {
       }
     });
 
-    this['family'] = '\'' + family + '\'';
+    this.setCssFamily(this.internalFamily);
+
+    this['family'] = family;
     this['style'] = descriptors['style'] || 'normal';
     this['variant'] = descriptors['variant'] || 'normal';
     this['weight'] = descriptors['weight'] || 'normal';
@@ -200,15 +230,45 @@ goog.scope(function () {
 
   /**
    * @private
-   * @return {string}
+   * @param {string} name
    */
-  FontFace.prototype.guid = function () {
-    var d = Date.now();
+  FontFace.prototype.setCssFamily = function (name) {
+    this.properties['font-family'] = '\'' + name + '\'';
+  };
 
-    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
-      var r = (d + Math.random() * 16) % 16 | 0;
-      d = Math.floor(d / 16);
-      return (c === 'x' ? r : (r & 0x7 | 0x8)).toString(16);
+  /**
+   * Called when you want to connect this FontFace instance
+   * to the DOM. It internally sets the real font family name
+   * on the @font-face declaration so that the fonts become
+   * available (they've already been loaded, but under an
+   * internal name).
+   *
+   * @return {IThenable.<fontloader.FontFace>}
+   */
+  FontFace.prototype.connect = function () {
+    var fontface = this;
+
+    this.cssConnected = true;
+
+    // Because we rewrite the entire CSSRule in Firefox this actually
+    // triggers a second request for the font, which is unfortunate.
+    this.setCssFamily(this.realFamily);
+
+    // Unfortunately, setting the font-family name to the real family
+    // doesn't apply the font immediately in Firefox because the CSSRule
+    // is rewritten and this is considered a new font (*sigh*). We trigger
+    // a new round of font load detection to make sure we catch this.
+    //
+    // TODO: we can make this a bit more efficient by re-using the
+    // FontFaceObserver instance.
+    return new Promise(function (resolve, reject) {
+      var observer = new FontFaceObserver(fontface.realFamily, fontface.properties['cssText'], fontface.range.getTestString());
+
+      observer.start().then(function () {
+        resolve(fontface);
+      }, function (r) {
+        reject(r);
+      });
     });
   };
 
@@ -223,7 +283,7 @@ goog.scope(function () {
     } else {
       fontface.loadStatus = FontFaceLoadStatus.LOADING;
 
-      var observer = new FontFaceObserver(this['family'], this.cssRule['cssText'], this.range.getTestString());
+      var observer = new FontFaceObserver(this.internalFamily, this.properties['cssText'], this.range.getTestString());
 
       observer.start().then(function () {
         fontface.loadStatus = FontFaceLoadStatus.LOADED;

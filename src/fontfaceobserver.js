@@ -95,10 +95,10 @@ goog.scope(function () {
       }
 
       rulerA.insert();
-      rulerA.setStyle(style + 'font-family:' + family + ',sans-serif');
+      rulerA.setStyle(style + 'font-family:\'' + family + '\',sans-serif');
 
       rulerB.insert();
-      rulerB.setStyle(style + 'font-family:' + family + ',serif');
+      rulerB.setStyle(style + 'font-family:\'' + family + '\',serif');
 
       check();
     });

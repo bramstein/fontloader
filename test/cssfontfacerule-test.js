@@ -72,6 +72,16 @@ describe('CSSFontFaceRule', function () {
       expect(rule.style['font-style'], 'to equal', 'normal');
     });
 
+    it('updates the original values of an existing rule', function () {
+      insertRule('@font-face{font-family:test;}');
+
+      var rule = new CSSFontFaceRule(cssRule);
+
+      rule.style['font-family'] = 'hello';
+
+      expect(rule.style['font-family'], 'to match', /['"]?hello['"]?/);
+    });
+
     it('returns a value for the font-variant property', function () {
       insertRule('@font-face{font-variant:normal;}');
 
@@ -95,11 +105,7 @@ describe('CSSFontFaceRule', function () {
   });
 
   describe('#update', function () {
-    // This is broken on IE9 because it doesn't allow setting
-    // of the cssText of a CSSRule. Fortunately, setting properties
-    // individually works on IE9 so we're not actually using this
-    // method.
-    xit('updates the rule', function () {
+    it('updates the rule', function () {
       insertRule('@font-face{font-family:test;}');
 
       var rule = new CSSFontFaceRule(cssRule);
@@ -144,7 +150,7 @@ describe('CSSFontFaceRule', function () {
 
   describe('#setProperty', function () {
     it('sets the property', function () {
-      insertRule('@font-face{}');
+      insertRule('@font-face{font-family:test;}');
 
       var rule = new CSSFontFaceRule(cssRule);
 

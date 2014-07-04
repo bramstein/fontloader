@@ -3,9 +3,9 @@ goog.provide('fontloader.CSSFontFaceRule');
 goog.scope(function () {
   /**
    * Convenience wrapper around CSSFontFaceRule's. Firefox
-   * and IE9 do not support setting properties on the style
-   * attribute of a CSSRule, so we work around it by rewriting
-   * the rule each time a property is updated.
+   * and Internet Explorer do not support setting properties on
+   * the style attribute of a CSSRule, so we work around it by
+   * rewriting the rule each time a property is updated.
    *
    * Hopefully we'll be able to remove this wrapper in the
    * future. In the meantime this lets us use the correct API
@@ -13,8 +13,9 @@ goog.scope(function () {
    *
    * @constructor
    * @param {CSSRule} cssRule
+   * @param {string=} opt_src
    */
-  fontloader.CSSFontFaceRule = function (cssRule) {
+  fontloader.CSSFontFaceRule = function (cssRule, opt_src) {
     /**
      * @type {CSSRule}
      */
@@ -30,7 +31,7 @@ goog.scope(function () {
      */
     var that = this;
 
-    ['font-family',
+    [ 'font-family',
       'font-style',
       'font-variant',
       'font-weight',
@@ -48,6 +49,28 @@ goog.scope(function () {
           that.setProperty(key, value);
         }
       });
+    });
+
+    this.src = opt_src;
+
+    // We treat src special because even though Internet Explorer
+    // supports setting of the "src" property, it always returns the
+    // empty string when getting the value. Since "src" is the only
+    // write-only property in FontFace we work around it by caching
+    // a local copy here so it appears to work.
+    Object.defineProperty(style, 'src', {
+      get: function () {
+        return that.src;
+      },
+      set: function (value) {
+        that.src = value;
+      }
+    });
+
+    Object.defineProperty(style, 'cssText', {
+      get: function () {
+        return that.getCssText();
+      }
     });
 
     Object.defineProperties(this, {
@@ -69,7 +92,7 @@ goog.scope(function () {
   /**
    * @type {null|boolean}
    */
-  CSSFontFaceRule.SUPPORTS_PROPERTIES = null;
+  CSSFontFaceRule.SUPPORTS_PROPERTIES = !(/Gecko|MSIE|Trident/.test(goog.global.navigator.userAgent));
 
   /**
    * @private
@@ -97,13 +120,17 @@ goog.scope(function () {
       cssText += this.cssRule.style[i] + ':' + this.getPropertyValue(this.cssRule.style[i]) + ';';
     }
 
+    if (this.src) {
+      cssText += 'src:' + this.src + ';';
+    }
+
     return cssText;
   };
 
   /**
    * @private
    * @param {string} name
-   * @return {string}
+   * @return {string|null}
    */
   CSSFontFaceRule.prototype.getPropertyValue = function (name) {
     var value = this.cssRule.style.getPropertyValue(name);
@@ -112,8 +139,10 @@ goog.scope(function () {
     // it always returns an empty string when asked for the font-variant
     // property. We return 'normal' instead so the rest of the code can
     // assume everything is normalised.
-    if (value === '') {
+    if (value === '' && name !== 'unicode-range') {
       return 'normal';
+    } else if (value === '') {
+      return 'u+0-10ffff';
     } else {
       return value;
     }
@@ -125,20 +154,8 @@ goog.scope(function () {
    * @param {string} value
    */
   CSSFontFaceRule.prototype.setProperty = function (name, value) {
-    if (CSSFontFaceRule.SUPPORTS_PROPERTIES === null) {
-      try {
-        // Firefox throws an exception when attempting to set a property.
-        // We catch this and set a global flag so we don't need to check
-        // on subsequent property retrieval.
-        this.cssRule.style.setProperty(name, value);
-        CSSFontFaceRule.SUPPORTS_PROPERTIES = true;
-      } catch (e) {
-        CSSFontFaceRule.SUPPORTS_PROPERTIES = false;
-      }
-    }
-
     if (CSSFontFaceRule.SUPPORTS_PROPERTIES) {
-      this.cssRule.style.setProperty(name, value);
+      this.cssRule.style[name] = value;
     } else {
       var cssText = this.getCssText();
 
