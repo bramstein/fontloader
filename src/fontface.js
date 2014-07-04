@@ -237,6 +237,13 @@ goog.scope(function () {
   };
 
   /**
+   * @return {boolean}
+   */
+  FontFace.prototype.isConnected = function () {
+    return this.cssConnected;
+  };
+
+  /**
    * Called when you want to connect this FontFace instance
    * to the DOM. It internally sets the real font family name
    * on the @font-face declaration so that the fonts become
