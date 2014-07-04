@@ -258,9 +258,6 @@ goog.scope(function () {
     // doesn't apply the font immediately in Firefox because the CSSRule
     // is rewritten and this is considered a new font (*sigh*). We trigger
     // a new round of font load detection to make sure we catch this.
-    //
-    // TODO: we can make this a bit more efficient by re-using the
-    // FontFaceObserver instance.
     return new Promise(function (resolve, reject) {
       var observer = new FontFaceObserver(fontface.realFamily, fontface.properties['cssText'], fontface.range.getTestString());
 
