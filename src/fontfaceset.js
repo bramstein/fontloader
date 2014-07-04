@@ -21,16 +21,6 @@ goog.scope(function () {
     this.data = [];
 
     /**
-     * @type {number}
-     */
-    this['size'] = 0;
-
-    /**
-     * @type {fontloader.FontFaceSetLoadStatus}
-     */
-    this['status'] = fontloader.FontFaceSetLoadStatus.LOADED;
-
-    /**
      * @type {fontloader.EventHandler}
      */
     this['onloading'] = goog.nullFunction;
@@ -45,11 +35,23 @@ goog.scope(function () {
      */
     this['onloadingerror'] = goog.nullFunction;
 
-    /**
-     * @type {IThenable}
-     */
-    this['ready'] = new Promise(function (resolve, reject) {
-
+    Object.defineProperties(this, {
+      'size': {
+        get: function () {
+          return this.data.length;
+        }
+      },
+      'ready': {
+        get: function () {
+          return new Promise(function (resolve, reject) {
+          });
+        }
+      },
+      'status': {
+        get: function () {
+          return fontloader.FontFaceSetLoadStatus.LOADED;
+        }
+      }
     });
   };
 
@@ -61,13 +63,12 @@ goog.scope(function () {
   FontFaceSet.prototype['add'] = function (value) {
     if (!this['has'](value)) {
       this.data.push(value);
-      this['size'] += 1;
     }
   };
 
   /**
    * @param {fontloader.FontFace} value
-   * @return true if the given FontFace is in this set.
+   * @return {boolean} true if the given FontFace is in this set.
    */
   FontFaceSet.prototype['has'] = function (value) {
     return this.data.indexOf(value) !== -1;
@@ -75,14 +76,13 @@ goog.scope(function () {
 
   /**
    * @param {fontloader.FontFace} value
-   * @return true if the value was deleted, false otherwise.
+   * @return {boolean} true if the value was deleted, false otherwise.
    */
   FontFaceSet.prototype['delete'] = function (value) {
     var index = this.data.indexOf(value);
 
     if (index !== -1) {
       this.data.splice(index, 1);
-      this['size'] -= 1;
       return true;
     } else {
       return false;
@@ -94,7 +94,6 @@ goog.scope(function () {
    */
   FontFaceSet.prototype['clear'] = function () {
     this.data = [];
-    this['size'] = 0;
   };
 
   /**
@@ -145,7 +144,7 @@ goog.scope(function () {
   /**
    * @param {string} font
    * @param {string=} opt_text
-   * @return {IThenable}
+   * @return {IThenable.<Array.<fontloader.FontFace>>}
    */
   FontFaceSet.prototype['load'] = function (font, opt_text) {
     var matches = this.match(font, opt_text),
