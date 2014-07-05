@@ -28,6 +28,23 @@ goog.scope(function () {
     }
   };
 
+  CSSValue.parseSrc = function (input) {
+    var srcRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)( format\((\'|\"|)([^\'\"]+?)\4\))?/g,
+        match = null,
+        result = [];
+
+    while((match = srcRegExp.exec(input))) {
+      if (match[2]) {
+        result.push({
+          url: match[2],
+          format: match[5]
+        });
+      }
+    }
+
+    return result;
+  };
+
   /**
    * @param {string} input
    * @return {Array.<string>}

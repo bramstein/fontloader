@@ -73,6 +73,29 @@ describe('CSSValue', function () {
     });
   });
 
+  describe('#parseSrc', function () {
+    it('parses source urls', function () {
+      expect(CSSValue.parseSrc('url(font.woff)'), 'to equal', [{ url: 'font.woff', format: undefined }]);
+      expect(CSSValue.parseSrc('url(\'font.woff\')'), 'to equal', [{ url: 'font.woff', format: undefined }]);
+      expect(CSSValue.parseSrc('url("font.woff")'), 'to equal', [{ url: 'font.woff', format: undefined }]);
+    });
+
+    it('parses source urls with formats', function () {
+      expect(CSSValue.parseSrc('url(font.woff) format(woff)'), 'to equal', [{ url: 'font.woff', format: 'woff' }]);
+      expect(CSSValue.parseSrc('url(font.woff) format(\'woff\')'), 'to equal', [{ url: 'font.woff', format: 'woff' }]);
+      expect(CSSValue.parseSrc('url(font.woff) format("woff")'), 'to equal', [{ url: 'font.woff', format: 'woff' }]);
+    });
+
+    it('parses multiple urls', function () {
+      expect(CSSValue.parseSrc('url(font.woff), url(font.ttf)'), 'to equal', [{ url: 'font.woff', format: undefined }, { url: 'font.ttf', format: undefined }]);
+      expect(CSSValue.parseSrc('url(font.woff), url(font.otf), url(font.ttf)'), 'to equal', [{ url: 'font.woff',  format: undefined }, { url: 'font.otf', format: undefined }, { url: 'font.ttf', format: undefined }]);
+    });
+
+    it('parses multiple urls with formats', function () {
+      expect(CSSValue.parseSrc('url(font.woff) format(woff), url(font.ttf) format(truetype)'), 'to equal', [{ url: 'font.woff', format: 'woff' }, { url: 'font.ttf', format: 'truetype' }]);
+    });
+  });
+
   describe('#parseFamily', function () {
     it('parses a single family', function () {
       expect(CSSValue.parseFamily('serif'), 'to equal', ['serif']);
