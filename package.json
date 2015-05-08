@@ -15,18 +15,26 @@
   "author": "Bram Stein <b.l.stein@gmail.com> (http://www.bramstein.com/)",
   "license": "Apache 2.0",
   "devDependencies": {
-    "mocha": "=1.12.0",
-    "mocha-browserstack": "=0.2.1",
-    "sinon": "=1.7.3",
-    "grunt": "=0.4.0",
-    "grunt-contrib-clean": "=0.5.0",
-    "grunt-contrib-jshint": "=0.6.0",
-    "grunt-closurecompiler": "~1.3.0",
-    "grunt-contrib-connect": "~0.3.0",
-    "grunt-contrib-watch": "~0.5.1",
-    "grunt-exec": "~0.4.2"
+    "mocha": "=2.2.4",
+    "mocha-browserstack": "=0.2.2",
+    "sinon": "=1.14.1",
+    "grunt": "=0.4.5",
+    "grunt-contrib-clean": "=0.6.0",
+    "grunt-contrib-jshint": "=0.11.2",
+    "grunt-closurecompiler": "~0.9.9",
+    "grunt-contrib-connect": "~0.10.1",
+    "grunt-contrib-watch": "~0.6.1",
+    "grunt-exec": "~0.4.6",
+    "extend": "^2.0.1",
+    "unexpected": "^7.0.5"
   },
   "scripts": {
     "test": "grunt test"
+  },
+  "dependencies": {
+    "promis": "^1.0.3",
+    "closure-fetch": "^0.1.5",
+    "fontfaceobserver": "=1.4.8",
+    "closure-dom": "0.0.1"
   }
 }

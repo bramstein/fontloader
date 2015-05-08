@@ -1,6 +1,6 @@
-goog.provide('fontloader.BinaryData');
+goog.provide('fl.BinaryData');
 
 /**
  * @typedef {ArrayBuffer|ArrayBufferView}
  */
-fontloader.BinaryData;
+fl.BinaryData;

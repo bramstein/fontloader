@@ -1,139 +1,140 @@
-goog.provide('fontloader.FontFaceSet');
+goog.provide('fl.FontFaceSet');
 
-goog.require('fontloader.FontFaceSetLoadStatus');
-goog.require('fontloader.FontFaceLoadStatus');
-goog.require('fontloader.EventHandler');
-goog.require('fontloader.UnicodeRange');
-goog.require('fontloader.CSSValue');
+goog.require('fl.FontFaceSetLoadStatus');
+goog.require('fl.CSSValue');
 
 goog.scope(function () {
-  var UnicodeRange = fontloader.UnicodeRange,
-      FontFaceLoadStatus = fontloader.FontFaceLoadStatus,
-      CSSValue = fontloader.CSSValue;
+  var FontFaceSetLoadStatus = fl.FontFaceSetLoadStatus,
+      CSSValue = fl.CSSValue;
 
   /**
    * @constructor
    */
-  fontloader.FontFaceSet = function () {
-    /**
-     * @type {Array.<fontloader.FontFace>}
-     */
-    this.data = [];
+  fl.FontFaceSet = function () {
 
     /**
-     * @type {fontloader.EventHandler}
+     * @type {Array.<fl.FontFace>}
      */
-    this['onloading'] = goog.nullFunction;
+    this.fonts = [];
 
     /**
-     * @type {fontloader.EventHandler}
+     * @type {!fl.FontFaceSetLoadStatus}
      */
-    this['onloadingdone'] = goog.nullFunction;
-
-    /**
-     * @type {fontloader.EventHandler}
-     */
-    this['onloadingerror'] = goog.nullFunction;
+    this.loadStatus = FontFaceSetLoadStatus.LOADED;
 
     Object.defineProperties(this, {
-      'size': {
-        get: function () {
-          return this.data.length;
-        }
-      },
       'ready': {
-        get: function () {
-          return new Promise(function (resolve, reject) {
-          });
-        }
+
       },
       'status': {
         get: function () {
-          return fontloader.FontFaceSetLoadStatus.LOADED;
+          return this.loadStatus;
+        }
+      },
+      'size': {
+        get: function () {
+          return this.fonts.length;
         }
       }
     });
   };
 
-  var FontFaceSet = fontloader.FontFaceSet;
+  var FontFaceSet = fl.FontFaceSet;
 
   /**
-   * @param {fontloader.FontFace} value
+   * @type {?function(Event)}
    */
-  FontFaceSet.prototype['add'] = function (value) {
-    if (!this['has'](value)) {
-      this.data.push(value);
+  FontFaceSet.prototype['onloading'] = function () {};
+
+  /**
+   * @type {?function(Event)}
+   */
+  FontFaceSet.prototype['onloadingdone'] = function () {};
+
+  /**
+   * @type {?function(Event)}
+   */
+  FontFaceSet.prototype['onloadingerror'] = function () {};
+
+  /**
+   * @param {!fl.FontFace} font
+   *
+   * return {fl.FontFaceSet}
+   */
+  FontFaceSet.prototype['add'] = function (font) {
+    if (!this['has'](font)) {
+      font.insert();
+      this.fonts.push(font);
     }
   };
 
   /**
-   * @param {fontloader.FontFace} value
-   * @return {boolean} true if the given FontFace is in this set.
+   * @param {!fl.FontFace} font
+   *
+   * @return {boolean}
    */
-  FontFaceSet.prototype['has'] = function (value) {
-    return this.data.indexOf(value) !== -1;
-  };
-
-  /**
-   * @param {fontloader.FontFace} value
-   * @return {boolean} true if the value was deleted, false otherwise.
-   */
-  FontFaceSet.prototype['delete'] = function (value) {
-    var index = this.data.indexOf(value);
+  FontFaceSet.prototype['delete'] = function (font) {
+    var index = this.fonts.indexOf(font);
 
     if (index !== -1) {
-      this.data.splice(index, 1);
+      font.remove();
+      this.fonts.splice(index, 1);
       return true;
     } else {
       return false;
     }
   };
 
-  /**
-   * Removes all values from this set.
-   */
   FontFaceSet.prototype['clear'] = function () {
-    this.data = [];
+    this.fonts = [];
   };
 
   /**
-   * @param {function(fontloader.FontFace, fontloader.FontFace, fontloader.FontFaceSet)} callbackFn
-   * @param {Object=} opt_thisArg
+   * @param {!fl.FontFace} font
+   *
+   * @return {boolean}
    */
-  FontFaceSet.prototype['forEach'] = function (callbackFn, opt_thisArg) {
-    for (var i = 0; i < this.data.length; i++) {
-      callbackFn.call(opt_thisArg, this.data[i], this.data[i], this);
-    }
+  FontFaceSet.prototype['has'] = function (font) {
+    return this.fonts.indexOf(font) !== -1;
+  };
+
+  /**
+   * @param {function(fl.FontFace, number, fl.FontFaceSet)} fn
+   */
+  FontFaceSet.prototype['forEach'] = function (fn) {
+    var set = this;
+
+    this.fonts.forEach(function (font, index) {
+      fn(font, index, set);
+    });
   };
 
   /**
    * @param {string} font
    * @param {string=} opt_text
-   * @return {Array.<fontloader.FontFace>} Returns all matching FontFace's in this set
+   *
+   * @return {!Array.<!fl.FontFace>}
    */
   FontFaceSet.prototype.match = function (font, opt_text) {
-    function normalizeWeight(weight) {
+    function normalize(weight) {
       if (weight === 'bold') {
-        return '700';
+        return 700;
       } else if (weight === 'normal') {
-        return '400';
+        return 400;
       } else {
         return weight;
       }
     }
 
-    var properties = CSSValue.parseFont(font),
-        textRange = UnicodeRange.parseString(opt_text || '\u0020');
-
-    return this.data.filter(function (fontface) {
+    var properties = CSSValue.parseFont(font);
+    // TODO: match on opt_text
+    return this.fonts.filter(function (font) {
       var families = properties.family;
 
       for (var i = 0; i < families.length; i++) {
-        if (fontface['family'] === families[i] &&
-            fontface['style'] === properties.style &&
-            fontface['variant'] === properties.variant &&
-            normalizeWeight(fontface['weight']) === normalizeWeight(properties.weight) &&
-            fontface.getUnicodeRange().intersects(textRange)) {
+        if (font['family'] === families[i] &&
+            font['style'] === properties.style &&
+            normalize(font['weight']) === normalize(properties.weight)) {
           return true;
         }
       }
@@ -144,22 +145,27 @@ goog.scope(function () {
   /**
    * @param {string} font
    * @param {string=} opt_text
-   * @return {IThenable.<Array.<fontloader.FontFace>>}
+   *
+   * @return {!Promise.<!Array.<fl.FontFace>>}
    */
   FontFaceSet.prototype['load'] = function (font, opt_text) {
-    var matches = this.match(font, opt_text),
-        promises = [];
+    var set = this,
+        matches = this.match(font, opt_text);
 
-    for (var i = 0; i < matches.length; i++) {
-      promises.push(matches[i].load());
-    }
+    set.loadStatus = FontFaceSetLoadStatus.LOADING;
 
-    return Promise.all(promises);
+    return Promise.all(matches.map(function (font) {
+      return font.load();
+    })).then(function (fonts) {
+      set.loadStatus = FontFaceSetLoadStatus.LOADED;
+      return fonts;
+    });
   };
 
   /**
    * @param {string} font
-   * @param {string=} opt_text
+   * @param {string} opt_text
+   *
    * @return {boolean}
    */
   FontFaceSet.prototype['check'] = function (font, opt_text) {
@@ -169,7 +175,7 @@ goog.scope(function () {
       return false;
     } else {
       for (var i = 0; i < matches.length; i++) {
-        if (matches[i]['status'] !== FontFaceLoadStatus.LOADED) {
+        if (matches[i]['status'] !== "loaded") {
           return false;
         }
       }

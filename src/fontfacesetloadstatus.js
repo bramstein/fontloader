@@ -1,8 +1,9 @@
-goog.provide('fontloader.FontFaceSetLoadStatus');
+goog.provide('fl.FontFaceSetLoadStatus');
 
-goog.scope(function () {
-  fontloader.FontFaceSetLoadStatus = {
-    LOADED: 'loaded',
-    LOADING: 'loading'
-  };
-});
+/**
+ * @enum {string}
+ */
+fl.FontFaceSetLoadStatus = {
+  LOADED: 'loaded',
+  LOADING: 'loading'
+};

@@ -1,82 +1,26 @@
 describe('FontFace', function () {
-  var FontFace = fontloader.FontFace,
-      FontFaceObserver = fontloader.FontFaceObserver,
-      FontFaceLoadStatus = fontloader.FontFaceLoadStatus,
-      Ruler = fontloader.Ruler;
+  var FontFace = fl.FontFace;
 
   describe('#constructor', function () {
-    it('throws when called without arguments', function () {
-      expect(function () {
-        new FontFace();
-      }, 'to throw exception');
-    });
-
-    it('throws when called with less than three arguments', function () {
-      expect(function () {
-        new FontFace('My Family');
-      }, 'to throw exception');
-    });
-
-    it('throws a syntax error if the source url is not a string or arraybuffer', function () {
-      expect(function () {
-        new FontFace('My Family', true, {});
-      }, 'to throw exception');
-    });
-
     it('accepts family names starting with non-valid identifier characters', function () {
-      expect(new FontFace('3four', 'url(font.woff)', {}).family, 'to equal', '3four');
-      expect(new FontFace('-5f', 'url(font.woff)', {}).family, 'to equal', '-5f');
-      expect(new FontFace('--vendor', 'url(font.woff)', {}).family, 'to equal', '--vendor');
-    });
-
-    it('accepts randomly generated family names', function () {
-      expect(new FontFace('32de8a5-2e72-4ade-dc76-ea7ad7c', 'url(font.woff)', {}).family, 'to equal', '32de8a5-2e72-4ade-dc76-ea7ad7c');
+      expect(new FontFace('3four', 'url(font.woff)').family, 'to equal', '3four');
+      expect(new FontFace('-5f', 'url(font.woff)').family, 'to equal', '-5f');
+      expect(new FontFace('--vendor', 'url(font.woff)').family, 'to equal', '--vendor');
     });
 
     it('parses descriptors', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { style: 'italic' }).style, 'to equal', 'italic');
       expect(new FontFace('My Family', 'url(font.woff)', { weight: 'bold' }).weight, 'to equal', 'bold');
-    });
-
-    // This one is currently disabled because browsers do not yet accept font-stretch as part of the font shorthand
-    // syntax. Fortunately, this also means the browser does not support font-stretch, so we can just ignore it for now.
-    xit('parses descriptors with stretch', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { stretch: 'condensed' }).stretch, 'to equal', 'condensed');
-    });
-
-    // This one is currently disabled because Firefox does not support setting font-variant.
-    xit('parses descriptors with variant', function () {
       expect(new FontFace('My Family', 'url(font.woff)', { variant: 'small-caps' }).variant, 'to equal', 'small-caps');
     });
 
     it('defaults descriptors if not given', function () {
-      var font = new FontFace('My Family', 'url(font.woff)', {});
+      var font = new FontFace('My Family', 'url(font.woff)');
 
       expect(font.style, 'to equal', 'normal');
       expect(font.weight, 'to equal', 'normal');
       expect(font.variant, 'to equal', 'normal');
-    });
-
-    it('accepts and uses an existing CSSRule', function () {
-      var style = document.createElement('style');
-
-      style.appendChild(document.createTextNode('@font-face{ font-family: "My Family"; src: url(unknown.woff); }'));
-    });
-  });
-
-  describe('attributes', function () {
-    it('updates the CSS rule when setting a FontFace attribute', function () {
-      var font = new FontFace('My Family', 'url(unknown.woff)', {});
-
-      expect(font.weight, 'to equal', 'normal');
-
-      font.weight = '500';
-
-      expect(font.weight, 'to equal', '500');
-      expect(font.cssRule.cssText, 'to match', /font-weight:\s*500/);
-
-      font.weight = 'normal';
-      expect(font.cssRule.cssText, 'to match', /font-weight:\s*normal/);
     });
   });
 

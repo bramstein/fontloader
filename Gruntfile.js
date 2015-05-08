@@ -1,22 +1,24 @@
 module.exports = function (grunt) {
-
-  function extend() {
-    for (var i = 1; i < arguments.length; i += 1) {
-      for (var p in arguments[i]) {
-        arguments[0][p] = arguments[i][p];
-      }
-    }
-    return arguments[0];
-  }
+  var extend = require('extend');
 
   var compilerOptions = {
     compilation_level: 'ADVANCED_OPTIMIZATIONS',
     warning_level: 'VERBOSE',
     summary_detail_level: 3,
     language_in: 'ECMASCRIPT5_STRICT',
-    output_wrapper: '"(function(){%output%}());"',
-    use_types_for_optimization: true
+    output_wrapper: '(function(){%output%}());',
+    use_types_for_optimization: true,
+    externs: ['node_modules/closure-fetch/externs.js']
   };
+
+  var src = [
+    'polyfill.js',
+    'src/**/*.js',
+    'node_modules/promis/src/**/*.js',
+    'node_modules/closure-fetch/src/**/*.js',
+    'node_modules/closure-dom/src/**/*.js',
+    'node_modules/fontfaceobserver/src/**/*.js'
+  ];
 
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
@@ -31,9 +33,8 @@ module.exports = function (grunt) {
     },
     watch: {},
     exec: {
-      test: {
-        command: 'browserstack-test -u $BROWSERSTACK_USERNAME -p $BROWSERSTACK_PASSWORD -k $BROWSERSTACK_KEY -b browsers.json http://localhost:9999/test/index.html'
-      }
+      test: 'browserstack-test -u $BROWSERSTACK_USERNAME -p $BROWSERSTACK_PASSWORD -k $BROWSERSTACK_KEY -b browsers.json http://localhost:9999/test/index.html',
+      deps: 'calcdeps -p ' + src.map(function (p) { return p.replace('**/*.js', ''); }).join(' -p ' ) + ' -p ./vendor/google/base.js -o deps > test/deps.js'
     },
     jshint: {
       all: ['src/**/*.js'],
@@ -54,23 +55,19 @@ module.exports = function (grunt) {
     closurecompiler: {
       dist: {
         files: {
-          "fontloader.js": ['src/**/*.js', 'vendor/google/base.js']
+          "fontloader.js": src
         },
-        options: extend({}, compilerOptions, {
-          define: "goog.DEBUG=false"
-        })
+        options: extend({}, compilerOptions)
       },
       compile: {
         files: {
-          "build/fontloader.js": ['src/**/*.js', 'vendor/google/base.js'],
+          "build/fontloader.js": src
         },
-        options: extend({}, compilerOptions, {
-          define: "goog.DEBUG=false"
-        })
+        options: extend({}, compilerOptions)
       },
       debug: {
         files: {
-          "build/fontloader.debug.js": ['src/**/*.js', 'vendor/google/base.js']
+          "build/fontloader.debug.js": src
         },
         options: extend({}, compilerOptions, {
           debug: true,
@@ -92,5 +89,6 @@ module.exports = function (grunt) {
   grunt.registerTask('default', ['compile']);
   grunt.registerTask('test', ['connect', 'exec:test']);
   grunt.registerTask('dev', ['connect', 'watch']);
+  grunt.registerTask('deps', ['exec:deps']);
   grunt.registerTask('dist', ['closurecompiler:dist']);
 };

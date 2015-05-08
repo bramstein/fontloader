@@ -1,5 +1,5 @@
 describe('CSSValue', function () {
-  var CSSValue = fontloader.CSSValue;
+  var CSSValue = fl.CSSValue;
 
   describe('parseFont', function () {
     it('returns null on invalid css font values', function () {

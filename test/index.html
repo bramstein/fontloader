@@ -3,9 +3,10 @@
   <head>
     <meta charset="utf-8">
     <title>FontLoader</title>
+    <script src="http://use.typekit.net/lcb7cfh.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="../node_modules/mocha/mocha.css" rel="stylesheet">
-    <style>
+    <!--<style>
       @font-face {
         font-family: observer-test1;
         src: url(assets/sourcesanspro-regular.woff) format('woff');
@@ -44,14 +45,14 @@
         src: url(assets/subset.woff) format('woff');
         unicode-range: u+23;
       }
-    </style>
+    </style>-->
   </head>
   <body>
+    <h1 style="font-family: test, monospace;">Hello World</h1>
     <div id="mocha"></div>
     <script>CLOSURE_NO_DEPS = true;</script>
-    <script src="../vendor/bramstein/promise.min.js"></script>
     <script src="../vendor/google/base.js"></script>
-    <script src="../vendor/sunesimonsen/unexpected.js"></script>
+    <script src="../node_modules/unexpected/unexpected.js"></script>
     <script src="../node_modules/mocha/mocha.js"></script>
     <script src="../node_modules/sinon/pkg/sinon.js"></script>
     <script src="../node_modules/mocha-browserstack/lib/mocha-browserstack.js"></script>
@@ -63,14 +64,9 @@
 
       expect = weknowhow.expect;
     </script>
-    <script src="./range-test.js"></script>
-    <script src="./unicoderange-test.js"></script>
-    <script src="./cssfontfacerule-test.js"></script>
     <script src="./cssvalue-test.js"></script>
-    <script src="./ruler-test.js"></script>
     <script src="./fontloader-test.js"></script>
     <script src="./fontface-test.js"></script>
-    <script src="./fontfaceobserver-test.js"></script>
     <script src="./fontfaceset-test.js"></script>
     <script>
       window.onload = function () {

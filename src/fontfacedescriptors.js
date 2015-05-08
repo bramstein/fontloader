@@ -1,4 +1,4 @@
-goog.provide('fontloader.FontFaceDescriptors');
+goog.provide('fl.FontFaceDescriptors');
 
 /**
  * @typedef {{
@@ -10,4 +10,4 @@ goog.provide('fontloader.FontFaceDescriptors');
  *   featureSettings: string
  * }}
  */
-fontloader.FontFaceDescriptors;
+fl.FontFaceDescriptors;

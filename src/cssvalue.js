@@ -1,9 +1,10 @@
-goog.provide('fontloader.CSSValue');
+goog.provide('fl.CSSValue');
 
 goog.scope(function () {
-  fontloader.CSSValue = {};
+  // TODO: Move CSSValue to its own repository as it is useful beyond the fontloader.
+  fl.CSSValue = {};
 
-  var CSSValue = fontloader.CSSValue;
+  var CSSValue = fl.CSSValue;
 
   /**
    * @param {string} input
@@ -28,12 +29,17 @@ goog.scope(function () {
     }
   };
 
+  /**
+   * @param {string} input
+   *
+   * @return {Array.<fl.FontFaceSource>}
+   */
   CSSValue.parseSrc = function (input) {
     var srcRegExp = /\burl\((\'|\"|)([^\'\"]+?)\1\)( format\((\'|\"|)([^\'\"]+?)\4\))?/g,
         match = null,
         result = [];
 
-    while((match = srcRegExp.exec(input))) {
+    while ((match = srcRegExp.exec(input))) {
       if (match[2]) {
         result.push({
           url: match[2],
@@ -41,7 +47,6 @@ goog.scope(function () {
         });
       }
     }
-
     return result;
   };
 

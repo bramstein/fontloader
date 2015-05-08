@@ -1,9 +1,9 @@
-goog.provide('fontloader.FontFaceLoadStatus');
+goog.provide('fl.FontFaceLoadStatus');
 
 /**
  * @enum {string}
  */
-fontloader.FontFaceLoadStatus = {
+fl.FontFaceLoadStatus = {
   UNLOADED: "unloaded",
   LOADING: "loading",
   LOADED: "loaded",
