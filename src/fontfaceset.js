@@ -150,11 +150,13 @@ goog.scope(function () {
         variant: font['variant'],
         featureSettings: font['featureSettings']
       });
-      return observer.check(opt_text);
-    })).then(function (fonts) {
-      set.loadStatus = FontFaceSetLoadStatus.LOADED;
-      return fonts;
-    });
+      return observer.check(opt_text, 1000).then(function () {
+        set.loadStatus = FontFaceSetLoadStatus.LOADED;
+        return font;
+      }, function () {
+        return font;
+      });
+    }));
   };
 
   /**
