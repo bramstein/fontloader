@@ -26,9 +26,6 @@ goog.scope(function () {
     this.loadStatus = FontFaceSetLoadStatus.LOADED;
 
     Object.defineProperties(this, {
-      'ready': {
-
-      },
       'status': {
         get: function () {
           return this.loadStatus;
@@ -43,21 +40,6 @@ goog.scope(function () {
   };
 
   var FontFaceSet = fl.FontFaceSet;
-
-  /**
-   * @type {?function(Event)}
-   */
-  FontFaceSet.prototype['onloading'] = function () {};
-
-  /**
-   * @type {?function(Event)}
-   */
-  FontFaceSet.prototype['onloadingdone'] = function () {};
-
-  /**
-   * @type {?function(Event)}
-   */
-  FontFaceSet.prototype['onloadingerror'] = function () {};
 
   /**
    * @param {!fl.FontFace} font
