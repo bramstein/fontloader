@@ -185,6 +185,7 @@ describe('FontFaceSet', function () {
       set.add(font);
 
       set.load('16px Font1').then(function (fonts) {
+        expect(set.status, 'to equal', 'loaded');
         expect(fonts[0], 'to equal', font);
         done();
       }).catch(function () {
@@ -199,6 +200,7 @@ describe('FontFaceSet', function () {
       set.add(font);
 
       set.load('16px Font2').then(function (fonts) {
+        expect(set.status, 'to equal', 'loaded');
         expect(fonts, 'to equal', [font]);
         done();
       }).catch(function () {
@@ -210,6 +212,7 @@ describe('FontFaceSet', function () {
       var set = new FontFaceSet();
 
       set.load('16px Font').then(function (fonts) {
+        expect(set.status, 'to equal', 'loaded');
         expect(fonts, 'to equal', []);
         done();
       }).catch(function () {
@@ -226,6 +229,7 @@ describe('FontFaceSet', function () {
       set.add(font2);
 
       set.load('16px Font1, Font2').then(function (fonts) {
+        expect(set.status, 'to equal', 'loaded');
         expect(fonts, 'to equal', [font1, font2]);
         done();
       }).catch(function () {
@@ -241,6 +245,7 @@ describe('FontFaceSet', function () {
         set.add(font);
 
         set.load('16px Font1').then(function (fonts) {
+          expect(set.status, 'to equal', 'loaded');
           expect(fonts, 'to equal', [font]);
           done();
         }).catch(function () {

@@ -140,23 +140,28 @@ goog.scope(function () {
     var set = this,
         matches = this.match(font, opt_text);
 
-    set.loadStatus = FontFaceSetLoadStatus.LOADING;
+    if (matches.length) {
+      set.loadStatus = FontFaceSetLoadStatus.LOADING;
 
-    return Promise.all(matches.map(function (font) {
-      var observer = new fontface.Observer(font['family'], {
-        style: font['style'],
-        weight: font['weight'],
-        stretch: font['stretch'],
-        variant: font['variant'],
-        featureSettings: font['featureSettings']
-      });
-      return observer.check(opt_text, 1000).then(function () {
-        set.loadStatus = FontFaceSetLoadStatus.LOADED;
-        return font;
-      }, function () {
-        return font;
-      });
-    }));
+      return Promise.all(matches.map(function (font) {
+        var observer = new fontface.Observer(font['family'], {
+          style: font['style'],
+          weight: font['weight'],
+          stretch: font['stretch'],
+          variant: font['variant'],
+          featureSettings: font['featureSettings']
+        });
+        return observer.check(opt_text, 1000).then(function () {
+          set.loadStatus = FontFaceSetLoadStatus.LOADED;
+          return font;
+        }, function () {
+          set.loadStatus = FontFaceSetLoadStatus.LOADED;
+          return font;
+        });
+      }));
+    } else {
+      return Promise.resolve([]);
+    }
   };
 
   /**
