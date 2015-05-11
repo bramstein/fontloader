@@ -21,9 +21,9 @@ describe('FontFaceSet', function () {
 
       expect(set.size, 'to equal', 0);
       expect(set.status, 'to equal', 'loaded');
-      expect(set.onloading, 'to equal', goog.nullFunction);
-      expect(set.onloadingdone, 'to equal', goog.nullFunction);
-      expect(set.onloadingerror, 'to equal', goog.nullFunction);
+      expect(set.onloading, 'to equal', function () {});
+      expect(set.onloadingdone, 'to equal', function () {});
+      expect(set.onloadingerror, 'to equal', function () {});
     });
   });
 
@@ -177,6 +177,49 @@ describe('FontFaceSet', function () {
       set.add(font);
 
       expect(set.match('16px "My Family"'), 'to equal', []);
+    });
+  });
+
+  describe('#load', function () {
+  });
+
+  describe('#check', function () {
+    it('returns true if the family is in the set and loaded', function () {
+      var set = new FontFaceSet(),
+          font1 = new FontFace('My Family', new ArrayBuffer(1));
+
+      set.add(font1);
+
+      expect(set.check('16px My Family'), 'to be true');
+    });
+
+    it('returns false if the family is not in the set', function () {
+      var set = new FontFaceSet();
+
+      expect(set.check('16px My Family'), 'to be false');
+    });
+
+    it('returns false if the family is in the set and not loaded', function () {
+      var set = new FontFaceSet(),
+          font1 = new FontFace('My Other Family', 'url(font.woff)');
+
+      set.add(font1);
+
+      expect(set.check('16px My Other Family'), 'to be false');
+    });
+
+    it('returns false if only some of the fonts are loaded', function () {
+      var set = new FontFaceSet(),
+          font1 = new FontFace('My Family', new ArrayBuffer(1)),
+          font2 = new FontFace('My Other Family', 'url(font.woff)');
+
+      set.add(font1);
+      set.add(font2);
+
+      expect(set.check('16px My Family'), 'to be true');
+      expect(set.check('16px My Other Family'), 'to be false');
+
+      expect(set.check('16px My Family, My Other Family'), 'to be false');
     });
   });
 });
