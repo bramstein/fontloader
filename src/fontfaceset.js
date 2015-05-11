@@ -111,6 +111,8 @@ goog.scope(function () {
       }
     }
 
+    // TODO: Font.parse returns null and should reject the promise
+    // if that happens.
     var properties = Font.parse(font);
 
     // TODO: match on opt_text
