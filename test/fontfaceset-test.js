@@ -21,9 +21,6 @@ describe('FontFaceSet', function () {
 
       expect(set.size, 'to equal', 0);
       expect(set.status, 'to equal', 'loaded');
-      expect(set.onloading, 'to equal', function () {});
-      expect(set.onloadingdone, 'to equal', function () {});
-      expect(set.onloadingerror, 'to equal', function () {});
     });
   });
 
