@@ -159,7 +159,14 @@ goog.scope(function () {
     set.loadStatus = FontFaceSetLoadStatus.LOADING;
 
     return Promise.all(matches.map(function (font) {
-      return font.load();
+      var observer = new fontface.Observer(font['family'], {
+        style: font['style'],
+        weight: font['weight'],
+        stretch: font['stretch'],
+        variant: font['variant'],
+        featureSettings: font['featureSettings']
+      });
+      return observer.check(opt_text);
     })).then(function (fonts) {
       set.loadStatus = FontFaceSetLoadStatus.LOADED;
       return fonts;
