@@ -25,168 +25,104 @@ describe('FontFace', function () {
   });
 
   describe('#load', function () {
-    var startMethod = null;
-
-    beforeEach(function () {
-      startMethod = FontFaceObserver.prototype.start;
-    });
-
     afterEach(function () {
-      FontFaceObserver.prototype.start = startMethod;
+      net.fetch.restore();
     });
 
-    it('resolves when a fake font loads', function (done) {
-      var font = new FontFace('My Family', 'url(unknown.woff)', {});
+    it('resolves when a font loads', function (done) {
+      var font = new FontFace('My Family', 'url(font.woff)');
 
-      FontFaceObserver.prototype.start = function () {
-        return Promise.resolve(font);
-      };
+      sinon.stub(net, 'fetch').withArgs('font.woff').returns(
+        lang.Promise.resolve(new net.Response(new ArrayBuffer(1), { status: 200 }))
+      );
 
-      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
+      expect(font.status, 'to equal', 'unloaded');
 
       font.load().then(function (f) {
         expect(font, 'to equal', f);
-        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
+        expect(font.status, 'to equal', 'loaded');
         done();
+      }).catch(function () {
+        done(new Error('Should not fail'));
       });
     });
 
-    it('resolves when a fake font loads with a delay', function (done) {
-      var font = new FontFace('My Family', 'url(unknown.woff)', {});
+    it('resolves when a font load slowly', function (done) {
+      var font = new FontFace('My Family', 'url(font.woff)');
 
-      FontFaceObserver.prototype.start = function () {
-        return new Promise(function (resolve) {
+      sinon.stub(net, 'fetch').withArgs('font.woff').returns(
+        new lang.Promise(function (resolve, reject) {
           setTimeout(function () {
-            resolve(font);
+            resolve(new net.Response(new ArrayBuffer(1), { status: 200 }));
           }, 50);
-        });
-      };
+        })
+      );
 
-      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
+      expect(font.status, 'to equal', 'unloaded');
 
       font.load().then(function (f) {
         expect(font, 'to equal', f);
-        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
+        expect(font.status, 'to equal', 'loaded');
         done();
+      }).catch(function (f) {
+        done(new Error('Should not fail'));
       });
+
+      expect(font.status, 'to equal', 'loading');
     });
 
-    it('rejects when a fake font fails to load', function (done) {
-      var font = new FontFace('My Family', 'url(unknown.woff)', {});
 
-      FontFaceObserver.prototype.start = function () {
-        return Promise.reject(font);
-      };
+    it('rejects when a font fails to load', function (done) {
+      var font = new FontFace('My Family', 'url(font.woff)');
 
-      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
+      sinon.stub(net, 'fetch').withArgs('font.woff').returns(
+        lang.Promise.reject(new net.Response(new ArrayBuffer(1), { status: 404 }))
+      );
 
-      font.load().catch(function (f) {
+      expect(font.status, 'to equal', 'unloaded');
+
+      font.load().then(function (f) {
+        done(new Error('Should not succeed'));
+      }).catch(function (f) {
         expect(font, 'to equal', f);
-        expect(font.status, 'to equal', FontFaceLoadStatus.ERROR);
+        expect(font.status, 'to equal', 'error');
         done();
       });
     });
 
     it('rejects when a fake font fails to load with a delay', function (done) {
-      var font = new FontFace('My Family', 'url(unknown.woff)', {});
+      var font = new FontFace('My Family', 'url(font.woff)');
 
-      FontFaceObserver.prototype.start = function () {
-        return new Promise(function (resolve, reject) {
+      sinon.stub(net, 'fetch').withArgs('font.woff').returns(
+        new lang.Promise(function (resolve, reject) {
           setTimeout(function () {
-            reject(font);
+            reject(new net.Response(new ArrayBuffer(1), { status: 404 }));
           }, 50);
-        });
-      };
+        })
+      );
 
-      expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
+      expect(font.status, 'to equal', 'unloaded');
 
-      font.load().catch(function (f) {
+      font.load().then(function (f) {
+        done(new Error('Should not succeed'));
+      }).catch(function (f) {
         expect(font, 'to equal', f);
-        expect(font.status, 'to equal', FontFaceLoadStatus.ERROR);
+        expect(font.status, 'to equal', 'error');
         done();
       });
     });
 
-    if (window['ArrayBuffer']) {
-      it('loads immediately when given a fake arraybuffer', function (done) {
-        FontFaceObserver.prototype.start = function () {
-          return Promise.resolve('font');
-        };
+    it('loads immediately when given an arraybuffer', function (done) {
+      var font = new FontFace('My Family', new ArrayBuffer(4), {});
 
-        var font = new FontFace('My Family', new ArrayBuffer(4), {});
+      sinon.stub(net, 'fetch');
 
-        expect(font.status, 'to equal', FontFaceLoadStatus.UNLOADED);
+      expect(font.status, 'to equal', "loaded");
 
-        font.load().then(function (f) {
-          expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
-          expect(f, 'to equal', font);
-          done();
-        }, function (r) {
-          done(r);
-        });
-      });
-    }
-
-    it('loads a font and resolves correctly but does not make the font available by its family name', function (done) {
-      var font = new FontFace('fontface-test1', 'url(assets/sourcesanspro-regular.woff)', {}),
-          ruler = new Ruler('hello world'),
-          before = -1;
-
-      ruler.insert();
-      ruler.setStyle('font-family: monospace');
-
-      before = ruler.getWidth();
-
-      ruler.setStyle('font-family: fontface-test1, monospace');
       font.load().then(function (f) {
-        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
-        expect(ruler.getWidth(), 'to equal', before);
+        expect(font.status, 'to equal', "loaded");
+        expect(f, 'to equal', font);
         done();
-      }).catch(function (e) {
-        done(e);
-      });
-    });
-
-    it('loads a font and resolves correctly and the font is available by its internal name', function (done) {
-      var font = new FontFace('fontface-test2', 'url(assets/sourcesanspro-regular.woff)', {}),
-          ruler = new Ruler('hello world'),
-          before = -1;
-
-      ruler.insert();
-      ruler.setStyle('font-family: monospace');
-
-      before = ruler.getWidth();
-
-      ruler.setStyle('font-family: \'' + font.internalFamily + '\', monospace');
-      font.load().then(function (f) {
-        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
-        expect(ruler.getWidth(), 'not to equal', before);
-        done();
-      }).catch(function (e) {
-        done(e);
-      });
-    });
-
-    it('loads a font and resolves correctly and makes the font available when connected', function (done) {
-      var font = new FontFace('fontface-test3', 'url(assets/sourcesanspro-regular.woff)', {}),
-          ruler = new Ruler('hello world'),
-          before = -1;
-
-      ruler.insert();
-      ruler.setStyle('font-family: monospace');
-
-      before = ruler.getWidth();
-
-      ruler.setStyle('font-family: fontface-test3, monospace');
-      font.load().then(function (f) {
-        expect(font.status, 'to equal', FontFaceLoadStatus.LOADED);
-        expect(ruler.getWidth(), 'to equal', before);
-        font.connect().then(function (f) {
-          expect(ruler.getWidth(), 'not to equal', before);
-          done();
-        }, function (r) {
-          done(r);
-        });
       }, function (r) {
         done(r);
       });

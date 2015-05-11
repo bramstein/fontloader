@@ -12,8 +12,7 @@ goog.scope(function () {
   var FontFaceLoadStatus = fl.FontFaceLoadStatus,
       FontFormat = fl.FontFormat,
       Src = cssvalue.Src,
-      Promise = lang.Promise,
-      fetch = net.fetch;
+      Promise = lang.Promise;
 
   /**
    * @constructor
@@ -203,7 +202,7 @@ goog.scope(function () {
         }
 
         if (url) {
-          fetch(url).then(function (response) {
+          net.fetch(url).then(function (response) {
             return response.arrayBuffer();
           }).then(function (buffer) {
             fontface.buffer = buffer;
