@@ -1,11 +1,12 @@
 goog.provide('fl.FontFaceSet');
 
 goog.require('fl.FontFaceSetLoadStatus');
-goog.require('fl.CSSValue');
+
+goog.require('cssvalue.Font');
 
 goog.scope(function () {
   var FontFaceSetLoadStatus = fl.FontFaceSetLoadStatus,
-      CSSValue = fl.CSSValue;
+      Font = cssvalue.Font;
 
   /**
    * @constructor
@@ -126,15 +127,16 @@ goog.scope(function () {
       }
     }
 
-    var properties = CSSValue.parseFont(font);
+    var properties = Font.parse(font);
+
     // TODO: match on opt_text
-    return this.fonts.filter(function (font) {
+    return this.fonts.filter(function (f) {
       var families = properties.family;
 
       for (var i = 0; i < families.length; i++) {
-        if (font['family'] === families[i] &&
-            font['style'] === properties.style &&
-            normalize(font['weight']) === normalize(properties.weight)) {
+        if (f['family'] === families[i] &&
+            f['style'] === (properties.style || 'normal') &&
+            normalize(f['weight']) === normalize(properties.weight || 'normal')) {
           return true;
         }
       }

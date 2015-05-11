@@ -2,14 +2,15 @@ goog.provide('fl.FontFace');
 
 goog.require('fl.FontFaceLoadStatus');
 goog.require('fl.FontFormat');
-goog.require('fl.CSSValue');
+
+goog.require('cssvalue.Src');
 
 goog.require('dom');
 
 goog.scope(function () {
   var FontFaceLoadStatus = fl.FontFaceLoadStatus,
       FontFormat = fl.FontFormat,
-      CSSValue = fl.CSSValue;
+      Src = cssvalue.Src;
 
   /**
    * @constructor
@@ -33,7 +34,7 @@ goog.scope(function () {
     this.buffer = null;
 
     /**
-     * @type {Array.<fl.FontFaceSource>}
+     * @type {Array.<cssvalue.Src.Value>}
      */
     this.urls = [];
 
@@ -109,7 +110,7 @@ goog.scope(function () {
     });
 
     if (typeof source === 'string') {
-      this.urls = CSSValue.parseSrc(/** @type {string} */ (source));
+      this.urls = Src.parse(/** @type {string} */ (source));
     } else {
       this.buffer = /** @type {ArrayBuffer} */ (source);
       this.loadStatus = FontFaceLoadStatus.LOADED;
@@ -202,12 +203,10 @@ goog.scope(function () {
           fetch(url).then(function (response) {
             return response.arrayBuffer();
           }).then(function (buffer) {
-            console.log(buffer);
             fontface.buffer = buffer;
             fontface.loadStatus = FontFaceLoadStatus.LOADED;
             fontface.resolveLoad(fontface);
           }).catch(function (e) {
-            console.log(e);
             fontface.loadStatus = FontFaceLoadStatus.ERROR;
             fontface.rejectLoad(fontface);
           });

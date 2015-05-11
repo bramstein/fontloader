@@ -14,6 +14,7 @@ module.exports = function (grunt) {
   var src = [
     'polyfill.js',
     'src/**/*.js',
+    'node_modules/cssvalue/src/**/*.js',
     'node_modules/promis/src/**/*.js',
     'node_modules/closure-fetch/src/**/*.js',
     'node_modules/closure-dom/src/**/*.js',

@@ -141,7 +141,7 @@ describe('FontFaceSet', function () {
 
     it('returns one match', function () {
       var set = new FontFaceSet(),
-          font = new FontFace('My Family', 'url(font.woff)', {});
+          font = new FontFace('My Family', 'url(font.woff)');
 
       set.add(font);
 

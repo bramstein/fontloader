@@ -35,6 +35,7 @@
     "promis": "^1.0.3",
     "closure-fetch": "^0.1.5",
     "fontfaceobserver": "=1.4.8",
-    "closure-dom": "0.0.1"
+    "closure-dom": "0.0.1",
+    "cssvalue": "0.0.2"
   }
 }
