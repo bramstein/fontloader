@@ -1,6 +1,6 @@
 {
   "name": "fontloader",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A polyfill for the FontLoader interface",
   "directories": {
     "test": "test"
