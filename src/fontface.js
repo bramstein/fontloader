@@ -157,8 +157,12 @@ goog.scope(function () {
       '}';
 
       this.element = dom.createElement('style');
-      this.element.textContent = css;
+
+      // This may seem inefficient, but it's to only way
+      // for IE10 to trigger font rendering using dynamically
+      // inserted @font-face rules.
       dom.append(document.head, this.element);
+      this.element.textContent = css;
     }
   };
 
