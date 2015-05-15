@@ -118,52 +118,49 @@ goog.scope(function () {
       this.loadStatus = FontFaceLoadStatus.LOADED;
       this.resolveLoad(fontface);
     }
-
-    /**
-     * @type {Element}
-     */
-    this.element = null;
   };
 
   var FontFace = fl.FontFace;
 
   /**
+   * @type {Element|null}
+   */
+  FontFace.STYLE_ELEMENT = null;
+
+  /**
    * Inserts the FontFace in the document.
    */
   FontFace.prototype.insert = function () {
-    if (!this.element) {
-      var src = null;
-
-      if (this.loadStatus === FontFaceLoadStatus.LOADED) {
-        var bytes = new Uint8Array(this.buffer),
-            tmp = '';
-
-        for (var i = 0; i < bytes.length; i++) {
-          tmp += String.fromCharCode(bytes[i]);
-        }
-        src = 'url(data:font/opentype;base64,' + btoa(tmp) + ')';
-      } else {
-        src = this.source;
-      }
-
-      // This doesn't use font-stretch, font-variant or font-feature-settings
-      // because support is hardly there and horribly broken.
-      var css = '@font-face {' +
-        'font-family:"' + this['family'] + '";' +
-        'src:' + src + ';' +
-        'font-style:' + this['style'] + ';' +
-        'font-weight:' + this['weight'] + ';' +
-        'unicode-range:' + this['unicodeRange'] + ';' +
-      '}';
-
-      this.element = dom.createElement('style');
-
-      // This may seem inefficient, but it's to only way
-      // for IE10 to trigger font rendering using dynamically
-      // inserted @font-face rules.
-      dom.append(document.head, this.element);
-      this.element.textContent = css;
+    if (!FontFace.STYLE_ELEMENT) {
+      FontFace.STYLE_ELEMENT = dom.createElement('style');
+      dom.append(document.head, FontFace.STYLE_ELEMENT);
     }
+
+    var src = null;
+
+    if (this.loadStatus === FontFaceLoadStatus.LOADED) {
+      var bytes = new Uint8Array(this.buffer),
+          tmp = '';
+
+      for (var i = 0; i < bytes.length; i++) {
+        tmp += String.fromCharCode(bytes[i]);
+      }
+      src = 'url(data:font/opentype;base64,' + btoa(tmp) + ')';
+    } else {
+      src = this.source;
+    }
+
+    // This doesn't use font-stretch, font-variant or font-feature-settings
+    // because support is hardly there and horribly broken.
+    var css = '@font-face{' +
+      'font-family:"' + this['family'] + '";' +
+      'font-style:' + this['style'] + ';' +
+      'font-weight:' + this['weight'] + ';' +
+      'unicode-range:' + this['unicodeRange'] + ';' +
+      'src:' + src + ';' +
+    '}';
+
+    FontFace.STYLE_ELEMENT.textContent += css;
   };
 
   /**
