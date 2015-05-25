@@ -24,17 +24,8 @@ module.exports = function (grunt) {
   grunt.initConfig({
     pkg: grunt.file.readJSON('package.json'),
     clean: ['build'],
-    connect: {
-      server: {
-        options: {
-          base: "",
-          port: 9999
-        }
-      }
-    },
-    watch: {},
     exec: {
-      test: 'browserstack-test -u $BROWSERSTACK_USERNAME -p $BROWSERSTACK_PASSWORD -k $BROWSERSTACK_KEY -b browsers.json http://localhost:9999/test/index.html',
+      test: 'phantomjs node_modules/mocha-phantomjs-core/mocha-phantomjs-core.js test/index.html',
       deps: 'calcdeps -p ' + src.map(function (p) { return p.replace('**/*.js', ''); }).join(' -p ' ) + ' -p ./vendor/google/base.js -o deps > test/deps.js'
     },
     jshint: {
@@ -81,15 +72,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-closurecompiler');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-connect');
-  grunt.loadNpmTasks('grunt-contrib-watch');
   grunt.loadNpmTasks('grunt-exec');
 
   grunt.registerTask('compile', ['closurecompiler:compile']);
   grunt.registerTask('debug', ['closurecompiler:debug']);
   grunt.registerTask('default', ['compile']);
-  grunt.registerTask('test', ['connect', 'exec:test']);
-  grunt.registerTask('dev', ['connect', 'watch']);
+  grunt.registerTask('test', ['exec:test']);
   grunt.registerTask('deps', ['exec:deps']);
   grunt.registerTask('dist', ['closurecompiler:dist']);
 };

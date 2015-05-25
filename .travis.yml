@@ -1,11 +1,6 @@
-node_js: 
-- 0.1
-before_script: 
-- npm install -g grunt-cli
-- npm install -g browserstack-test
+before_install:
+  - wget https://s3.amazonaws.com/travis-phantomjs/phantomjs-2.0.0-ubuntu-12.04.tar.bz2
+  - tar -xjf phantomjs-2.0.0-ubuntu-12.04.tar.bz2
+  - sudo mv /usr/local/phantomjs/bin/phantomjs /usr/local/phantomjs/bin/phantomjs1
+  - sudo mv phantomjs /usr/local/phantomjs/bin/phantomjs
 language: node_js
-env: 
-  global: 
-  - secure: NRREJPpqoum84WpF/5pDB49ixuiv8y4u4NecboVz+WuKWlnH9nbF5TjiMRdI3zNGzVPOAJNe8p/DY+h4DWcDuVqLGroLqlxxmKE0CVNF2WVCYWIEdk3sac8hHq52z556juHoRYXAbR4QGPf/F+OagkRdFRNr5XK5Ag88rG5uDMA=
-  - secure: Y6gOj5fF0foDfDkf9HrCKTCF86h7C3VcgwAJjwfkLmOQCu8nAFH2FkLCrSUIcQScY2PCcbJL9XvxnmBihq+P/UgJt1JbmwsZM6KNekYn0j3TjKHmJd6V7kZiRxDfFdXs9fqTa6r1n7RdaRDN/J1P2KeRxDA8MTngy+9yKVwLu4o=
-  - secure: G7FbURqXoxmmHEYkGmiylC1OEo8KXQLP3GK7BF2mx84eciQpigwQDmoz3TXfRzEH5Ds+tdjrlcyYB+WmqQYiOQ/vuUnEafet0BZqbXTGjIjxsn+OU79klEJLgnbtAHMJAnLLW+7QxyC3qkvajZO/gFaltrIH26Gm3BHaVAEtLT0=
