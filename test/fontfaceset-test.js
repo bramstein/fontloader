@@ -179,6 +179,8 @@ describe('FontFaceSet', function () {
 
   describe('#load', function () {
     it('loads a font', function (done) {
+      this.timeout(5000);
+
       var set = new FontFaceSet(),
           font = new FontFace('Font1', 'url(./assets/sourcesanspro-regular.woff)');
 
