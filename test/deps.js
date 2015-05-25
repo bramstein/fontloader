@@ -8,15 +8,12 @@ goog.addDependency("../../src/fontfaceset.js", ["fl.FontFaceSet"], ["fl.FontFace
 goog.addDependency("../../src/fontfacesetloadstatus.js", ["fl.FontFaceSetLoadStatus"], []);
 goog.addDependency("../../src/fontfacesource.js", ["fl.FontFaceSource"], []);
 goog.addDependency("../../src/fontformat.js", ["fl.FontFormat"], ["fontface.Observer"]);
+goog.addDependency("../../node_modules/promis/src/async.js", ["lang.async"], []);
+goog.addDependency("../../node_modules/promis/src/promise.js", ["lang.Promise"], ["lang.async"]);
 goog.addDependency("../../node_modules/cssvalue/src/featuresettings.js", ["cssvalue.FeatureSettings"], []);
 goog.addDependency("../../node_modules/cssvalue/src/font.js", ["cssvalue.Font"], []);
 goog.addDependency("../../node_modules/cssvalue/src/src.js", ["cssvalue.Src"], []);
 goog.addDependency("../../node_modules/cssvalue/src/unicoderange.js", ["cssvalue.UnicodeRange"], []);
-goog.addDependency("../../node_modules/promis/src/promise.js", ["lang.Promise"], []);
-goog.addDependency("../../node_modules/closure-dom/src/dom.js", ["dom"], []);
-goog.addDependency("../../node_modules/fontfaceobserver/src/descriptors.js", ["fontface.Descriptors"], []);
-goog.addDependency("../../node_modules/fontfaceobserver/src/observer.js", ["fontface.Observer"], ["fontface.Ruler","dom","lang.Promise"]);
-goog.addDependency("../../node_modules/fontfaceobserver/src/ruler.js", ["fontface.Ruler"], ["dom"]);
 goog.addDependency("../../node_modules/closure-fetch/src/body.js", ["net.Body"], []);
 goog.addDependency("../../node_modules/closure-fetch/src/bodyinit.js", ["net.BodyInit"], []);
 goog.addDependency("../../node_modules/closure-fetch/src/fetch.js", ["net.fetch"], ["net.Body","net.Response","lang.Promise"]);
@@ -24,3 +21,7 @@ goog.addDependency("../../node_modules/closure-fetch/src/headersinit.js", ["net.
 goog.addDependency("../../node_modules/closure-fetch/src/requestinit.js", ["net.RequestInit"], []);
 goog.addDependency("../../node_modules/closure-fetch/src/response.js", ["net.Response"], ["lang.Promise"]);
 goog.addDependency("../../node_modules/closure-fetch/src/responseinit.js", ["net.ResponseInit"], []);
+goog.addDependency("../../node_modules/closure-dom/src/dom.js", ["dom"], []);
+goog.addDependency("../../node_modules/fontfaceobserver/src/descriptors.js", ["fontface.Descriptors"], []);
+goog.addDependency("../../node_modules/fontfaceobserver/src/observer.js", ["fontface.Observer"], ["fontface.Ruler","dom","lang.Promise"]);
+goog.addDependency("../../node_modules/fontfaceobserver/src/ruler.js", ["fontface.Ruler"], ["dom"]);
