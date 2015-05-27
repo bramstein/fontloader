@@ -15,7 +15,7 @@
   "author": "Bram Stein <b.l.stein@gmail.com> (http://www.bramstein.com/)",
   "license": "Apache 2.0",
   "devDependencies": {
-    "mocha": "=2.2.4",
+    "mocha": "=2.2.5",
     "sinon": "=1.14.1",
     "grunt": "=0.4.5",
     "grunt-contrib-clean": "=0.6.0",
@@ -23,7 +23,7 @@
     "grunt-closurecompiler": "~0.9.9",
     "grunt-exec": "~0.4.6",
     "extend": "^2.0.1",
-    "unexpected": "^7.0.5",
+    "unexpected": "^7.5.0",
     "mocha-phantomjs-core": "^0.2.0"
   },
   "scripts": {
@@ -34,6 +34,6 @@
     "closure-fetch": "=0.1.7",
     "fontfaceobserver": "=1.4.12",
     "closure-dom": "=0.0.1",
-    "cssvalue": "=0.0.2"
+    "cssvalue": "=0.0.3"
   }
 }
