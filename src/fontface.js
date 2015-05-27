@@ -63,6 +63,11 @@ goog.scope(function () {
      */
     this.loadStatus = FontFaceLoadStatus.UNLOADED;
 
+    /**
+     * @type {CSSRule|null}
+     */
+    this.rule = null;
+
     Object.defineProperties(this, {
       'family': {
         get: function () {
@@ -160,16 +165,23 @@ goog.scope(function () {
       'src:' + src + ';' +
     '}';
 
-    FontFace.STYLE_ELEMENT.textContent += css;
+    FontFace.STYLE_ELEMENT.sheet.insertRule(css, 0);
+
+    this.rule = FontFace.STYLE_ELEMENT.sheet.cssRules[0];
   };
 
   /**
    * Remove the FontFace from the document.
    */
   FontFace.prototype.remove = function () {
-    if (this.element) {
-      dom.remove(this.element.parentNode, this.element);
-      this.element = null;
+    if (FontFace.STYLE_ELEMENT && this.rule) {
+      for (var i = 0; i < FontFace.STYLE_ELEMENT.sheet.cssRules.length; i++) {
+        if (this.rule === FontFace.STYLE_ELEMENT.sheet.cssRules[i]) {
+          FontFace.STYLE_ELEMENT.sheet.deleteRule(i);
+          this.rule = null;
+          break;
+        }
+      }
     }
   };
 
