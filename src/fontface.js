@@ -201,7 +201,7 @@ goog.scope(function () {
         // find matching format in urls
         for (var i = 0; i < formats.length; i++) {
           for (var j = 0; j < fontface.urls.length; j++) {
-            if (formats[i] === fontface.urls[j].format) {
+            if (formats[i] === fontface.urls[j].format && url === null) {
               url = fontface.urls[j].url;
               break;
             }
