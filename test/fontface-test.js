@@ -88,4 +88,68 @@ describe('FontFace', function () {
       });
     });
   });
+
+  describe('#insert', function () {
+    it('inserts a @font-face rule into the DOM', function () {
+      var font = new FontFace('My Family', new ArrayBuffer(4), {});
+
+      font.insert();
+
+      expect(font.rule, 'not to be null');
+      expect(font.rule.parentStyleSheet, 'not to be null');
+    });
+
+    it('inserts multiple @font-face rules into the DOM', function () {
+      var font1 = new FontFace('Font1', new ArrayBuffer(4), {}),
+          font2 = new FontFace('Font2', new ArrayBuffer(4), {});
+
+      font1.insert();
+      font2.insert();
+
+      expect(font1.rule, 'not to be null');
+      expect(font1.rule.parentStyleSheet, 'not to be null');
+      expect(font2.rule, 'not to be null');
+      expect(font2.rule.parentStyleSheet, 'not to be null');
+
+      expect(font1.rule.parentStyleSheet, 'to equal', font2.rule.parentStyleSheet);
+    });
+  });
+
+  describe('#remove', function () {
+    it('removes @ font-face rule from the DOM', function () {
+      var font = new FontFace('My Family', new ArrayBuffer(4), {});
+
+      font.insert();
+
+      expect(font.rule, 'not to be null');
+      expect(font.rule.parentStyleSheet, 'not to be null');
+
+      font.remove();
+      expect(font.rule, 'to be null');
+    });
+
+    it('removes multiple @font-face rules from the DOM', function () {
+      var font1 = new FontFace('Font1', new ArrayBuffer(4), {}),
+          font2 = new FontFace('Font2', new ArrayBuffer(4), {});
+
+      font1.insert();
+      font2.insert();
+
+      expect(font1.rule, 'not to be null');
+      expect(font1.rule.parentStyleSheet, 'not to be null');
+      expect(font2.rule, 'not to be null');
+      expect(font2.rule.parentStyleSheet, 'not to be null');
+
+      expect(font1.rule.parentStyleSheet, 'to equal', font2.rule.parentStyleSheet);
+
+      font1.remove();
+      expect(font1.rule, 'to be null');
+      expect(font2.rule, 'not to be null');
+      expect(font2.rule.parentStyleSheet, 'not to be null');
+
+      font2.remove();
+
+      expect(font2.rule, 'to be null');
+    });
+  });
 });
