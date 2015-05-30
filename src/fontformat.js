@@ -24,13 +24,6 @@ goog.scope(function () {
   FontFormat.WOFF = 'd09GRgABAAAAAAHgAAoAAAAAAggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABPUy8yAAABUAAAABcAAABOBIQEIWNtYXAAAAFwAAAAJgAAACwADABzZ2x5ZgAAAaAAAAAUAAAAFAwBPQJoZWFkAAAA9AAAAC0AAAA2CHEB92hoZWEAAAEkAAAAFgAAACQMAQgDaG10eAAAAWgAAAAIAAAACAgAAABsb2NhAAABmAAAAAYAAAAGAAoAAG1heHAAAAE8AAAAEwAAACAABAACbmFtZQAAAbQAAAAeAAAAIAAjCF5wb3N0AAAB1AAAAAwAAAAgAAMAAHgBY2BkYABhb81vuvH8Nl8ZmFgYQOBCWvVrMP3VURxEczBAxBmYQAQAAFIIBgAAAHgBY2BkYGBhAAEOKAkUQQVMAAJKABkAAHgBY2BkYGBgAkIgjQ0AAAC+AAcAeAFjAIEUBkYGcoECgwILmAEiASBRAK4AAAAAAAgAAAB4AWNgYGBkYAZiBgYeBhYGBSDNAoQgvsP//xDy/0EwnwEATX4GfAAAAAAAAAAKAAAAAQAAAAAIAAQAAAEAADEBCAAEAHgBY2BgYGKQY2BmYGThZGAEshmgbCYw2wEABjMAigAAeAFjYGbACwAAfQAE';
 
   /**
-   * Width is 1024 (1em).
-   * @const
-   * @type {string}
-   */
-  FontFormat.OPENTYPE = 'AAEAAAAKAIAAAwAgT1MvMgSEBCEAAAEoAAAATmNtYXAADABzAAABgAAAACxnbHlmCAE5AgAAAbQAAAAUaGVhZARxAiIAAACsAAAANmhoZWEIAQQDAAAA5AAAACRobXR4BAAAAAAAAXgAAAAIbG9jYQAKAAAAAAGsAAAABm1heHAABAACAAABCAAAACBuYW1lACMIXgAAAcgAAAAgcG9zdAADAAAAAAHoAAAAIAABAAAAAQAAayoF118PPPUAAgQAAAAAANBme+sAAAAA0PVBQgAAAAAEAAQAAAAAAAACAAAAAAAAAAEAAAQAAAAAAAQAAAAAAAQAAAEAAAAAAAAAAAAAAAAAAAACAAEAAAACAAIAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGQAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAIAQAAAAAAAQAAAAAAAAAAAAEAAAAAAAAAQADAAEAAAAMAAQAIAAAAAQABAABAAAAQP//AAAAQP///8EAAQAAAAAAAAAAAAoAAAABAAAAAAQABAAAAQAAMQEEAAQAAAAAAgAeAAMAAQQJAAEAAgAAAAMAAQQJAAIAAgAAAEAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==';
-
-  /**
    * @type {string}
    */
   FontFormat.TEST_FONT_FAMILY = '_fff_';
@@ -53,8 +46,7 @@ goog.scope(function () {
           'font-family:"' + FontFormat.TEST_FONT_FAMILY + '";' +
           'src:' +
             'url(data:font/font-woff2;base64,' + FontFormat.WOFF2  +') format("woff2"),' +
-            'url(data:application/font-woff;base64,' + FontFormat.WOFF + ') format("woff"),' +
-            'url(data:font/opentype;base64,' + FontFormat.OPENTYPE + ') format("opentype");' +
+            'url(data:application/font-woff;base64,' + FontFormat.WOFF + ') format("woff")' +
         '}'
       ));
 
@@ -65,17 +57,13 @@ goog.scope(function () {
       // to insert test spans into the document.
       FontFormat.SUPPORTED_FORMATS = new fontface.Observer(FontFormat.TEST_FONT_FAMILY, {}).check('@').then(function () {
         var ruler = new fontface.Ruler('@'),
-            formats = [];
+            formats = ['opentype', 'truetype'];
 
         ruler.setFont(FontFormat.TEST_FONT_FAMILY, '');
 
         document.body.appendChild(ruler.getElement());
 
         var width = ruler.getWidth();
-
-        if (width >= 100) {
-          formats.push('opentype', 'truetype');
-        }
 
         if (width >= 200) {
           formats.unshift('woff');
