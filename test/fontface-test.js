@@ -25,16 +25,8 @@ describe('FontFace', function () {
   });
 
   describe('#load', function () {
-    afterEach(function () {
-      net.fetch.restore();
-    });
-
     it('resolves when a font loads', function (done) {
-      var font = new FontFace('My Family', 'url(font.woff)');
-
-      sinon.stub(net, 'fetch').withArgs('font.woff').returns(
-        lang.Promise.resolve(new net.Response(new ArrayBuffer(1), { status: 200 }))
-      );
+      var font = new FontFace('My Family', 'url(./assets/sourcesanspro-regular.woff)');
 
       expect(font.status, 'to equal', 'unloaded');
 
@@ -47,59 +39,8 @@ describe('FontFace', function () {
       });
     });
 
-    it('resolves when a font load slowly', function (done) {
-      var font = new FontFace('My Family', 'url(font.woff)');
-
-      sinon.stub(net, 'fetch').withArgs('font.woff').returns(
-        new lang.Promise(function (resolve, reject) {
-          setTimeout(function () {
-            resolve(new net.Response(new ArrayBuffer(1), { status: 200 }));
-          }, 50);
-        })
-      );
-
-      expect(font.status, 'to equal', 'unloaded');
-
-      font.load().then(function (f) {
-        expect(font, 'to equal', f);
-        expect(font.status, 'to equal', 'loaded');
-        done();
-      }).catch(function (f) {
-        done(new Error('Should not fail'));
-      });
-
-      expect(font.status, 'to equal', 'loading');
-    });
-
-
     it('rejects when a font fails to load', function (done) {
-      var font = new FontFace('My Family', 'url(font.woff)');
-
-      sinon.stub(net, 'fetch').withArgs('font.woff').returns(
-        lang.Promise.reject(new net.Response(new ArrayBuffer(1), { status: 404 }))
-      );
-
-      expect(font.status, 'to equal', 'unloaded');
-
-      font.load().then(function (f) {
-        done(new Error('Should not succeed'));
-      }).catch(function (f) {
-        expect(font, 'to equal', f);
-        expect(font.status, 'to equal', 'error');
-        done();
-      });
-    });
-
-    it('rejects when a fake font fails to load with a delay', function (done) {
-      var font = new FontFace('My Family', 'url(font.woff)');
-
-      sinon.stub(net, 'fetch').withArgs('font.woff').returns(
-        new lang.Promise(function (resolve, reject) {
-          setTimeout(function () {
-            reject(new net.Response(new ArrayBuffer(1), { status: 404 }));
-          }, 50);
-        })
-      );
+      var font = new FontFace('My Family', 'url(./assets/unknown.woff)');
 
       expect(font.status, 'to equal', 'unloaded');
 
@@ -114,8 +55,6 @@ describe('FontFace', function () {
 
     it('loads immediately when given an arraybuffer', function (done) {
       var font = new FontFace('My Family', new ArrayBuffer(4), {});
-
-      sinon.stub(net, 'fetch');
 
       expect(font.status, 'to equal', "loaded");
 
