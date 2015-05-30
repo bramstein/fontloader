@@ -73,12 +73,16 @@ goog.scope(function () {
 
         var width = ruler.getWidth();
 
-        if (width === 300) {
-          formats = ['woff2', 'woff', 'opentype', 'truetype'];
-        } else if (width === 200) {
-          formats = ['woff', 'opentype', 'truetype'];
-        } else if (width === 100) {
-          formats = ['opentype', 'truetype'];
+        if (width >= 100) {
+          formats.push('opentype', 'truetype');
+        }
+
+        if (width >= 200) {
+          formats.unshift('woff');
+        }
+
+        if (width == 300) {
+          formats.unshift('woff2');
         }
 
         head.removeChild(style);
