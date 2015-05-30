@@ -186,6 +186,34 @@ goog.scope(function () {
     }
   };
 
+  /**
+   * @private
+   *
+   * @param {Array.<string>} formats
+   *
+   * @return {string|null}
+   */
+  FontFace.prototype.getMatchingUrls = function (formats) {
+    var url = null;
+
+    // find matching format in urls
+    for (var i = 0; i < formats.length; i++) {
+      for (var j = 0; j < this.urls.length; j++) {
+        if (formats[i] === this.urls[j].format && url === null) {
+          url = this.urls[j].url;
+          break;
+        }
+      }
+    }
+
+    // If there is no format but the browser supports at least
+    // one format, just load the first one.
+    if (!url && formats.length !== 0) {
+      url = this.urls[0].url;
+    }
+
+    return url;
+  };
 
   /**
    * @return {Promise.<fl.FontFace>}
@@ -197,23 +225,7 @@ goog.scope(function () {
       fontface.loadStatus = FontFaceLoadStatus.LOADING;
 
       FontFormat.detect().then(function (formats) {
-        var url = null;
-
-        // find matching format in urls
-        for (var i = 0; i < formats.length; i++) {
-          for (var j = 0; j < fontface.urls.length; j++) {
-            if (formats[i] === fontface.urls[j].format && url === null) {
-              url = fontface.urls[j].url;
-              break;
-            }
-          }
-        }
-
-        // If there is no format but the browser supports at least
-        // one format, just load the first one.
-        if (!url && formats.length !== 0) {
-          url = fontface.urls[0].url;
-        }
+        var url = fontface.getMatchingUrls(formats);
 
         if (url) {
           fetch(url).then(function (response) {

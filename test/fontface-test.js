@@ -24,6 +24,27 @@ describe('FontFace', function () {
     });
   });
 
+  describe('#getMatchingUrls', function () {
+    it('returns the first URL if there are no format identifiers', function () {
+      var font = new FontFace('My Family', 'url(font.woff), url(font.otf)');
+
+      expect(font.getMatchingUrls(['woff', 'opentype']), 'to equal', 'font.woff');
+    });
+
+    it('returns the first matching format URL', function () {
+      var font = new FontFace('My Family', 'url(font.woff) format("woff"), url(font.otf) format("opentype")');
+
+      expect(font.getMatchingUrls(['woff']), 'to equal', 'font.woff');
+      expect(font.getMatchingUrls(['opentype']), 'to equal', 'font.otf');
+    });
+
+    it('returns null when the browser does not support anything', function () {
+      var font = new FontFace('My Family', 'url(font.woff) format("woff"), url(font.otf) format("opentype")');
+
+      expect(font.getMatchingUrls([]), 'to be null');
+    });
+  });
+
   describe('#load', function () {
     it('resolves when a font loads', function (done) {
       var font = new FontFace('My Family', 'url(./assets/sourcesanspro-regular.woff)');
