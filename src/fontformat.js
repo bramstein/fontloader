@@ -30,6 +30,8 @@ goog.scope(function () {
    */
   FontFormat.OPENTYPE = 'AAEAAAAKAIAAAwAgT1MvMgSEBCEAAAEoAAAATmNtYXAADABzAAABgAAAACxnbHlmCAE5AgAAAbQAAAAUaGVhZARxAiIAAACsAAAANmhoZWEIAQQDAAAA5AAAACRobXR4BAAAAAAAAXgAAAAIbG9jYQAKAAAAAAGsAAAABm1heHAABAACAAABCAAAACBuYW1lACMIXgAAAcgAAAAgcG9zdAADAAAAAAHoAAAAIAABAAAAAQAAayoF118PPPUAAgQAAAAAANBme+sAAAAA0PVBQgAAAAAEAAQAAAAAAAACAAAAAAAAAAEAAAQAAAAAAAQAAAAAAAQAAAEAAAAAAAAAAAAAAAAAAAACAAEAAAACAAIAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGQAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAIAQAAAAAAAQAAAAAAAAAAAAEAAAAAAAAAQADAAEAAAAMAAQAIAAAAAQABAABAAAAQP//AAAAQP///8EAAQAAAAAAAAAAAAoAAAABAAAAAAQABAAAAQAAMQEEAAQAAAAAAgAeAAMAAQQJAAEAAgAAAAMAAQQJAAIAAgAAAEAAAwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==';
 
+  FontFormat.TEST_FONT_FAMILY = '_fff_';
+
   /**
    * @type {Promise.<!Array.<string>>}
    */
@@ -45,7 +47,7 @@ goog.scope(function () {
 
       style.appendChild(document.createTextNode(
         '@font-face{' +
-          'font-family:"__fff__";' +
+          'font-family:"' + FontFormat.TEST_FONT_FAMILY + '";' +
           'src:' +
             'url(data:font/font-woff2;base64,' + FontFormat.WOFF2  +') format("woff2"),' +
             'url(data:application/font-woff;base64,' + FontFormat.WOFF + ') format("woff"),' +
@@ -55,11 +57,14 @@ goog.scope(function () {
 
       head.appendChild(style);
 
-      FontFormat.SUPPORTED_FORMATS = new fontface.Observer('__fff__', {}).check('@').then(function () {
+      // TODO: Since we have the font data hardcoded in the JS we can
+      // use the forced-relayout trick here, which removes the need
+      // to insert test spans into the document.
+      FontFormat.SUPPORTED_FORMATS = new fontface.Observer(FontFormat.TEST_FONT_FAMILY, {}).check('@').then(function () {
         var ruler = new fontface.Ruler('@'),
             formats = [];
 
-        ruler.setFont('__fff__', '');
+        ruler.setFont(FontFormat.TEST_FONT_FAMILY, '');
 
         document.body.appendChild(ruler.getElement());
 
