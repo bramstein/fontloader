@@ -98,7 +98,7 @@ goog.scope(function () {
    * @param {string} font
    * @param {string=} opt_text
    *
-   * @return {!Array.<!fl.FontFace>}
+   * @return {!Array.<!fl.FontFace>|null}
    */
   FontFaceSet.prototype.match = function (font, opt_text) {
     function normalize(weight) {
@@ -111,9 +111,11 @@ goog.scope(function () {
       }
     }
 
-    // TODO: Font.parse returns null and should reject the promise
-    // if that happens.
     var properties = Font.parse(font);
+
+    if (properties === null) {
+      return null;
+    }
 
     // TODO: match on opt_text
     return this.fonts.filter(function (f) {
@@ -121,8 +123,9 @@ goog.scope(function () {
 
       for (var i = 0; i < families.length; i++) {
         if (f['family'] === families[i] &&
-            f['style'] === (properties.style || 'normal') &&
-            normalize(f['weight']) === normalize(properties.weight || 'normal')) {
+            f['style'] === properties.style &&
+            f['stretch'] === properties.stretch &&
+            normalize(f['weight']) === normalize(properties.weight)) {
           return true;
         }
       }
@@ -140,7 +143,9 @@ goog.scope(function () {
     var set = this,
         matches = this.match(font, opt_text);
 
-    if (matches.length) {
+    if (matches === null) {
+      return Promise.reject([]);
+    } else if (matches.length) {
       set.loadStatus = FontFaceSetLoadStatus.LOADING;
 
       return Promise.all(matches.map(function (font) {

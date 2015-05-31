@@ -167,6 +167,12 @@ describe('FontFaceSet', function () {
       expect(set.match('16px "My Other Family"'), 'to equal', [font2]);
     });
 
+    it('returns null on an invalid font string', function () {
+      var set = new FontFaceSet();
+
+      expect(set.match('san-see'), 'to be null');
+    });
+
     xit('rejects a match because of a mismatching unicode range', function () {
       var set = new FontFaceSet(),
           font = new FontFace('My Family', 'url(font.woff)', { unicodeRange: 'u+0' });
@@ -217,6 +223,17 @@ describe('FontFaceSet', function () {
         done();
       }).catch(function () {
         done(new Error('Should not be called'));
+      });
+    });
+
+    it('rejects the promise if the font string is invalid', function (done) {
+      var set = new FontFaceSet();
+
+      set.load('see-sa').then(function () {
+        done(new Error('Should not be called'));
+      }).catch(function (fonts) {
+        expect(fonts, 'to equal', []);
+        done();
       });
     });
 
