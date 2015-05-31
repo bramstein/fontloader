@@ -45,7 +45,7 @@ goog.scope(function () {
         '@font-face{' +
           'font-family:"' + FontFormat.TEST_FONT_FAMILY + '";' +
           'src:' +
-            'url(data:font/font-woff2;base64,' + FontFormat.WOFF2  +') format("woff2"),' +
+            'url(data:font/woff2;base64,' + FontFormat.WOFF2  +') format("woff2"),' +
             'url(data:application/font-woff;base64,' + FontFormat.WOFF + ') format("woff")' +
         '}'
       ));
