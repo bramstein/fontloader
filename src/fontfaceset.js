@@ -149,21 +149,14 @@ goog.scope(function () {
       set.loadStatus = FontFaceSetLoadStatus.LOADING;
 
       return Promise.all(matches.map(function (font) {
-        var observer = new fontface.Observer(font['family'], {
-          style: font['style'],
-          weight: font['weight'],
-          stretch: font['stretch'],
-          variant: font['variant'],
-          featureSettings: font['featureSettings']
-        });
-        return observer.check(opt_text, 1000).then(function () {
-          set.loadStatus = FontFaceSetLoadStatus.LOADED;
-          return font;
-        }, function () {
-          set.loadStatus = FontFaceSetLoadStatus.LOADED;
-          return font;
-        });
-      }));
+        return font.load();
+      })).then(function () {
+        set.loadStatus = FontFaceSetLoadStatus.LOADED;
+        return matches;
+      }).catch(function () {
+        set.loadStatus = FontFaceSetLoadStatus.LOADED;
+        return matches;
+      });
     } else {
       return Promise.resolve([]);
     }
