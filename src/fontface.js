@@ -151,6 +151,7 @@ goog.scope(function () {
       for (var i = 0; i < bytes.length; i++) {
         tmp += String.fromCharCode(bytes[i]);
       }
+      // TODO: Set the correct font format.
       src = 'url(data:font/opentype;base64,' + btoa(tmp) + ')';
     } else {
       src = this.source;
