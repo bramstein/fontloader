@@ -247,6 +247,9 @@ goog.scope(function () {
           fontface.loadStatus = FontFaceLoadStatus.ERROR;
           fontface.rejectLoad(fontface);
         }
+      }).catch(function () {
+        fontface.loadStatus = FontFaceLoadStatus.ERROR;
+        fontface.rejectLoad(fontface);
       });
     }
     return this.promise;
