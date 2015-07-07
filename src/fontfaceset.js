@@ -3,12 +3,10 @@ goog.provide('fl.FontFaceSet');
 goog.require('fl.FontFaceSetLoadStatus');
 
 goog.require('cssvalue.Font');
-goog.require('lang.Promise');
 
 goog.scope(function () {
   var FontFaceSetLoadStatus = fl.FontFaceSetLoadStatus,
-      Font = cssvalue.Font,
-      Promise = lang.Promise;
+      Font = cssvalue.Font;
 
   /**
    * @constructor

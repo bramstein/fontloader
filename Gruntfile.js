@@ -15,7 +15,6 @@ module.exports = function (grunt) {
     'polyfill.js',
     'src/**/*.js',
     'node_modules/cssvalue/src/**/*.js',
-    'node_modules/promis/src/**/*.js',
     'node_modules/closure-fetch/src/**/*.js',
     'node_modules/closure-dom/src/**/*.js',
     'node_modules/fontfaceobserver/src/**/*.js'
@@ -45,12 +44,6 @@ module.exports = function (grunt) {
       }
     },
     closurecompiler: {
-      dist: {
-        files: {
-          "fontloader.js": src
-        },
-        options: extend({}, compilerOptions)
-      },
       compile: {
         files: {
           "build/fontloader.js": src
@@ -66,6 +59,12 @@ module.exports = function (grunt) {
           formatting: ['PRETTY_PRINT', 'PRINT_INPUT_DELIMITER']
         })
       }
+    },
+    concat: {
+      dist: {
+        src: ['node_modules/promis/promise.js', 'build/fontloader.js'],
+        dest: 'fontloader.js'
+      }
     }
   });
 
@@ -73,11 +72,12 @@ module.exports = function (grunt) {
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-exec');
+  grunt.loadNpmTasks('grunt-contrib-concat');
 
   grunt.registerTask('compile', ['closurecompiler:compile']);
   grunt.registerTask('debug', ['closurecompiler:debug']);
   grunt.registerTask('default', ['compile']);
   grunt.registerTask('test', ['exec:test']);
   grunt.registerTask('deps', ['exec:deps']);
-  grunt.registerTask('dist', ['closurecompiler:dist']);
+  grunt.registerTask('dist', ['closurecompiler:compile', 'concat:dist']);
 };

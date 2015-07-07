@@ -4,7 +4,6 @@ goog.require('fl.FontFaceLoadStatus');
 goog.require('fl.FontFormat');
 
 goog.require('cssvalue.Src');
-goog.require('lang.Promise');
 goog.require('net.fetch');
 goog.require('dom');
 
@@ -12,8 +11,7 @@ goog.scope(function () {
   var FontFaceLoadStatus = fl.FontFaceLoadStatus,
       FontFormat = fl.FontFormat,
       Src = cssvalue.Src,
-      fetch = net.fetch,
-      Promise = lang.Promise;
+      fetch = net.fetch;
 
   /**
    * @constructor

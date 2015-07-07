@@ -24,15 +24,16 @@
     "grunt-exec": "~0.4.6",
     "extend": "^2.0.1",
     "unexpected": "^7.5.0",
-    "mocha-phantomjs-core": "^0.2.0"
+    "mocha-phantomjs-core": "^0.2.0",
+    "grunt-contrib-concat": "^0.5.1"
   },
   "scripts": {
     "test": "grunt test"
   },
   "dependencies": {
-    "promis": "=1.0.8",
-    "closure-fetch": "=0.1.7",
-    "fontfaceobserver": "=1.4.17",
+    "promis": "=1.1.0",
+    "closure-fetch": "=0.4.0",
+    "fontfaceobserver": "=1.5.0",
     "closure-dom": "=0.0.1",
     "cssvalue": "=0.0.3"
   }
