@@ -33,8 +33,8 @@
   "dependencies": {
     "promis": "=1.1.0",
     "closure-fetch": "=0.4.0",
-    "fontfaceobserver": "=1.5.0",
-    "closure-dom": "=0.0.1",
+    "fontfaceobserver": "=1.5.1",
+    "closure-dom": "=0.1.1",
     "cssvalue": "=0.0.3"
   }
 }
