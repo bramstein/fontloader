@@ -186,7 +186,7 @@ describe('FontFaceSet', function () {
   describe('#load', function () {
     it('loads a font', function (done) {
       var set = new FontFaceSet(),
-          font = new FontFace('Font1', 'url(./assets/sourcesanspro-regular.woff)');
+          font = new FontFace('Font1', 'url(./assets/sourcesanspro-regular.woff) format("woff"), url(./assets/sourcesanspro-regular.ttf) format("truetype")');
 
       set.add(font);
 
@@ -201,7 +201,7 @@ describe('FontFaceSet', function () {
 
     it('fails to load a font', function (done) {
       var set = new FontFaceSet(),
-          font = new FontFace('Font2', 'url(unknown.woff)');
+          font = new FontFace('Font2', 'url(unknown.woff) format("woff"), url(unknown.ttf) format("truetype")');
 
       set.add(font);
 
@@ -239,8 +239,8 @@ describe('FontFaceSet', function () {
 
     it('loads multiple matching fonts', function (done) {
       var set = new FontFaceSet(),
-          font1 = new FontFace('Font1', 'url(./assets/sourcesanspro-regular.woff)'),
-          font2 = new FontFace('Font2', 'url(./assets/sourcesanspro-regular.woff)');
+          font1 = new FontFace('Font1', 'url(./assets/sourcesanspro-regular.woff) format("woff"), url(./assets/sourcesanspro-regular.ttf) format("truetype")'),
+          font2 = new FontFace('Font2', 'url(./assets/sourcesanspro-regular.woff) format("woff"), url(./assets/sourcesanspro-regular.ttf) format("truetype")');
 
       set.add(font1);
       set.add(font2);
@@ -256,7 +256,7 @@ describe('FontFaceSet', function () {
 
     it('loads a preloaded font', function (done) {
       var set = new FontFaceSet(),
-          font = new FontFace('Font1', 'url(./assets/sourcesanspro-regular.woff)');
+          font = new FontFace('Font1', 'url(./assets/sourcesanspro-regular.woff) format("woff"), url(./assets/sourcesanspro-regular.ttf) format("truetype")');
 
       font.load().then(function () {
         set.add(font);

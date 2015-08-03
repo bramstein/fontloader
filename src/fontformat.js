@@ -77,6 +77,8 @@ goog.scope(function () {
         document.body.removeChild(ruler.getElement());
 
         return formats;
+      }, function () {
+        return ['opentype', 'truetype'];
       });
     }
     return FontFormat.SUPPORTED_FORMATS;

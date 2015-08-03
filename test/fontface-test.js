@@ -47,7 +47,8 @@ describe('FontFace', function () {
 
   describe('#load', function () {
     it('resolves when a font loads', function (done) {
-      var font = new FontFace('My Family', 'url(./assets/sourcesanspro-regular.woff)');
+      this.timeout(6000);
+      var font = new FontFace('My Family', 'url(./assets/sourcesanspro-regular.woff) format("woff"), url(./assets/sourcesanspro-regular.ttf) format("truetype")');
 
       expect(font.status, 'to equal', 'unloaded');
 
@@ -61,7 +62,7 @@ describe('FontFace', function () {
     });
 
     it('rejects when a font fails to load', function (done) {
-      var font = new FontFace('My Family', 'url(./assets/unknown.woff)');
+      var font = new FontFace('My Family', 'url(./assets/unknown.woff) format("woff"), url(./assets/unknown.ttf) format("truetype")');
 
       expect(font.status, 'to equal', 'unloaded');
 
