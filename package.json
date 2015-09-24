@@ -31,9 +31,9 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "promis": "=1.1.0",
+    "promis": "=1.1.2",
     "closure-fetch": "=0.4.1",
-    "fontfaceobserver": "=1.5.1",
+    "fontfaceobserver": "=1.5.3",
     "closure-dom": "=0.1.1",
     "cssvalue": "=0.0.3"
   }
