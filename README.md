@@ -1,3 +1,7 @@
+# Deprecated
+
+This library is deprecated and no longer maintained. The CSS font loading API is near impossible to implement without access to the browser's internal font loading behaviour. The most useful aspects of the API (font events) has been implemented in [Font Face Observer](https://github.com/bramstein/fontfaceobserver), so please use that instead.
+
 ## FontLoader Polyfill [![Build Status](https://travis-ci.org/bramstein/fontloader.png?branch=master)](https://travis-ci.org/bramstein/fontloader)
 
 This polyfill implements the [W3C Font Load Events Module Level 3 specification](http://www.w3.org/TR/css-font-loading/). It detects when fonts have loaded and provides callbacks for each font load event. You can use the fontloader polyfill to prevent the Flash Of Unstyled Text (FOUT) or execute JavaScript code when fonts have loaded (for example to perform layout or show a user interface element.)
