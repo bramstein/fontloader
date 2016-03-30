@@ -161,7 +161,10 @@ goog.scope(function () {
       'font-family:"' + this['family'] + '";' +
       'font-style:' + this['style'] + ';' +
       'font-weight:' + this['weight'] + ';' +
-      'unicode-range:' + this['unicodeRange'] + ';' +
+    // TODO: unicode-range is fairly buggy in Chrome when it is used in combination
+    // with characters that also have OpenType features. Disable it for now because
+    // it's causing those characters not to render.
+    //  'unicode-range:' + this['unicodeRange'] + ';' +
       'src:' + src + ';' +
     '}';
 
