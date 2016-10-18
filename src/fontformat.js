@@ -55,11 +55,11 @@ goog.scope(function () {
       // TODO: Since we have the font data hardcoded in the JS we can
       // use the forced-relayout trick here, which removes the need
       // to insert test spans into the document.
-      FontFormat.SUPPORTED_FORMATS = new fontface.Observer(FontFormat.TEST_FONT_FAMILY, {}).check('@', 5000).then(function () {
+      FontFormat.SUPPORTED_FORMATS = new fontface.Observer(FontFormat.TEST_FONT_FAMILY, {}).load('@', 5000).then(function () {
         var ruler = new fontface.Ruler('@'),
             formats = ['opentype', 'truetype'];
 
-        ruler.setFont(FontFormat.TEST_FONT_FAMILY, '');
+        ruler.setFont(FontFormat.TEST_FONT_FAMILY);
 
         document.body.appendChild(ruler.getElement());
 

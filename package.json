@@ -31,10 +31,10 @@
     "test": "grunt test"
   },
   "dependencies": {
-    "promis": "=1.1.2",
-    "closure-fetch": "=0.4.1",
-    "fontfaceobserver": "=1.5.3",
-    "closure-dom": "=0.1.1",
+    "promis": "=1.1.4",
+    "closure-fetch": "=0.4.2",
+    "fontfaceobserver": "=2.0.5",
+    "closure-dom": "=0.2.6",
     "cssvalue": "=0.0.3"
   }
 }
