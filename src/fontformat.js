@@ -39,7 +39,7 @@ goog.scope(function () {
   FontFormat.detect = function () {
     if (!FontFormat.SUPPORTED_FORMATS) {
       if (/MSIE|Trident/.test(navigator.userAgent)) {
-        return ['woff', 'opentype', 'truetype'];
+        return Promise.resolve(['woff', 'opentype', 'truetype']);
       }
 
       var style = document.createElement('style'),
