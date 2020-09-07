@@ -1,4 +1,5 @@
 module.exports = function (grunt) {
+  require('google-closure-compiler').grunt(grunt);
   var extend = require('extend');
 
   var compilerOptions = {
@@ -42,7 +43,7 @@ module.exports = function (grunt) {
         "-W092": true
       }
     },
-    closurecompiler: {
+    'closure-compiler': {
       compile: {
         files: {
           "build/fontloader.js": src
@@ -67,16 +68,15 @@ module.exports = function (grunt) {
     }
   });
 
-  grunt.loadNpmTasks('grunt-closurecompiler');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-exec');
   grunt.loadNpmTasks('grunt-contrib-concat');
 
-  grunt.registerTask('compile', ['closurecompiler:compile']);
-  grunt.registerTask('debug', ['closurecompiler:debug']);
+  grunt.registerTask('compile', ['closure-compiler:compile']);
+  grunt.registerTask('debug', ['closure-compiler:debug']);
   grunt.registerTask('default', ['compile']);
   grunt.registerTask('test', ['exec:test']);
   grunt.registerTask('deps', ['exec:deps']);
-  grunt.registerTask('dist', ['closurecompiler:compile', 'concat:dist']);
+  grunt.registerTask('dist', ['closure-compiler:compile', 'concat:dist']);
 };
